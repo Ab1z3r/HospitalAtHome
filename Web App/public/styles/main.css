@@ -1,12 +1,19 @@
 body {
-    background: #DDDDDD;
+    background: white;
 }
 
 .navbar {
-    background-color: #800000;
-    color: white;
+    background-color: white;
 }
 
 .page-container {
     margin-top: 75px;
+}
+
+#title {
+    color: black;
+}
+
+#loginPage > div {
+    background-color: #ECECEC;
 }
