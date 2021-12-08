@@ -11,28 +11,53 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-dark fixed-top">
+  <!-- <nav class="navbar navbar-dark fixed-top">
     <a id="title" class="navbar-brand" href="#">Login Page</a>
-  </nav>
-  <div id="loginPage" class="container page-container">
+  </nav> -->
 
-  <img src="" alt="Union Health Logo">
-  <h1>Hospital At Home</h1>
-  <p>For healthcare professionals</p>
+  <div id="loginPage" class="container login-container">
 
-  <div>
-    <h2>Log in to your account</h2>
-    <p>Please enter the following information</p>
+    <div id="loginHeader">
+      <img src="images/union_health_logo.png" alt="Union Health Logo">
+      <h3>Hospital At Home</h3>
+      <p>For healthcare professionals</p>
+    </div>
+
+    <div id="loginForm">
+      <h2>Log in to your account</h2>
+      <p>Please enter the following information</p>
+
+      <div id="loginInputs">
+        <div id="loginEmail">
+          <label name="logon">Logon ID (required)</label>
+          <input id="logonInput" type="text" name="logon" size="30">
+        </div>
+
+        <div id="loginPassword">
+          <label name="logon">Password (required)</label>
+          <input id="passwordInput" type="password" name="password" size="30">
+        </div>
+      </div>
+
+      <!-- <input type="checkbox" class="" checked=""> -->
+      <button id="loginButton" class="btn btn-primary" type="button">Log in</button>
+      <p id="loginCopyright">Copyright &copy; Your Website 2021</p>
+
+
+    </div>
+
+    <footer class="text-center fixed-bottom">
+      <p>&copy; All rights and use of this website belong to Rose-Hulman and Union Hospital</p>
+    </footer>
+
   </div>
 
-  <p>&copy; All rights and use of this website belong to Rose-Hulman and Union Hospital</p>
-
-
-  </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap-material-design.js"></script>
-  <script>$("body").bootstrapMaterialDesign();</script>
+  <script>
+    $("body").bootstrapMaterialDesign();
+  </script>
   <script src="/__/firebase/7.18.0/firebase-app.js"></script>
   <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
   <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
