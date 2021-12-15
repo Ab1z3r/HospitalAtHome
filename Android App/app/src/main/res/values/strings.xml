@@ -13,4 +13,10 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="google_sign_in_content_description">Google Sign In</string>
+    <string name="hospital_at_home">Hospital at Home</string>
+    <string name="for_patients">For Patients</string>
+    <string name="log_in_to_your_account">Log in to your account</string>
+    <string name="please_enter_the_following_information">Please enter the following information</string>
+    <string name="logon_id">Logon ID</string>
+    <string name="password">Password</string>
 </resources>

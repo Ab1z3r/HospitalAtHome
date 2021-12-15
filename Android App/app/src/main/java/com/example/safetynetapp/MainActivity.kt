@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         Log.d("[INFO]", "onActivity result fired")
-        val tv = findViewById<TextView>(R.id.main_text)
+        val tv = findViewById<TextView>(R.id.title_text)
 
         when (requestCode) {
             REQ_ONE_TAP -> {
