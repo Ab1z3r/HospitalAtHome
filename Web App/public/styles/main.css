@@ -12,6 +12,7 @@
 
 :root {
     --main-color: #C15027;
+    --secondardy-color: #F8F8F8;
     --main-font: 'Mukta', sans-serif;
 }
 
@@ -145,7 +146,7 @@ body {
 }
 
 #patientsPage h1 {
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 #patientsPage #breadCrumbs {
@@ -155,6 +156,7 @@ body {
 #patientsHeader {
     display: flex;
     flex-direction: column;
+    margin-bottom: 10px;
 }
 
 #patientsFilter {
@@ -170,8 +172,8 @@ body {
 
 #patientsSelect {
     margin-right: 10px;
-    font-size: small;
-    height: 40px;
+    font-size: 10px;
+    height: 30px;
     width: 125px;
     border-radius: 0px;
     font-family: var(--main-font);
@@ -179,7 +181,8 @@ body {
 
 #patientSearchInput {
     border-radius: 0px;
-    height: 40px;
+    height: 30px;
+    font-size: 12px;
     font-family: var(--main-font);
     background-image: url('mdn_logo_only_color.png');
     background-repeat: no-repeat;
@@ -192,7 +195,7 @@ body {
 
 #patientsSearchButton {
     padding: 0px;
-    height: 40px;
+    height: 30px;
     width: 40px;
     border-radius: 0px;
     margin-bottom: 0px;
@@ -203,7 +206,7 @@ body {
 
 #patientsPage footer {
     margin-right: 60px;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 #patientsPage footer > a {
@@ -213,6 +216,41 @@ body {
 
 #patientsPage footer > a:hover {
     text-decoration: underline;
+}
+
+.card {
+    background-color: var(--secondardy-color);
+    height: 75px;
+    margin: 20px;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+    padding: 1.25rem;
+    justify-content: space-between;
+}
+
+.card-body h4 {
+    margin-bottom: 0px;
+    margin-left: 20px;
+}
+
+.card-body p {
+    margin: 0px 30px;
+    padding-top: 5px;
+}
+
+#patientsCardInfo {
+    display: flex;
+    flex-direction: row;
+}
+
+#selectButton {
+    background: var(--main-color);
+    color: white;
+    margin-bottom: 0px;
+    font-size: 12px;
 }
 
 .custom-file-control, .form-control, .is-focused .custom-file-control, .is-focused .form-control {
@@ -266,6 +304,26 @@ body {
 
     #loginEmail {
         margin-bottom: 10px;
+    }
+
+    #patientsSelect {
+        font-size: small;
+        height: 40px;
+    }
+    
+    #patientSearchInput {
+        height: 40px;
+        font-family: var(--main-font);
+        font-size: small;
+    }
+    
+    #patientsSearchButton {
+        height: 40px;
+    }
+
+    #patientsPage {
+        margin-left: 125px;
+        margin-right: 125px;
     }
 }
 
