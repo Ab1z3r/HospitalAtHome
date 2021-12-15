@@ -28,6 +28,19 @@ body {
     margin-top: 75px;
 }
 
+#navLogo {
+    width: 30%;
+    margin-left: 20px;
+}
+
+#breadCrumbs {
+    color: black;
+    font-weight: 200;
+    list-style: none;
+    padding: 0px;
+    margin-bottom: 0px;
+}
+
 /* <----- Login Page (index.html) -----> */
 .login-container {
     margin-top: 40px;
@@ -48,7 +61,7 @@ body {
 }
 
 #loginHeader img {
-    width: 70%;
+    width: 60%;
 }
 
 #loginHeader h3 {
@@ -118,9 +131,116 @@ body {
     padding-top: 0px;
 }
 
+
+/* <----- Patient Page (patients.html) -----> */
+.patients-container {
+    margin-top: 120px;
+}
+
+#patientsPage {
+    display: flex;
+    flex-direction: column;
+    margin-left: 60px;
+    margin-right: 60px;
+}
+
+#patientsPage h1 {
+    margin-bottom: 5px;
+}
+
+#patientsPage #breadCrumbs {
+    margin-bottom: 10px;
+}
+
+#patientsHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+#patientsFilter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#patientsFilter i {
+    color: black;
+    padding-right: 10px;
+}
+
+#patientsSelect {
+    margin-right: 10px;
+    font-size: small;
+    height: 40px;
+    width: 125px;
+    border-radius: 0px;
+    font-family: var(--main-font);
+}
+
+#patientSearchInput {
+    border-radius: 0px;
+    height: 40px;
+    font-family: var(--main-font);
+    background-image: url('mdn_logo_only_color.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    border: 0px;
+    border-top: 1px #ced4da solid;
+    border-bottom: 1px #ced4da solid;
+    border-left: 1px #ced4da solid;
+}
+
+#patientsSearchButton {
+    padding: 0px;
+    height: 40px;
+    width: 40px;
+    border-radius: 0px;
+    margin-bottom: 0px;
+    border-top: 1px #ced4da solid;
+    border-bottom: 1px #ced4da solid;
+    border-right: 1px #ced4da solid;
+}
+
+#patientsPage footer {
+    margin-right: 60px;
+    margin-bottom: 30px;
+}
+
+#patientsPage footer > a {
+    text-decoration: none;
+    color: var(--main-color);
+}
+
+#patientsPage footer > a:hover {
+    text-decoration: underline;
+}
+
+.custom-file-control, .form-control, .is-focused .custom-file-control, .is-focused .form-control {
+    background-image: none;
+}
+
 /* Small devices (phones, 576px and up) */
 @media screen and (min-width: 576px) {
+    #patientsHeader {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #patientsPage #breadCrumbs {
+        margin-bottom: 0px;
+    }
+
+    #patientsSelect {
+        width: 95%;
+    }
+
+    #patientsFilter i {
+        color: black;
+        padding-right: 0px;
+    }
 }
+
 
 @media screen and (min-width: 768px) {
     #loginForm p {
