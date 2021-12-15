@@ -58,7 +58,7 @@ body {
 }
 
 #loginForm {
-    width: 690px;
+    width: 100%;
     height: 350px;
     background-color: #ECECEC;
     box-shadow: 5px 10px 5px #dbdbdb;
@@ -66,7 +66,7 @@ body {
 }
 
 #loginForm h2 {
-    margin-top: 50px;
+    margin-top: 40px;
     margin-bottom: 0px;
     font-weight: 600;
 }
@@ -74,15 +74,14 @@ body {
 #loginForm p {
     font-weight: 600;
     font-size: 14px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 #loginInputs{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
-    margin-bottom: 40px;
-
+    margin-bottom: 20px;
 }
 
 #loginEmail, #loginPassword{
@@ -91,8 +90,12 @@ body {
     margin: 0px 30px;
 }
 
+#loginEmail {
+    margin-bottom: 10px;
+}
+
 #loginInputs label {
-    text-align: left;
+    text-align: center;
 }
 
 #loginButton {
@@ -115,3 +118,36 @@ body {
     padding-top: 0px;
 }
 
+/* Small devices (phones, 576px and up) */
+@media screen and (min-width: 576px) {
+}
+
+@media screen and (min-width: 768px) {
+    #loginForm p {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 40px;
+    }
+    #loginForm {
+        width: 690px;
+        height: 350px;
+        background-color: #ECECEC;
+        box-shadow: 5px 10px 5px #dbdbdb;
+        text-align: center;
+    }
+    #loginInputs{
+        flex-direction: row;
+        margin-bottom: 40px;
+    }
+    
+    #loginInputs label {
+        text-align: left;
+    }
+
+    #loginEmail {
+        margin-bottom: 10px;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+}
