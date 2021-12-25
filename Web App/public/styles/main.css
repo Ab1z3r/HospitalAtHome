@@ -41,6 +41,26 @@ body {
     padding: 0px;
     margin-bottom: 0px;
 }
+.breadcrumb {
+    background-color: white;
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+    float: left;
+    padding-right: .5rem;
+    color: #6c757d;
+    content: var(--bs-breadcrumb-divider, ">");
+}
+
+#breadCrumbs a {
+   color: #6c757d;
+   text-decoration: none;
+}
+
+#breadCrumbs a:hover {
+    color: black;
+    text-decoration: underline;
+}
 
 /* <----- Login Page (index.html) -----> */
 .login-container {
@@ -252,6 +272,18 @@ body {
 .is-focused .custom-file-control,
 .is-focused .form-control {
     background-image: none;
+}
+
+/* <----- Patient Page (patients.html) -----> */
+.singlePatient-container {
+    margin-top: 120px;
+}
+
+#singlePatientPage {
+    display: flex;
+    flex-direction: column;
+    margin-left: 60px;
+    margin-right: 60px;
 }
 
 /* Small devices (phones, 576px and up) */
