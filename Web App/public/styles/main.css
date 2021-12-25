@@ -91,14 +91,15 @@ body {
     margin-bottom: 20px;
 }
 
-#loginInputs{
+#loginInputs {
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin-bottom: 20px;
 }
 
-#loginEmail, #loginPassword{
+#loginEmail,
+#loginPassword {
     display: flex;
     flex-direction: column;
     margin: 0px 30px;
@@ -209,31 +210,27 @@ body {
     margin-bottom: 10px;
 }
 
-#patientsPage footer > a {
+#patientsPage footer>a {
     text-decoration: none;
     color: var(--main-color);
 }
 
-#patientsPage footer > a:hover {
+#patientsPage footer>a:hover {
     text-decoration: underline;
 }
 
 .card {
     background-color: var(--secondardy-color);
-    height: 75px;
     margin: 20px;
+    text-align: center;
 }
 
 .card-body {
-    display: flex;
-    flex-direction: row;
     padding: 1.25rem;
-    justify-content: space-between;
 }
 
 .card-body h4 {
     margin-bottom: 0px;
-    margin-left: 20px;
 }
 
 .card-body p {
@@ -241,19 +238,19 @@ body {
     padding-top: 5px;
 }
 
-#patientsCardInfo {
-    display: flex;
-    flex-direction: row;
-}
 
 #selectButton {
     background: var(--main-color);
     color: white;
     margin-bottom: 0px;
     font-size: 12px;
+    margin-top: 10px;
 }
 
-.custom-file-control, .form-control, .is-focused .custom-file-control, .is-focused .form-control {
+.custom-file-control,
+.form-control,
+.is-focused .custom-file-control,
+.is-focused .form-control {
     background-image: none;
 }
 
@@ -277,6 +274,36 @@ body {
         color: black;
         padding-right: 0px;
     }
+
+    .patientsCardInfo {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .card-body .patientsCardInfo:nth-child(2) p {
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .card {
+        text-align: left;
+    }
+
+    #selectButton {
+        margin-top: 0px;
+    }
+
+    .card-body h4 {
+        margin-left: 20px;
+    }
+
 }
 
 
@@ -286,6 +313,7 @@ body {
         font-size: 14px;
         margin-bottom: 40px;
     }
+
     #loginForm {
         width: 690px;
         height: 350px;
@@ -293,11 +321,12 @@ body {
         box-shadow: 5px 10px 5px #dbdbdb;
         text-align: center;
     }
-    #loginInputs{
+
+    #loginInputs {
         flex-direction: row;
         margin-bottom: 40px;
     }
-    
+
     #loginInputs label {
         text-align: left;
     }
@@ -310,13 +339,13 @@ body {
         font-size: small;
         height: 40px;
     }
-    
+
     #patientSearchInput {
         height: 40px;
         font-family: var(--main-font);
         font-size: small;
     }
-    
+
     #patientsSearchButton {
         height: 40px;
     }
@@ -325,7 +354,11 @@ body {
         margin-left: 125px;
         margin-right: 125px;
     }
+
+    .card-body .patientsCardInfo:nth-child(2) p {
+        margin-right: 20px;
+        margin-left: 20px;
+    }
 }
 
-@media screen and (min-width: 1280px) {
-}
+@media screen and (min-width: 1280px) {}
