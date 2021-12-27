@@ -62,6 +62,20 @@ body {
     text-decoration: underline;
 }
 
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+}
+
+.btn-primary.custom-file-control:before, .btn.btn-primary {
+    color: var(--main-color);
+    background-color: transparent;
+    border-color: #ccc;
+}
+
+
+
 /* <----- Login Page (index.html) -----> */
 .login-container {
     margin-top: 40px;
@@ -286,6 +300,21 @@ body {
     margin-right: 60px;
 }
 
+#singlePatientTitle {
+    text-align: center;
+    font-size: 50px;
+}
+
+#singlePatientButtonGroup {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* #singlePatientButtonGroup button: hover {
+    color: var(--main-color);
+} */
+
 /* Small devices (phones, 576px and up) */
 @media screen and (min-width: 576px) {
     #patientsHeader {
@@ -382,7 +411,7 @@ body {
         height: 40px;
     }
 
-    #patientsPage {
+    #patientsPage, #singlePatientPage {
         margin-left: 125px;
         margin-right: 125px;
     }
