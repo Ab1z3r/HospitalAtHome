@@ -315,20 +315,21 @@ body {
     width: 100%;
 }
 
-#singlePatientsCard {
+#singlePatientCard {
     width: 100%;
     height: 250px;
 }
 
-#singlePatientsCard p {
+#singlePatientCard p {
     font-size: 16px;
     font-weight: 200;
 }
 
-#singlePatientsCardBody {
+#singlePatientCardBody {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding-top: 2px;
 }
 
 .singlePatientInfo {
@@ -345,7 +346,7 @@ body {
     text-decoration: underline;
 }
 
-#singlePatientsCard a {
+#singlePatientCard a {
     color: var(--main-color);
     text-decoration: none;
 }
@@ -371,6 +372,13 @@ body {
 #singlePatientContactButtons {
     display: flex;
     flex-direction: column;
+}
+
+#singlePatientPage #editButton {
+    padding: 4px;
+    font-size: 12px;
+    background-color: var(--main-color);
+    color: white;
 }
 
 /* Small devices (phones, 576px and up) */
@@ -424,12 +432,12 @@ body {
     }
     
 
-   #singlePatientsCard a:hover {
+   #singlePatientCard a:hover {
     text-decoration: underline;
 }
 
-    #singlePatientsCard p {
-        font-size: 24px;
+    #singlePatientCard p {
+        font-size: 20px;
     }
 
     .singlePatientInfo {
@@ -438,8 +446,9 @@ body {
         justify-content: space-around;
     }
 
-    #singlePatientsCardBody {
-        justify-content: space-evenly;
+    #singlePatientCardBody {
+        justify-content: start;
+        padding-top: 10px;
     }
 
     #singlePatientContactButtons {
@@ -456,6 +465,14 @@ body {
         margin-bottom: 20px;
     }
 
+    #singlePatientPage #editButton {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    #singlePatientCardBody div :nth-child(1) {
+        margin-bottom: 20px;
+    }
 }
 
 
@@ -510,9 +527,14 @@ body {
         margin-left: 20px;
     }
 
-    #singlePatientsCard {
+    #singlePatientCard {
         width: 800px;
     }
+
+    div.singlePatientInfo:nth-of-type(1){
+        margin: 10px 0px;
+    }
+
 }
 
 @media screen and (min-width: 1280px) {}
