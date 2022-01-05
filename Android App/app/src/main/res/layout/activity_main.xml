@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.SafetyNetApp"
     tools:context=".MainActivity">
 
     <TextView
@@ -64,11 +65,11 @@
 
             <TableRow>
 
-                <EditText>
+                <EditText tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck">
 
                 </EditText>
 
-                <EditText>
+                <EditText tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck">
 
 
                 </EditText>
