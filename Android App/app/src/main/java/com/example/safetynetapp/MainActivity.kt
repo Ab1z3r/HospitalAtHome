@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startOneTapUI(){
+
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener(this) { result ->
                 try {
@@ -74,6 +75,8 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("[INFO]", "onActivity result fired")
         val tv = findViewById<TextView>(R.id.title_text)
+        Log.d("[INFO]", "requestCode$requestCode")
+
 
         when (requestCode) {
             REQ_ONE_TAP -> {
