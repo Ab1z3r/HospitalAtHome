@@ -49,9 +49,8 @@ class MainActivity : AppCompatActivity() {
         /*
         Check to see i there is already a google account signed in to the app
          */
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        if(account != null){
-            alreadySignedIn(account)
+        if(isSignedIn()){
+            alreadySignedIn()
         }
 
 
@@ -60,7 +59,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun alreadySignedIn(account: GoogleSignInAccount){
+    fun alreadySignedIn(){
+        val account: GoogleSignInAccount = GoogleSignIn.getLastSignedInAccount(this)!!
         try {
             val loggedInUser = User(displayName = account.displayName, userPictureURI = account.photoUrl.toString(), username = account.email)
             val intent = Intent(this@MainActivity, HomeScreen::class.java)
@@ -107,6 +107,10 @@ class MainActivity : AppCompatActivity() {
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w("[ERROR]", "signInResult:failed code=" + e.statusCode)
         }
+    }
+
+    private fun isSignedIn(): Boolean {
+        return GoogleSignIn.getLastSignedInAccount(this) != null
     }
 
     }

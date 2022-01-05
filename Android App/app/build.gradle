@@ -8,6 +8,16 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+
+    signingConfigs{
+        debug{
+            storeFile file("safetynetkeystorefinal.jks")
+            storePassword "Password!2E"
+            keyAlias "safetynetappkeystore"
+            keyPassword "Password!2E"
+        }
+    }
+
     compileSdk 31
 
     defaultConfig {
