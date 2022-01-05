@@ -1,5 +1,6 @@
 package com.example.safetynetapp
 
+import android.R.attr
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Build
@@ -15,9 +16,17 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import androidx.core.app.ActivityCompat.startActivityForResult
+import android.R.attr.data
+import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.tasks.Task
 
 
-private lateinit var oneTapClient: SignInClient
+private lateinit var mGoogleSignInClient: GoogleSignInClient
 private lateinit var signInRequest: BeginSignInRequest
 private const val REQ_ONE_TAP = 2
 
@@ -27,81 +36,77 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        // Google sign in button
         val googleSignInButton =findViewById<ImageButton>(R.id.google_sign_in_button)
 
-        oneTapClient = Identity.getSignInClient(this)
-        signInRequest = BeginSignInRequest.builder()
-            .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
-                .setSupported(true)
-                .build())
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    // Your server's client ID, not your Android client ID.
-                    .setServerClientId(getString(R.string.Android_client_id))
-                    // Only show accounts previously used to sign in.
-                    .setFilterByAuthorizedAccounts(false)
-                    .build())
-            // Automatically sign in when exactly one credential is retrieved.
-            .setAutoSelectEnabled(true)
+        // Setting up firebase auth
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
             .build()
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+
+        /*
+        Check to see i there is already a google account signed in to the app
+         */
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if(account != null){
+            alreadySignedIn(account)
+        }
+
 
         googleSignInButton.setOnClickListener{
             startOneTapUI()
         }
     }
 
-    fun startOneTapUI(){
+    fun alreadySignedIn(account: GoogleSignInAccount){
+        try {
+            val loggedInUser = User(displayName = account.displayName, userPictureURI = account.photoUrl.toString(), username = account.email)
+            val intent = Intent(this@MainActivity, HomeScreen::class.java)
+            intent.putExtra("loggedInUser", loggedInUser)
+            startActivity(intent)
+            // Signed in successfully, show authenticated UI.
+        } catch (e: ApiException) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w("[ERROR]", "signInResult:failed code=" + e.statusCode)
+        }
 
-        oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener(this) { result ->
-                try {
-                    startIntentSenderForResult(
-                        result.pendingIntent.intentSender, REQ_ONE_TAP,
-                        null, 0, 0, 0)
-                } catch (e: IntentSender.SendIntentException) {
-                    Log.e("[ERROR]", "Couldn't start One Tap UI: ${e.localizedMessage}")
-                }
-            }
-            .addOnFailureListener(this) { e ->
-                // No Google Accounts found. Just continue presenting the signed-out UI.
-                Log.d("[ERROR]", "LAUNCHING ONE TAP UI -> ${e.localizedMessage}")
-            }
+    }
+
+    fun startOneTapUI(){
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, REQ_ONE_TAP)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        Log.d("[INFO]", "onActivity result fired")
-        val tv = findViewById<TextView>(R.id.title_text)
-        Log.d("[INFO]", "requestCode$requestCode")
-
-
         when (requestCode) {
             REQ_ONE_TAP -> {
-                try {
-                    val credential = oneTapClient.getSignInCredentialFromIntent(data)
-                    val displayName = credential.displayName
-                    val userPictureURI = credential.profilePictureUri
-                    val username = credential.id
-                    when {
-                        username != null -> {
-                            val loggedInUser = User(displayName = displayName, userPictureURI = userPictureURI.toString(), username = username)
-
-                            val intent = Intent(this@MainActivity, HomeScreen::class.java)
-                            intent.putExtra("loggedInUser", loggedInUser)
-                            startActivity(intent)
-                        }
-                        else -> {
-                            Log.d("[ERROR]", "No Display Name!")
-                        }
-                    }
-                } catch (e: ApiException) {
-                    Log.d("[ERROR]", "API EXCEPTION ${e.localizedMessage}")
-                }
-                }
+                val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+                handleSignInResult(task)
             }
         }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+
+
+            val loggedInUser = User(displayName = account.displayName, userPictureURI = account.photoUrl.toString(), username = account.email)
+
+            val intent = Intent(this@MainActivity, HomeScreen::class.java)
+            intent.putExtra("loggedInUser", loggedInUser)
+            startActivity(intent)
+
+            // Signed in successfully, show authenticated UI.
+        } catch (e: ApiException) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w("[ERROR]", "signInResult:failed code=" + e.statusCode)
+        }
+    }
 
     }
