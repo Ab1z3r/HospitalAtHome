@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         Check to see i there is already a google account signed in to the app
          */
         if(isSignedIn()){
+            Log.d("[INFO]", "already logged in bro")
             alreadySignedIn()
         }
 
@@ -61,8 +62,9 @@ class MainActivity : AppCompatActivity() {
 
     fun alreadySignedIn(){
         val account: GoogleSignInAccount = GoogleSignIn.getLastSignedInAccount(this)!!
+
         try {
-            val loggedInUser = User(displayName = account.displayName, userPictureURI = account.photoUrl.toString(), username = account.email)
+            val loggedInUser = User(displayName = account.displayName!!, userPictureURI = account.photoUrl.toString(), username = account.email!!)
             val intent = Intent(this@MainActivity, HomeScreen::class.java)
             intent.putExtra("loggedInUser", loggedInUser)
             startActivity(intent)
@@ -75,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun startOneTapUI(){
+    private fun startOneTapUI(){
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, REQ_ONE_TAP)
     }
@@ -92,10 +94,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
+            Log.d("[INFO]", "Handling sign in")
+
             val account = completedTask.getResult(ApiException::class.java)
-
-
-            val loggedInUser = User(displayName = account.displayName, userPictureURI = account.photoUrl.toString(), username = account.email)
+            val loggedInUser = User(displayName = account.displayName!!, userPictureURI = account.photoUrl.toString(), username = account.email!!)
 
             val intent = Intent(this@MainActivity, HomeScreen::class.java)
             intent.putExtra("loggedInUser", loggedInUser)

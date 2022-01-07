@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.safetynetapp"
-        minSdk 21
+        minSdk 26
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -53,6 +53,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
     implementation 'com.google.firebase:firebase-analytics'
 
+    implementation("com.google.android.gms:play-services-fitness:21.0.1")
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'

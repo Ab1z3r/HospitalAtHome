@@ -18,7 +18,23 @@ import com.example.safetynetapp.databinding.ActivityHomeScreenBinding
 import com.example.safetynetapp.model.User
 import com.bumptech.glide.Glide
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataPoint
+import com.google.android.gms.fitness.data.DataSet
+import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA
+import com.google.android.gms.fitness.request.DataReadRequest
 import de.hdodenhof.circleimageview.CircleImageView
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.concurrent.TimeUnit
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class HomeScreen : AppCompatActivity() {
@@ -26,6 +42,7 @@ class HomeScreen : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeScreenBinding
     private var loggedInUser: User? = null
+    private var fitnessOptions: FitnessOptions? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +65,15 @@ class HomeScreen : AppCompatActivity() {
             startActivity(Intent(this@HomeScreen, MainActivity::class.java))
         }
 
+        val fabbutton = findViewById<FloatingActionButton>(R.id.fab)
         val displayImage = binding.navView.getHeaderView(0).findViewById<CircleImageView>(R.id.profile_picture_image_view)
         val displayNameTextView = binding.navView.getHeaderView(0).findViewById<TextView>(R.id.display_name_text_view)
         val usernameTextView = binding.navView.getHeaderView(0).findViewById<TextView>(R.id.username_text_view)
         val uriOfImage: String? = loggedInUser?.getterPictureURI()
+
+        fabbutton.setOnClickListener{
+            getData()
+        }
 
         Glide.with(this).load(uriOfImage).into(displayImage)
         displayNameTextView.setText(loggedInUser?.getdisplayName())
@@ -59,7 +81,82 @@ class HomeScreen : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        fitnessOptions = FitnessOptions.builder()
+            .addDataType(DataType.TYPE_HEIGHT, FitnessOptions.ACCESS_READ)
+            .build()
+
+        if(!hasPermissions()){
+            getPermissions()
+        }
+
+//        while (!hasPermissions()){
+//
+//        }
+
+
     }
+
+    private fun hasPermissions(): Boolean{
+        return GoogleSignIn.hasPermissions(getGoogleAccount(), fitnessOptions)
+    }
+
+    private fun getPermissions(){
+        GoogleSignIn.requestPermissions(
+            this@HomeScreen,
+            1,
+            getGoogleAccount(),
+            fitnessOptions
+        )
+    }
+
+    private fun getData(){
+        // Read the data that's been collected throughout the past week.
+        val endTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
+        val startTime = endTime.minusWeeks(1)
+
+
+
+        Fitness.getHistoryClient(this, getGoogleAccount())
+            .readDailyTotal(DataType.TYPE_HEIGHT)
+            .addOnSuccessListener { response ->
+                // The aggregate query puts datasets into buckets, so flatten into a
+                // single list of datasets
+                Log.d("[INFO]", "in gethistory success listener")
+                for (dataSet in response.dataPoints) {
+                    Log.d("[INFO]", "Dumping DataSet")
+                    dumpDataSet(dataSet)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("[ERROR]", "There was an error reading data from Google Fit", e)
+            }
+    }
+
+    private fun getGoogleAccount(): GoogleSignInAccount {
+        return GoogleSignIn.getAccountForExtension(this@HomeScreen, fitnessOptions)
+    }
+
+    private fun dumpDataSet(dp: DataPoint) {
+
+            Log.i("[INFO]","Data point:")
+            Log.i("[INFO]","\tType: ${dp.dataType.name}")
+            Log.i("[INFO]","\tStart: ${dp.getStartTimeString()}")
+            Log.i("[INFO]","\tEnd: ${dp.getEndTimeString()}")
+            for (field in dp.dataType.fields) {
+                Log.i("[ERROR]","\tField: ${field.name.toString()} Value: ${dp.getValue(field)}")
+            }
+
+    }
+
+
+    private fun DataPoint.getStartTimeString() = Instant.ofEpochSecond(this.getStartTime(TimeUnit.SECONDS))
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime().toString()
+
+    private fun DataPoint.getEndTimeString() = Instant.ofEpochSecond(this.getEndTime(TimeUnit.SECONDS))
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime().toString()
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
