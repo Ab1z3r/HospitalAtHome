@@ -380,6 +380,32 @@ body {
     background-color: var(--main-color);
     color: white;
 }
+/* <----- Graphics Page (graphics.html) -----> */
+.graphics-container {
+    margin-top: 120px;
+}
+
+#graphicsPage {
+    display: flex;
+    flex-direction: column;
+    margin-left: 60px;
+    margin-right: 60px;
+}
+
+#graphicsPage footer>a {
+    text-decoration: none;
+    color: var(--main-color);
+}
+
+#graphicsPage footer>a:hover {
+    text-decoration: underline;
+}
+
+/* #graphicsTitle {
+    text-align: center;
+    font-size: 50px;
+} */
+
 
 /* Small devices (phones, 576px and up) */
 @media screen and (min-width: 576px) {
@@ -517,7 +543,8 @@ body {
     }
 
     #patientsPage,
-    #singlePatientPage {
+    #singlePatientPage,
+    #graphicsPage {
         margin-left: 125px;
         margin-right: 125px;
     }
