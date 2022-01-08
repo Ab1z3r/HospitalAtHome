@@ -41,6 +41,7 @@ class HomeScreen : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeScreenBinding
+    private lateinit var heightVal: TextView
     private var loggedInUser: User? = null
     private var fitnessOptions: FitnessOptions? = null
 
@@ -66,6 +67,7 @@ class HomeScreen : AppCompatActivity() {
         }
 
         val fabbutton = findViewById<FloatingActionButton>(R.id.fab)
+        heightVal = findViewById<TextView>(R.id.heightValue)
         val displayImage = binding.navView.getHeaderView(0).findViewById<CircleImageView>(R.id.profile_picture_image_view)
         val displayNameTextView = binding.navView.getHeaderView(0).findViewById<TextView>(R.id.display_name_text_view)
         val usernameTextView = binding.navView.getHeaderView(0).findViewById<TextView>(R.id.username_text_view)
@@ -123,6 +125,7 @@ class HomeScreen : AppCompatActivity() {
                 // The aggregate query puts datasets into buckets, so flatten into a
                 // single list of datasets
                 Log.d("[INFO]", "in gethistory success listener")
+                Log.d("[INFO]", "Data points:"+response.dataPoints)
                 for (dataSet in response.dataPoints) {
                     Log.d("[INFO]", "Dumping DataSet")
                     dumpDataSet(dataSet)
@@ -139,13 +142,14 @@ class HomeScreen : AppCompatActivity() {
 
     private fun dumpDataSet(dp: DataPoint) {
 
-            Log.i("[INFO]","Data point:")
-            Log.i("[INFO]","\tType: ${dp.dataType.name}")
-            Log.i("[INFO]","\tStart: ${dp.getStartTimeString()}")
-            Log.i("[INFO]","\tEnd: ${dp.getEndTimeString()}")
-            for (field in dp.dataType.fields) {
-                Log.i("[ERROR]","\tField: ${field.name.toString()} Value: ${dp.getValue(field)}")
-            }
+        val METERS_PER_FOOT: Double = 0.3048;
+        val INCHES_PER_FOOT: Double= 12.0;
+        val heightInMetersstr:String = dp.getValue(dp.dataType.fields[0]).toString();
+        val heightInMeters: Double = heightInMetersstr.toDouble()
+        val heightInFeet = heightInMeters / METERS_PER_FOOT;
+        val feet: Int =  heightInFeet.toInt();
+        val inches:Int = ((heightInFeet - feet) * INCHES_PER_FOOT + 0.5).toInt();
+        heightVal.text = feet.toString().plus("''$inches'")
 
     }
 
