@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Test App</string>
+    <string name="submit_button">Get Health Data</string>
+</resources>
