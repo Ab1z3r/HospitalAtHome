@@ -257,7 +257,7 @@ body {
     text-decoration: underline;
 }
 
-.card {
+#patientsPage .card {
     background-color: var(--secondardy-color);
     margin: 20px;
     text-align: center;
@@ -401,10 +401,44 @@ body {
     text-decoration: underline;
 }
 
-/* #graphicsTitle {
+#graphicsContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+#graphicsChart {
+    margin-bottom: 20px;
+}
+
+#graphicsCard {
+    width: 250px;
+    height: 400px;
+    background-color: var(--secondardy-color);
+}
+
+#graphicsPage img {
+    width: 100%;
+}
+
+#graphicsHistoryContents {
     text-align: center;
-    font-size: 50px;
-} */
+}
+
+#graphicsPage h3 {
+    font-weight: 600;
+}
+
+#graphicsInnerCard {
+    margin-bottom: 5px;
+}
+
+#graphicsHistory {
+    display: flex;
+    justify-content: center;
+    height: 400px;
+}
 
 
 /* Small devices (phones, 576px and up) */
@@ -460,7 +494,7 @@ body {
 
    #singlePatientCard a:hover {
     text-decoration: underline;
-}
+    }
 
     #singlePatientCard p {
         font-size: 20px;
@@ -560,6 +594,40 @@ body {
 
     div.singlePatientInfo:nth-of-type(1){
         margin: 10px 0px;
+    }
+
+    #graphicsContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        margin-bottom: 15px;
+    }
+    
+    #graphicsChart {
+        margin-right: 20px;
+    }
+    
+    #graphicsCard {
+        width: 250px;
+        height: 400px;
+    }
+    
+    #graphicsPage img {
+        width: 600px;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    #graphicsPage img {
+        width: 800px;
+    }
+
+    #graphicsCard {
+        height: 500px;
+    }
+
+    #graphicsHistory {
+        height: 500px;
     }
 
 }
