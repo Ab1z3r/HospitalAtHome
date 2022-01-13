@@ -16,6 +16,8 @@
   <nav class="navbar navbar-dark fixed-top">
     <a id="title" class="navbar-brand" href="#"><img id="navLogo" src="images/union_health_logo.png"
         alt="Union Health Logo"></a>
+
+    <a id="signOutLink" href="index.html">Sign Out from Account</a>
   </nav>
   <div id="patientsPage" class="patients-container">
     <h1>Patients</h1>
@@ -43,7 +45,8 @@
     </div>
 
     <div id="patientsCards">
-      <div class="card">
+      <h4 id="loadingPatients">Loading Patients...</h4>
+      <!-- <div class="card">
         <div class="card-body">
           <div class="patientsCardInfo">
             <h4>Curry, Michael</h4>
@@ -106,16 +109,12 @@
             <button id="selectButton" class="btn btn-primary" type="button">Select</button>
           </div>
         </div>
-      </div>
+      </div> -->
 
     </div>
-
-    <footer class="text-right">
-      <a id="signOutLink" href="index.html">Sign Out from Account</a>
-    </footer>
-
-
   </div>
+
+
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap-material-design.js"></script>

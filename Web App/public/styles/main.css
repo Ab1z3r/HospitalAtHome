@@ -1,5 +1,5 @@
 /* <----- Imports -----> */
-@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;600;700&display=swap");
 
 /*     FONT WEIGHTS     
 - Extra-light: 200
@@ -11,720 +11,716 @@
 /* <----- Universal -----> */
 
 :root {
-    --main-color: #C15027;
-    --secondardy-color: #F8F8F8;
-    --main-font: 'Mukta', sans-serif;
+  --main-color: #c15027;
+  --secondardy-color: #f8f8f8;
+  --main-font: "Mukta", sans-serif;
 }
 
 body {
-    font-family: var(--main-font);
-    background: white;
+  font-family: var(--main-font);
+  background: white;
 }
 
 .navbar {
-    background-color: white;
+  background-color: white;
 }
 
 .page-container {
-    margin-top: 75px;
+  margin-top: 75px;
 }
 
 #navLogo {
-    width: 30%;
-    margin-left: 20px;
+  width: 30%;
+  margin-left: 20px;
 }
 
 #breadCrumbs {
-    color: black;
-    font-weight: 200;
-    list-style: none;
-    padding: 0px;
-    margin-bottom: 0px;
+  color: black;
+  font-weight: 200;
+  list-style: none;
+  padding: 0px;
+  margin-bottom: 0px;
 }
 
 .breadcrumb {
-    background-color: white;
+  background-color: white;
 }
 
-.breadcrumb-item+.breadcrumb-item::before {
-    float: left;
-    padding-right: .5rem;
-    color: #6c757d;
-    content: var(--bs-breadcrumb-divider, ">");
+.breadcrumb-item + .breadcrumb-item::before {
+  float: left;
+  padding-right: 0.5rem;
+  color: #6c757d;
+  content: var(--bs-breadcrumb-divider, ">");
 }
 
 #breadCrumbs a {
-    color: #6c757d;
-    text-decoration: none;
+  color: #6c757d;
+  text-decoration: none;
 }
 
 #breadCrumbs a:hover {
-    color: black;
-    text-decoration: underline;
+  color: black;
+  text-decoration: underline;
 }
 
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
-.show>.btn-primary.dropdown-toggle {
-    color: #fff;
-    background-color: var(--main-color);
-    border-color: var(--main-color);
+.show > .btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: var(--main-color);
+  border-color: var(--main-color);
 }
 
 .btn-primary.custom-file-control:before,
 .btn.btn-primary {
-    color: var(--main-color);
-    background-color: transparent;
-    border-color: #ccc;
+  color: var(--main-color);
+  background-color: transparent;
+  border-color: #ccc;
 }
-
-
 
 /* <----- Login Page (index.html) -----> */
 .login-container {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
 #loginPage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #loginHeader {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 #loginHeader img {
-    width: 60%;
+  width: 60%;
 }
 
 #loginHeader h3 {
-    color: var(--main-color);
-    font-weight: 700;
-    margin-bottom: 0px;
+  color: var(--main-color);
+  font-weight: 700;
+  margin-bottom: 0px;
 }
 
 #loginForm {
-    width: 100%;
-    height: 350px;
-    background-color: #ECECEC;
-    box-shadow: 5px 10px 5px #dbdbdb;
-    text-align: center;
+  width: 100%;
+  height: 350px;
+  background-color: #ececec;
+  box-shadow: 5px 10px 5px #dbdbdb;
+  text-align: center;
 }
 
 #loginForm h2 {
-    margin-top: 40px;
-    margin-bottom: 0px;
-    font-weight: 600;
+  margin-top: 40px;
+  margin-bottom: 0px;
+  font-weight: 600;
 }
 
 #loginForm p {
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
 #loginInputs {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 #loginEmail,
 #loginPassword {
-    display: flex;
-    flex-direction: column;
-    margin: 0px 30px;
+  display: flex;
+  flex-direction: column;
+  margin: 0px 30px;
 }
 
 #loginEmail {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #loginInputs label {
-    text-align: center;
+  text-align: center;
 }
 
 #loginButton {
-    background: var(--main-color);
-    padding: 10px 150px;
-    color: white;
-    margin-bottom: 30px;
+  background: var(--main-color);
+  padding: 10px 150px;
+  color: white;
+  margin-bottom: 30px;
 }
 
 #loginForm #loginCopyright {
-    font-weight: 200;
-    font-size: 12px;
+  font-weight: 200;
+  font-size: 12px;
 }
 
 #loginPage footer {
-    font-weight: 200;
+  font-weight: 200;
 }
 
 .bmd-form-group {
-    padding-top: 0px;
+  padding-top: 0px;
 }
-
 
 /* <----- Patient Page (patients.html) -----> */
 .patients-container {
-    margin-top: 120px;
+  margin-top: 120px;
 }
 
 #patientsPage {
-    display: flex;
-    flex-direction: column;
-    margin-left: 60px;
-    margin-right: 60px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
 }
 
 #patientsPage h1 {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+#loadingPatients {
+  margin-top: 40px;
+  text-align: center;
 }
 
 #patientsPage #breadCrumbs {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #patientsHeader {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
 }
 
 #patientsFilter {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 #patientsFilter i {
-    color: black;
-    padding-right: 10px;
+  color: black;
+  padding-right: 10px;
 }
 
 #patientsSelect {
-    margin-right: 10px;
-    font-size: 10px;
-    height: 30px;
-    width: 125px;
-    border-radius: 0px;
-    font-family: var(--main-font);
+  margin-right: 10px;
+  font-size: 10px;
+  height: 30px;
+  width: 125px;
+  border-radius: 0px;
+  font-family: var(--main-font);
 }
 
 #patientSearchInput {
-    border-radius: 0px;
-    height: 30px;
-    font-size: 12px;
-    font-family: var(--main-font);
-    background-image: url('mdn_logo_only_color.png');
-    background-repeat: no-repeat;
-    background-position: left center;
-    border: 0px;
-    border-top: 1px #ced4da solid;
-    border-bottom: 1px #ced4da solid;
-    border-left: 1px #ced4da solid;
+  border-radius: 0px;
+  height: 30px;
+  font-size: 12px;
+  font-family: var(--main-font);
+  background-image: url("mdn_logo_only_color.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+  border: 0px;
+  border-top: 1px #ced4da solid;
+  border-bottom: 1px #ced4da solid;
+  border-left: 1px #ced4da solid;
 }
 
 #patientsSearchButton {
-    padding: 0px;
-    height: 30px;
-    width: 40px;
-    border-radius: 0px;
-    margin-bottom: 0px;
-    border-top: 1px #ced4da solid;
-    border-bottom: 1px #ced4da solid;
-    border-right: 1px #ced4da solid;
+  padding: 0px;
+  height: 30px;
+  width: 40px;
+  border-radius: 0px;
+  margin-bottom: 0px;
+  border-top: 1px #ced4da solid;
+  border-bottom: 1px #ced4da solid;
+  border-right: 1px #ced4da solid;
 }
 
 #patientsPage footer {
-    margin-right: 60px;
-    margin-bottom: 10px;
+  margin-right: 60px;
+  margin-bottom: 10px;
 }
 
-#patientsPage footer>a {
-    text-decoration: none;
-    color: var(--main-color);
+#signOutLink {
+  text-decoration: none;
+  color: var(--main-color);
 }
 
-#patientsPage footer>a:hover {
-    text-decoration: underline;
+#signOutLink:hover {
+  text-decoration: underline;
 }
 
 #patientsPage .card {
-    background-color: var(--secondardy-color);
-    margin: 20px;
-    text-align: center;
+  background-color: var(--secondardy-color);
+  margin: 20px;
+  text-align: center;
 }
 
 .card-body {
-    padding: 1.25rem;
+  padding: 1.25rem;
 }
 
 .card-body h4 {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 .card-body p {
-    margin: 0px 30px;
-    padding-top: 5px;
+  margin: 0px 30px;
+  padding-top: 5px;
 }
 
-
 #selectButton {
-    background: var(--main-color);
-    color: white;
-    margin-bottom: 0px;
-    font-size: 12px;
-    margin-top: 10px;
+  background: var(--main-color);
+  color: white;
+  margin-bottom: 0px;
+  font-size: 12px;
+  margin-top: 10px;
 }
 
 .custom-file-control,
 .form-control,
 .is-focused .custom-file-control,
 .is-focused .form-control {
-    background-image: none;
+  background-image: none;
 }
 
 /* <----- Single Patient Page (single_patient.html) -----> */
 .singlePatient-container {
-    margin-top: 120px;
+  margin-top: 120px;
 }
 
 #singlePatientPage {
-    display: flex;
-    flex-direction: column;
-    margin-left: 60px;
-    margin-right: 60px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
 }
 
 #singlePatientTitle {
-    text-align: center;
-    font-size: 50px;
+  text-align: center;
+  font-size: 50px;
 }
 
 #singlePatientButtonGroup {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 #singlePatientCard {
-    width: 100%;
-    height: 250px;
+  width: 100%;
+  height: 250px;
 }
 
 #singlePatientCard p {
-    font-size: 16px;
-    font-weight: 200;
+  font-size: 16px;
+  font-weight: 200;
 }
 
 #singlePatientCardBody {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 2px;
 }
 
 .singlePatientInfo {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
-#singlePatientPage footer>a {
-    text-decoration: none;
-    color: var(--main-color);
+#singlePatientPage footer > a {
+  text-decoration: none;
+  color: var(--main-color);
 }
 
-#singlePatientPage footer>a:hover {
-    text-decoration: underline;
+#singlePatientPage footer > a:hover {
+  text-decoration: underline;
 }
 
 #singlePatientCard a {
-    color: var(--main-color);
-    text-decoration: none;
+  color: var(--main-color);
+  text-decoration: none;
 }
 
 #singlePatientContact {
-    width: 100%;
-    height: 175px;
-    background-color: var(--secondardy-color);
-    margin: 35px 0px 15px 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
+  width: 100%;
+  height: 175px;
+  background-color: var(--secondardy-color);
+  margin: 35px 0px 15px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
 
 #singlePatientContact h2 {
-    color: var(--main-color);
-    font-weight: 700;
-    font-size: 24px;
-    margin-top: 5px;
+  color: var(--main-color);
+  font-weight: 700;
+  font-size: 24px;
+  margin-top: 5px;
 }
 
 #singlePatientContactButtons {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 #singlePatientPage #editButton {
-    padding: 4px;
-    font-size: 12px;
-    background-color: var(--main-color);
-    color: white;
+  padding: 4px;
+  font-size: 12px;
+  background-color: var(--main-color);
+  color: white;
 }
 
 /* <----- Graphics Page (graphics.html) -----> */
 .graphics-container {
-    margin-top: 120px;
+  margin-top: 120px;
 }
 
 #graphicsPage {
-    display: flex;
-    flex-direction: column;
-    margin-left: 60px;
-    margin-right: 60px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
 }
 
-#graphicsPage footer>a {
-    text-decoration: none;
-    color: var(--main-color);
+#graphicsPage footer > a {
+  text-decoration: none;
+  color: var(--main-color);
 }
 
-#graphicsPage footer>a:hover {
-    text-decoration: underline;
+#graphicsPage footer > a:hover {
+  text-decoration: underline;
 }
 
 #graphicsContent {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 15px;
 }
 
 #graphicsChart {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 #graphicsCard {
-    width: 250px;
-    height: 400px;
-    background-color: var(--secondardy-color);
+  width: 250px;
+  height: 400px;
+  background-color: var(--secondardy-color);
 }
 
 #graphicsPage img {
-    width: 100%;
+  width: 100%;
 }
 
 #graphicsHistoryContents {
-    text-align: center;
+  text-align: center;
 }
 
 #graphicsPage h3 {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 #graphicsInnerCard {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 #graphicsHistory {
-    display: flex;
-    justify-content: center;
-    height: 400px;
+  display: flex;
+  justify-content: center;
+  height: 400px;
 }
 
 /* <----- Contact Page (contact.html) -----> */
 .contact-container {
-    margin-top: 120px;
+  margin-top: 120px;
 }
 
 #contactPage {
-    display: flex;
-    flex-direction: column;
-    margin-left: 60px;
-    margin-right: 60px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
 }
 
-#contactPage footer>a {
-    text-decoration: none;
-    color: var(--main-color);
+#contactPage footer > a {
+  text-decoration: none;
+  color: var(--main-color);
 }
 
-#contactPage footer>a:hover {
-    text-decoration: underline;
+#contactPage footer > a:hover {
+  text-decoration: underline;
 }
 
 #notesTextArea {
-    width: 100%;
-    height: 320px;
+  width: 100%;
+  height: 320px;
 }
 
 #contactContent {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 15px;
 }
 
 #contactScreen {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 #contactScreen div {
-    width: 100%;
-    height: 300px;
-    background-color: black;
+  width: 100%;
+  height: 300px;
+  background-color: black;
 }
 
 #contactCard {
-    width: 250px;
-    height: 400px;
-    background-color: var(--secondardy-color);
+  width: 250px;
+  height: 400px;
+  background-color: var(--secondardy-color);
 }
 
 #contactCardContents {
-    text-align: center;
+  text-align: center;
 }
 
 #contactPage h3 {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 #contactNotes {
-    display: flex;
-    justify-content: center;
-    height: 400px;
+  display: flex;
+  justify-content: center;
+  height: 400px;
 }
-
 
 /* Small devices (phones, 576px and up) */
 @media screen and (min-width: 576px) {
-    #patientsHeader {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-    }
+  #patientsHeader {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-    #patientsPage #breadCrumbs {
-        margin-bottom: 0px;
-    }
+  #patientsPage #breadCrumbs {
+    margin-bottom: 0px;
+  }
 
-    #patientsSelect {
-        width: 95%;
-    }
+  #patientsSelect {
+    width: 95%;
+  }
 
-    #patientsFilter i {
-        color: black;
-        padding-right: 0px;
-    }
+  #patientsFilter i {
+    color: black;
+    padding-right: 0px;
+  }
 
-    .patientsCardInfo {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
+  .patientsCardInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
 
-    #patientsPage .card-body .patientsCardInfo:nth-child(2) p {
-        margin-right: 10px;
-        margin-left: 10px;
-    }
+  #patientsPage .card-body .patientsCardInfo:nth-child(2) p {
+    margin-right: 10px;
+    margin-left: 10px;
+  }
 
-    #patientsPage .card-body {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
+  #patientsPage .card-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
-    #patientsPage .card {
-        text-align: left;
-    }
+  #patientsPage .card {
+    text-align: left;
+  }
 
-    #selectButton {
-        margin-top: 0px;
-    }
+  #selectButton {
+    margin-top: 0px;
+  }
 
-    #patientsPage .card-body h4 {
-        margin-left: 20px;
-    }
+  #patientsPage .card-body h4 {
+    margin-left: 20px;
+  }
 
+  #singlePatientCard a:hover {
+    text-decoration: underline;
+  }
 
-    #singlePatientCard a:hover {
-        text-decoration: underline;
-    }
+  #singlePatientCard p {
+    font-size: 20px;
+  }
 
-    #singlePatientCard p {
-        font-size: 20px;
-    }
+  .singlePatientInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
 
-    .singlePatientInfo {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-    }
+  #singlePatientCardBody {
+    justify-content: start;
+    padding-top: 10px;
+  }
 
-    #singlePatientCardBody {
-        justify-content: start;
-        padding-top: 10px;
-    }
+  #singlePatientContactButtons {
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
 
-    #singlePatientContactButtons {
-        flex-direction: row;
-        justify-content: space-evenly;
-    }
+  #singlePatientContactButtons button {
+    width: 200px;
+  }
 
-    #singlePatientContactButtons button {
-        width: 200px;
-    }
+  #singlePatientContact h2 {
+    font-size: calc(1.325rem + 0.9vw);
+    margin-bottom: 20px;
+  }
 
-    #singlePatientContact h2 {
-        font-size: calc(1.325rem + .9vw);
-        margin-bottom: 20px;
-    }
+  #singlePatientPage #editButton {
+    padding: 6px;
+    font-size: 14px;
+  }
 
-    #singlePatientPage #editButton {
-        padding: 6px;
-        font-size: 14px;
-    }
-
-    #singlePatientCardBody div :nth-child(1) {
-        margin-bottom: 20px;
-    }
+  #singlePatientCardBody div :nth-child(1) {
+    margin-bottom: 20px;
+  }
 }
 
-
 @media screen and (min-width: 768px) {
-    #loginForm p {
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 40px;
-    }
+  #loginForm p {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
 
-    #loginForm {
-        width: 690px;
-        height: 350px;
-    }
+  #loginForm {
+    width: 690px;
+    height: 350px;
+  }
 
-    #loginInputs {
-        flex-direction: row;
-        margin-bottom: 40px;
-    }
+  #loginInputs {
+    flex-direction: row;
+    margin-bottom: 40px;
+  }
 
-    #loginInputs label {
-        text-align: left;
-    }
+  #loginInputs label {
+    text-align: left;
+  }
 
-    #loginEmail {
-        margin-bottom: 10px;
-    }
+  #loginEmail {
+    margin-bottom: 10px;
+  }
 
-    #patientsSelect {
-        font-size: small;
-        height: 40px;
-    }
+  #patientsSelect {
+    font-size: small;
+    height: 40px;
+  }
 
-    #patientSearchInput {
-        height: 40px;
-        font-family: var(--main-font);
-        font-size: small;
-    }
+  #patientSearchInput {
+    height: 40px;
+    font-family: var(--main-font);
+    font-size: small;
+  }
 
-    #patientsSearchButton {
-        height: 40px;
-    }
+  #patientsSearchButton {
+    height: 40px;
+  }
 
-    #patientsPage,
-    #singlePatientPage,
-    #graphicsPage {
-        margin-left: 125px;
-        margin-right: 125px;
-    }
+  #patientsPage,
+  #singlePatientPage,
+  #graphicsPage {
+    margin-left: 125px;
+    margin-right: 125px;
+  }
 
-    #patientsPage .card-body .patientsCardInfo:nth-child(2) p {
-        margin-right: 20px;
-        margin-left: 20px;
-    }
+  #patientsPage .card-body .patientsCardInfo:nth-child(2) p {
+    margin-right: 20px;
+    margin-left: 20px;
+  }
 
-    #singlePatientCard {
-        width: 800px;
-    }
+  #singlePatientCard {
+    width: 800px;
+  }
 
-    div.singlePatientInfo:nth-of-type(1) {
-        margin: 10px 0px;
-    }
+  div.singlePatientInfo:nth-of-type(1) {
+    margin: 10px 0px;
+  }
 
-    #graphicsContent {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        margin-bottom: 15px;
-    }
+  #graphicsContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-bottom: 15px;
+  }
 
-    #graphicsChart {
-        margin-right: 20px;
-    }
+  #graphicsChart {
+    margin-right: 20px;
+  }
 
-    #graphicsCard {
-        width: 250px;
-        height: 400px;
-    }
+  #graphicsCard {
+    width: 250px;
+    height: 400px;
+  }
 
-    #graphicsPage img {
-        width: 500px;
-    }
+  #graphicsPage img {
+    width: 500px;
+  }
 
-    #contactContent {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        margin-bottom: 15px;
-    }
+  #contactContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-bottom: 15px;
+  }
 
-    #contactScreen {
-        margin-right: 20px;
-    }
+  #contactScreen {
+    margin-right: 20px;
+  }
 
-    #contactCard {
-        width: 250px;
-        height: 400px;
-    }
+  #contactCard {
+    width: 250px;
+    height: 400px;
+  }
 
-    #contactScreen div {
-        width: 500px;
-        height: 400px;
-    }
+  #contactScreen div {
+    width: 500px;
+    height: 400px;
+  }
 }
 
 @media screen and (min-width: 992px) {
-    #graphicsPage img {
-        width: 600px;
+  #graphicsPage img {
+    width: 600px;
+  }
+
+  @media screen and (min-width: 1280px) {
+    #contactScreen div {
+      width: 800px;
+      height: 500px;
     }
 
-
-    @media screen and (min-width: 1280px) {
-        #contactScreen div {
-            width: 800px;
-            height: 500px;
-        }
-
-        #contactCard {
-            height: 500px;
-        }
-
-        #contactNotes {
-            height: 500px;
-        }
-
-        #notesTextArea {
-            height: 415px;
-        }
+    #contactCard {
+      height: 500px;
     }
 
+    #contactNotes {
+      height: 500px;
+    }
+
+    #notesTextArea {
+      height: 415px;
+    }
+  }
 }
