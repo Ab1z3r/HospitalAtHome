@@ -42,7 +42,7 @@
     <div class= "d-flex justify-content-center">
       
       <!-- Vitals Card [ID is used for distinguishing cards] -->
-      <div id="vitalsCard" class="card" style="background-color: yellow;">
+      <div id="vitalsCard" class="card">
         <div id="vitalsCardBody" class="card-body">
           <div class="text-right">
             <button id="vitalsEditButton" class="editButton btn btn-primary" type="button">Edit</button>
@@ -79,7 +79,6 @@
                 </div>
               </div>
             </div>
-
             <div class="medicationCard card">
               <div class="medicationCardBody card-body">
                 <div class="medicationCardInfo">
@@ -88,7 +87,6 @@
                 </div>
               </div>
             </div>
-
             <div class="medicationCard card">
               <div class="medicationCardBody card-body">
                 <div class="medicationCardInfo">
@@ -102,26 +100,44 @@
       </div>
 
       <!-- Notes Card [ID is used for distinguishing cards] -->
-      <div id="notesCard" class="card hidden" style="background-color: purple;">
+      <div id="notesCard" class="card hidden">
         <div id="notesCardBody" class="card-body">
-          <div class="text-right">
-            <button id="notesEditButton" class="editButton btn btn-primary" type="button">Edit</button>
+            <div class="d-flex flex-row justify-content-end">
+              <button id="medicinesEditButton" class="editButton btn btn-primary" type="button">+</button>
+              <button id="medicinesEditButton" class="editButton btn btn-primary" type="button">Edit</button>
+            </div>
+            <div id="notesInfo">
+              <div class="specificNoteCard card">
+                <div class="specificNoteCardBody card-body">
+                  <div class="specificNoteCardInfo">
+                    <p>Micheal’s health has study gone up the past couple of weeks. 
+                      According with his blood pressure beginning to lower, 
+                      it’s possible that we may be able to take him off his blood...</p>
+                    <p>12/06/2021 1:45:13 PM</p>
+                  </div>
+                </div>
+              </div>
+              <div class="specificNoteCard card">
+                <div class="specificNoteCardBody card-body">
+                  <div class="specificNoteCardInfo">
+                    <p>Micheal’s temperature was a little higher today, at around 100 degrees. He noted feeling
+                      slightly more tired than noted. Will track any other symptoms he might experience.</p>
+                    <p>12/05/2021 7:18:56 AM</p>
+                  </div>
+                </div>
+              </div>
+              <div class="specificNoteCard card">
+                <div class="specificNoteCardBody card-body">
+                  <div class="specificNoteCardInfo">
+                    <p>Had a regular meeting with Micheal. All his vitals and stats are in order.</p>
+                    <p>12/04/2021 9:59:25 AM</p>
+                  </div>
+                </div>
+              </div>
+            </div> 
           </div>      
-          <div class="singlePatientInfo">
-            <a href="single_patient.html"><p>Weight: -</p></a>
-            <a href="single_patient.html"><p>SPO2: -</p></a>
-            <a href="single_patient.html"><p>Blood Pressure: -</p></a>
-          </div> 
-          <div class="singlePatientInfo">
-            <p>Height: -</p>
-            <a href="single_patient.html"><p>Pulse: -</p></a>
-            <p>Temperature: -</p>
-          </div>
         </div>
       </div> 
-      
-
-
     </div>
   
 

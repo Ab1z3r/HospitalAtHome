@@ -390,28 +390,28 @@ body {
   margin-right: 50px;
 }
 
-#medicinesInfo {
+#medicinesInfo, #notesInfo {
   width: 100%;
   height: 175px;
 }
 
-#medicinesInfo .card{
+#medicinesInfo .card, #notesInfo .card{
   border-radius: 0px;
   margin-bottom: 1px;
 }
 
-.medicationCardBody {
+.medicationCardBody, .specificNoteCardBody{
   padding: 3px;
 }
 
-.medicationCardInfo {
+.medicationCardInfo, .specificNoteCardInfo{
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
 
-.medicationCardInfo p {
+.medicationCardInfo p, .specificNoteCardInfo p {
   font-size: 14px;
 }
 
