@@ -7,18 +7,21 @@ rhit.FB_KEY_PATIENT_GOOGLE_ID = "GoogleID";
 rhit.FB_KEY_PATIENT_PRIMARY_PROVIDER = "primaryProvider";
 rhit.FB_KEY_PATIENT_LAST_ONLINE = "lastOnline";
 
-rhit.fbAuthManager = null;
-rhit.fbPatientsManager = null;
+rhit.single_AuthManager = null;
+rhit.single_PatientsManager = null;
 
 
+/** PAGE CONTROLLERS **/ 
+ 
+// Login Page Controller
 /**
- * * PAGE CONTROLLERS
+ * PURPOSE: Handle all View and Controller interactions for the Patients Page
  */
 rhit.LoginPageController = class {
 	constructor() {
 		// * Click Listener for Login Button
 		document.querySelector("#loginButton").onclick = (event) => {
-			rhit.fbAuthManager.signIn();
+			rhit.single_AuthManager.signIn();
 		};
 
 		// * Handles Login on Press of the Enter Key
@@ -31,20 +34,24 @@ rhit.LoginPageController = class {
 	}
 }
 
+// Patients Page Controller
+/**
+ * PURPOSE: Handle all View and Controller interactions for the Patients Page
+ */
 rhit.PatientsPageController = class {
 	constructor() {
 		// * Click Listener for sign out on Patients Page
 		document.querySelector("#signOutLink").onclick = (event) => {
-			rhit.fbAuthManager.signOut();
+			rhit.single_AuthManager.signOut();
 		};
 
-		rhit.fbPatientsManager.beginListening(this.updateList.bind(this));
+		rhit.single_PatientsManager.beginListening(this.updateList.bind(this));
 	}
 
 	updateList() {
 		const newList = htmlToElement('<div id="patientsCards"></div>');
-		for (let i = 0; i < rhit.fbPatientsManager.length; i++) {
-			const patient = rhit.fbPatientsManager.getPatientAtIndex(i);
+		for (let i = 0; i < rhit.single_PatientsManager.length; i++) {
+			const patient = rhit.single_PatientsManager.getPatientAtIndex(i);
 			const newCard = this._createCard(patient);
 			newList.appendChild(newCard);
 		}
@@ -77,24 +84,11 @@ rhit.PatientsPageController = class {
 }
 
 
+/** MANAGERS **/
 /**
- * * DATA MANAGEMENT
+ * PURPOSE: Handles a Patient Document [NOT A HEALTHCARE PROFESSIONAL]
  */
-
-// * PATIENT MANAGEMENT
-
-rhit.Patient = class {
-	constructor(id, firstName, lastName, googleId, primaryProvider, lastOnline) {
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.googleId = googleId;
-		this.primaryProvider = primaryProvider;
-		this.lastOnline = lastOnline;
-	}
-}
-
-rhit.FbPatientsManager = class {
+rhit.PatientsManager = class {
 	constructor(uid) {
 		this.uid = uid;
 		this._documentSnapshots = [];
@@ -132,11 +126,12 @@ rhit.FbPatientsManager = class {
 	}
 }
 
-
+// Auth Manager
 /**
- * * AUTHENTICATION
+ * PURPOSE: Handle all Authentification (creation, deleting, searching for current users)
+ * [USERS ARE HEALTHCARE PROFESSIONALS]
  */
-rhit.FbAuthManager = class {
+rhit.AuthManager = class {
 	constructor() {
 		this._user = null;
 	}
@@ -196,20 +191,49 @@ rhit.FbAuthManager = class {
 	}
 }
 
+/** DATA MANAGEMENT **/
 
+// Patient Wrapper
 /**
- * * PAGE MANAGEMENT
+ * PURPOSE: Holds all data relevant to a given patient
+ */
+rhit.Patient = class {
+	constructor(id, firstName, lastName, googleId, primaryProvider, lastOnline) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.googleId = googleId;
+		this.primaryProvider = primaryProvider;
+		this.lastOnline = lastOnline;
+	}
+}
+
+
+/** PAGE MANAGEMENT **/
+
+// Redirects
+/**
+ * PURPOSE: Checking for Redirects is mainly only for when a user first logs in
+ * Or is already logged in
+ * 
  */
 rhit.checkForRedirects = () => {
 	// * Checks whether the user is logged in an redirects the page accordingly
-	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
+	if (document.querySelector("#loginPage") && rhit.single_AuthManager.isSignedIn) {
 		window.location.href = "/patients.html";
 	}
-	if (!document.querySelector("#loginPage") && !rhit.fbAuthManager.isSignedIn) {
+	if (!document.querySelector("#loginPage") && !rhit.single_AuthManager.isSignedIn) {
 		window.location.href = "/";
 	}
 };
 
+
+// Page Initialization
+/**
+ * PURPOSE: Page Initialization takes place here. Depending what page a user is on
+ * will direct the user to the correct webpag
+ * 
+ */
 rhit.initializePage = () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	// * initializes page controller for Login Page
@@ -220,31 +244,26 @@ rhit.initializePage = () => {
 	// * initializes page controller for Patients Page
 	if (document.querySelector("#patientsPage")) {
 		console.log("You are on the patients page.");
-		rhit.fbPatientsManager = new rhit.FbPatientsManager();
+		rhit.single_PatientsManager = new rhit.PatientsManager();
 		new rhit.PatientsPageController();
 	}
 };
 
 
-/**
- * * MAIN
- */
+/** MAIN **/
 rhit.main = function () {
 	console.log("Ready");
 
 	// * Initializes webpage
-	rhit.fbAuthManager = new rhit.FbAuthManager();
-	rhit.fbAuthManager.beginListening(() => {
-		console.log("isSignedIn = ", rhit.fbAuthManager.isSignedIn);
+	rhit.single_AuthManager = new rhit.AuthManager();
+	rhit.single_AuthManager.beginListening(() => {
+		console.log("isSignedIn = ", rhit.single_AuthManager.isSignedIn);
 		rhit.checkForRedirects();
 		rhit.initializePage();
 	});
 };
 
 rhit.main();
-
-
-
 
 
 
