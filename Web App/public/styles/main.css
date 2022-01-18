@@ -13,6 +13,7 @@
 :root {
   --main-color: #c15027;
   --secondardy-color: #f8f8f8;
+  --ternary-color: #F5F5F5;
   --main-font: "Mukta", sans-serif;
 }
 
@@ -319,6 +320,7 @@ body {
 [id$=Card] {
   width: 100%;
   height: 250px;
+  background-color: var(--ternary-color);
 }
 
 [id$=Card] p {
@@ -333,7 +335,7 @@ body {
   padding-top: 2px;
 }
 
-.singlePatientInfo {
+.vitalsInfo {
   display: flex;
   flex-direction: column;
 }
@@ -380,6 +382,41 @@ body {
   font-size: 12px;
   background-color: var(--main-color);
   color: white;
+}
+
+#lastUpdated {
+  font-size: 12px;
+  text-align: center;
+  margin-right: 50px;
+}
+
+#medicinesInfo {
+  width: 100%;
+  height: 175px;
+}
+
+#medicinesInfo .card{
+  border-radius: 0px;
+  margin-bottom: 1px;
+}
+
+.medicationCardBody {
+  padding: 3px;
+}
+
+.medicationCardInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.medicationCardInfo p {
+  font-size: 14px;
+}
+
+p.medicationName {
+  font-weight: 600;
 }
 
 /* <----- Graphics Page (graphics.html) -----> */
@@ -505,6 +542,7 @@ body {
   height: 400px;
 }
 
+
 /* Small devices (phones, 576px and up) */
 @media screen and (min-width: 576px) {
   #patientsHeader {
@@ -559,11 +597,11 @@ body {
     text-decoration: underline;
   }
 
-  [id$=Card] p {
+  #vitalsCard p {
     font-size: 20px;
   }
 
-  .singlePatientInfo {
+  .vitalsInfo {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -593,8 +631,14 @@ body {
     font-size: 14px;
   }
 
-  [id$=CardBody] div :nth-child(1) {
+ #vitalsCardBody div :nth-child(1) {
     margin-bottom: 20px;
+  }
+
+  #lastUpdated {
+    font-size: 14px;
+    text-align: center;
+    margin-right: 0px;
   }
 }
 
@@ -654,7 +698,7 @@ body {
     width: 800px;
   }
 
-  div.singlePatientInfo:nth-of-type(1) {
+  div.vitalsInfo:nth-of-type(1) {
     margin: 10px 0px;
   }
 
