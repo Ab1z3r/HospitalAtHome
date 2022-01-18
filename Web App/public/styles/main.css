@@ -393,6 +393,8 @@ body {
 #medicinesInfo, #notesInfo {
   width: 100%;
   height: 175px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #medicinesInfo .card, #notesInfo .card{

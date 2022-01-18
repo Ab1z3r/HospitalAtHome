@@ -328,14 +328,14 @@ rhit.initializePage = () => {
 /** MAIN **/
 rhit.main = function () {
 	console.log("Ready");
-	// // * Initializes webpage
-	// rhit.single_AuthManager = new rhit.AuthManager();
-	// rhit.single_AuthManager.beginListening(() => {
-	// 	console.log("isSignedIn = ", rhit.single_AuthManager.isSignedIn);
-	// 	rhit.checkForRedirects();
-	// 	rhit.initializePage();
-	// });
-	// rhit.checkForRedirects()
+	// * Initializes webpage
+	rhit.single_AuthManager = new rhit.AuthManager();
+	rhit.single_AuthManager.beginListening(() => {
+		console.log("isSignedIn = ", rhit.single_AuthManager.isSignedIn);
+		rhit.checkForRedirects();
+		rhit.initializePage();
+	});
+	rhit.checkForRedirects()
 	rhit.initializePage()
 };
 
