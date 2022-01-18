@@ -316,17 +316,17 @@ body {
   width: 100%;
 }
 
-#singlePatientCard {
+[id$=Card] {
   width: 100%;
   height: 250px;
 }
 
-#singlePatientCard p {
+[id$=Card] p {
   font-size: 16px;
   font-weight: 200;
 }
 
-#singlePatientCardBody {
+[id$=CardBody] {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -347,7 +347,7 @@ body {
   text-decoration: underline;
 }
 
-#singlePatientCard a {
+[id$=Card] a {
   color: var(--main-color);
   text-decoration: none;
 }
@@ -375,7 +375,7 @@ body {
   flex-direction: column;
 }
 
-#singlePatientPage #editButton {
+#singlePatientPage .editButton {
   padding: 4px;
   font-size: 12px;
   background-color: var(--main-color);
@@ -555,11 +555,11 @@ body {
     margin-left: 20px;
   }
 
-  #singlePatientCard a:hover {
+  [id$=Card] a:hover {
     text-decoration: underline;
   }
 
-  #singlePatientCard p {
+  [id$=Card] p {
     font-size: 20px;
   }
 
@@ -569,7 +569,7 @@ body {
     justify-content: space-around;
   }
 
-  #singlePatientCardBody {
+  [id$=CardBody] {
     justify-content: start;
     padding-top: 10px;
   }
@@ -588,12 +588,12 @@ body {
     margin-bottom: 20px;
   }
 
-  #singlePatientPage #editButton {
+  #singlePatientPage .editButton {
     padding: 6px;
     font-size: 14px;
   }
 
-  #singlePatientCardBody div :nth-child(1) {
+  [id$=CardBody] div :nth-child(1) {
     margin-bottom: 20px;
   }
 }
@@ -650,7 +650,7 @@ body {
     margin-left: 20px;
   }
 
-  #singlePatientCard {
+  [id$=Card] {
     width: 800px;
   }
 
@@ -723,4 +723,9 @@ body {
       height: 415px;
     }
   }
+}
+
+/* <----- Additional Classes -----> */
+.hidden {
+  display: none;
 }

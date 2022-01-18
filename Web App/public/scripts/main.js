@@ -9,6 +9,7 @@ rhit.FB_KEY_PATIENT_LAST_ONLINE = "lastOnline";
 
 rhit.single_AuthManager = null;
 rhit.single_PatientsManager = null;
+rhit.single_SinglePatientsManager = null;
 
 
 /** PAGE CONTROLLERS **/ 
@@ -83,55 +84,68 @@ rhit.PatientsPageController = class {
 	}
 }
 
-
-/** MANAGERS **/
+// Single Patients Page Controller
 /**
- * PURPOSE: Handles a Patient Document [NOT A HEALTHCARE PROFESSIONAL]
+ * PURPOSE: Handle all View and Controller interactions for the Single Patients Page
  */
-rhit.PatientsManager = class {
-	constructor(uid) {
-		this.uid = uid;
-		this._documentSnapshots = [];
-		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_USERS);
-		this._unsubscribe = null;
-	}
+rhit.SinglePatientPageController = class {
+	constructor() {
 
-	beginListening(changeListener) {
-		let query = this._ref.orderBy(rhit.FB_KEY_PATIENT_LAST_ONLINE, "desc");
-		this._unsubscribe = query.onSnapshot((querySnapshot) => {
-			console.log("Patient Update!");
-			this._documentSnapshots = querySnapshot.docs;
-			changeListener();
-		});
-	}
+		const vitalsButton = document.querySelector("#vitalsButton");
+		const medicinesButton = document.querySelector("#medicinesButton");
+		const notesButton = document.querySelector("#notesButton");
 
-	stopListening() {
-		this._unsubscribe();
-	}
+		const vitalsCard = document.querySelector("#vitalsCard");
+		const medicinesCard = document.querySelector("#medicinesCard");
+		const notesCard = document.querySelector("#notesCard");
 
-	get length() {
-		return this._documentSnapshots.length;
-	}
+		// When a user clicks any of the buttons from the button group
+		// (VITALS, MEDICINES, NOTES), the cards need to change as well
+		// as the active class on the buttons
+		vitalsButton.onclick = (event) => {
+			vitalsButton.classList.add("active");
+			medicinesButton.classList.remove("active");
+			notesButton.classList.remove("active");
 
-	getPatientAtIndex(index) {
-		const docSnapshot = this._documentSnapshots[index];
-		const patient = new rhit.Patient(docSnapshot.id,
-			docSnapshot.get(rhit.FB_KEY_PATIENT_FIRSTNAME),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_LASTNAME),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_GOOGLE_ID),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_PRIMARY_PROVIDER),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_LAST_ONLINE)
-		);
-		return patient;
+			vitalsCard.classList.remove("hidden");
+			medicinesCard.classList.add("hidden");
+			notesCard.classList.add("hidden");
+
+		};
+
+		medicinesButton.onclick = (event) => {
+			medicinesButton.classList.add("active");
+			vitalsButton.classList.remove("active");
+			notesButton.classList.remove("active");
+
+			medicinesCard.classList.remove("hidden");
+			vitalsCard.classList.add("hidden");
+			notesCard.classList.add("hidden");
+			
+		};
+
+		notesButton.onclick = (event) => {
+			notesButton.classList.add("active");
+			medicinesButton.classList.remove("active");
+			vitalsButton.classList.remove("active");
+
+			notesCard.classList.remove("hidden");
+			medicinesCard.classList.add("hidden");
+			vitalsCard.classList.add("hidden");
+		};
+
 	}
 }
+
+
+/** MANAGERS **/
 
 // Auth Manager
 /**
  * PURPOSE: Handle all Authentification (creation, deleting, searching for current users)
  * [USERS ARE HEALTHCARE PROFESSIONALS]
  */
-rhit.AuthManager = class {
+ rhit.AuthManager = class {
 	constructor() {
 		this._user = null;
 	}
@@ -191,6 +205,58 @@ rhit.AuthManager = class {
 	}
 }
 
+// Patients Manager
+/**
+ * PURPOSE: Handles a Patient Document [NOT A HEALTHCARE PROFESSIONAL]
+ */
+rhit.PatientsManager = class {
+	constructor(uid) {
+		this.uid = uid;
+		this._documentSnapshots = [];
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_USERS);
+		this._unsubscribe = null;
+	}
+
+	beginListening(changeListener) {
+		let query = this._ref.orderBy(rhit.FB_KEY_PATIENT_LAST_ONLINE, "desc");
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			console.log("Patient Update!");
+			this._documentSnapshots = querySnapshot.docs;
+			changeListener();
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	get length() {
+		return this._documentSnapshots.length;
+	}
+
+	getPatientAtIndex(index) {
+		const docSnapshot = this._documentSnapshots[index];
+		const patient = new rhit.Patient(docSnapshot.id,
+			docSnapshot.get(rhit.FB_KEY_PATIENT_FIRSTNAME),
+			docSnapshot.get(rhit.FB_KEY_PATIENT_LASTNAME),
+			docSnapshot.get(rhit.FB_KEY_PATIENT_GOOGLE_ID),
+			docSnapshot.get(rhit.FB_KEY_PATIENT_PRIMARY_PROVIDER),
+			docSnapshot.get(rhit.FB_KEY_PATIENT_LAST_ONLINE)
+		);
+		return patient;
+	}
+}
+
+// Single Patients Manager
+/**
+ * PURPOSE: Handles a Single Patient Information
+ */
+rhit.SinglePatientManager = class {
+	constructor(uid) {
+	}
+}
+
+
 /** DATA MANAGEMENT **/
 
 // Patient Wrapper
@@ -241,26 +307,36 @@ rhit.initializePage = () => {
 		console.log("You are on the login page.");
 		new rhit.LoginPageController();
 	}
+
 	// * initializes page controller for Patients Page
 	if (document.querySelector("#patientsPage")) {
 		console.log("You are on the patients page.");
 		rhit.single_PatientsManager = new rhit.PatientsManager();
 		new rhit.PatientsPageController();
 	}
+
+	// * initializes page controller for Patients Page
+	if (document.querySelector("#singlePatientPage")) {
+		console.log("You are on the single patient page.");
+		rhit.single_SinglePatientsManager = new rhit.SinglePatientManager();
+		new rhit.SinglePatientPageController();
+	}
+	
 };
 
 
 /** MAIN **/
 rhit.main = function () {
 	console.log("Ready");
-
-	// * Initializes webpage
-	rhit.single_AuthManager = new rhit.AuthManager();
-	rhit.single_AuthManager.beginListening(() => {
-		console.log("isSignedIn = ", rhit.single_AuthManager.isSignedIn);
-		rhit.checkForRedirects();
-		rhit.initializePage();
-	});
+	// // * Initializes webpage
+	// rhit.single_AuthManager = new rhit.AuthManager();
+	// rhit.single_AuthManager.beginListening(() => {
+	// 	console.log("isSignedIn = ", rhit.single_AuthManager.isSignedIn);
+	// 	rhit.checkForRedirects();
+	// 	rhit.initializePage();
+	// });
+	// rhit.checkForRedirects()
+	rhit.initializePage()
 };
 
 rhit.main();

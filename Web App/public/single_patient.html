@@ -33,18 +33,19 @@
 
     <div id="singlePatientButtonGroup">
       <div class="btn-group" role="group" aria-label="Button Group">
-        <button type="button" class="btn btn-primary active">Vitals</button>
-        <button type="button" class="btn btn-primary">Medicines</button>
-        <button type="button" class="btn btn-primary">Notes</button>
+        <button id="vitalsButton" type="button" class="btn btn-primary active">Vitals</button>
+        <button id="medicinesButton" type="button" class="btn btn-primary">Medicines</button>
+        <button id="notesButton" type="button" class="btn btn-primary">Notes</button>
       </div>
     </div>
 
     <div class= "d-flex justify-content-center">
       
-      <div id="singlePatientCard" class="card">
-        <div id="singlePatientCardBody" class="card-body">
+      <!-- Vitals Card [ID is used for distinguishing cards] -->
+      <div id="vitalsCard" class="card" style="background-color: yellow;">
+        <div id="vitalsCardBody" class="card-body">
           <div class="text-right">
-            <button id="editButton" class="btn btn-primary" type="button">Edit</button>
+            <button id="vitalsEditButton" class="editButton btn btn-primary" type="button">Edit</button>
           </div>      
           <div class="singlePatientInfo">
             <a href="single_patient.html"><p>Weight: -</p></a>
@@ -58,7 +59,49 @@
           </div>
         </div>
       </div>
+
+      <!-- Medicines Card [ID is used for distinguishing cards] -->
+      <div id="medicinesCard" class="card hidden" style="background-color: green;">
+        <div id="medicinesCardBody" class="card-body">
+          <div class="text-right">
+            <button id="medicinesEditButton" class="editButton btn btn-primary" type="button">Edit</button>
+          </div>      
+          <div class="singlePatientInfo">
+            <a href="single_patient.html"><p>Weight: -</p></a>
+            <a href="single_patient.html"><p>SPO2: -</p></a>
+            <a href="single_patient.html"><p>Blood Pressure: -</p></a>
+          </div> 
+          <div class="singlePatientInfo">
+            <p>Height: -</p>
+            <a href="single_patient.html"><p>Pulse: -</p></a>
+            <p>Temperature: -</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes Card [ID is used for distinguishing cards] -->
+      <div id="notesCard" class="card hidden" style="background-color: purple;">
+        <div id="notesCardBody" class="card-body">
+          <div class="text-right">
+            <button id="notesEditButton" class="editButton btn btn-primary" type="button">Edit</button>
+          </div>      
+          <div class="singlePatientInfo">
+            <a href="single_patient.html"><p>Weight: -</p></a>
+            <a href="single_patient.html"><p>SPO2: -</p></a>
+            <a href="single_patient.html"><p>Blood Pressure: -</p></a>
+          </div> 
+          <div class="singlePatientInfo">
+            <p>Height: -</p>
+            <a href="single_patient.html"><p>Pulse: -</p></a>
+            <p>Temperature: -</p>
+          </div>
+        </div>
+      </div> 
+      
+
+
     </div>
+  
 
     <div id="singlePatientContact">
       <h2>Contact the Patient</h2>
