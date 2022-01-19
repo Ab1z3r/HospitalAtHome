@@ -324,19 +324,25 @@ rhit.initializePage = () => {
 	
 };
 
+// Page Status
+/**
+ * PURPOSE: Serves as method that gets called upon logging in/logging out
+ * 
+ */
+rhit.pageStatus = function () {
+	console.log(`The auth state has changed. isSignedIn = ${rhit.single_AuthManager.isSignedIn}`);
+
+	// Check for redirects 
+	rhit.checkForRedirects();
+
+	// Page initialization
+	rhit.initializePage();
+}
 
 /** MAIN **/
 rhit.main = function () {
-	console.log("Ready");
-	// * Initializes webpage
 	rhit.single_AuthManager = new rhit.AuthManager();
-	rhit.single_AuthManager.beginListening(() => {
-		console.log("isSignedIn = ", rhit.single_AuthManager.isSignedIn);
-		rhit.checkForRedirects();
-		rhit.initializePage();
-	});
-	rhit.checkForRedirects()
-	rhit.initializePage()
+	rhit.single_AuthManager.beginListening(rhit.pageStatus.bind(this));
 };
 
 rhit.main();
