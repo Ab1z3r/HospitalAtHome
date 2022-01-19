@@ -1,19 +1,35 @@
 var rhit = rhit || {};
 
-rhit.FB_COLLECTION_USERS = "users";
-rhit.FB_KEY_PATIENT_FIRSTNAME = "firstName";
-rhit.FB_KEY_PATIENT_LASTNAME = "lastName";
-rhit.FB_KEY_PATIENT_GOOGLE_ID = "GoogleID";
-rhit.FB_KEY_PATIENT_PRIMARY_PROVIDER = "primaryProvider";
-rhit.FB_KEY_PATIENT_LAST_ONLINE = "lastOnline";
+/** PATIENT COLLECTION **/
+rhit.COLLECTION_PATIENTS = "patients";
+rhit.PATIENT_ADDRESS = "address";
+rhit.PATIENT_BIRTHDATE = "birthdate";
+rhit.PATIENT_BLOOD_PRESSURE = "bloodPressure";
+rhit.PATIENT_FIRSTNAME = "firstName";
+rhit.PATIENT_GOOGLE_ID = "googleID";
+rhit.PATIENT_HEIGHT = "height";
+rhit.PATIENT_LASTNAME = "lastName";
+rhit.PATIENT_LAST_ONLINE = "lastOnline";
+rhit.PATIENT_PRIMARY_PROVIDER = "primaryProvider";
+rhit.PATIENT_PULSE = "pulse";
+rhit.PATIENT_SPO2 = "spo2";
+rhit.PATIENT_TEMPERATURE = "temperature";
+rhit.PATIENT_WEIGHT = "weight";
+
+/** MEDICINES **/
+rhit.MEDICINE_DOSAGE = "dosage"
+rhit.MEDICINE_NAME = "name"
+rhit.MEDICINE_PRIMARY_PROVIDER = "primaryProvider"
+rhit.MEDICINE_ISVALID = "isValid"
+rhit.MEDICINE_LAST_TOUCHED = "lastTouched"
 
 rhit.single_AuthManager = null;
 rhit.single_PatientsManager = null;
 rhit.single_SinglePatientsManager = null;
 
 
-/** PAGE CONTROLLERS **/ 
- 
+/** PAGE CONTROLLERS **/
+
 // Login Page Controller
 /**
  * PURPOSE: Handle all View and Controller interactions for the Patients Page
@@ -47,6 +63,7 @@ rhit.PatientsPageController = class {
 		};
 
 		rhit.single_PatientsManager.beginListening(this.updateList.bind(this));
+		rhit.single_PatientsManager.add();
 	}
 
 	updateList() {
@@ -121,7 +138,7 @@ rhit.SinglePatientPageController = class {
 			medicinesCard.classList.remove("hidden");
 			vitalsCard.classList.add("hidden");
 			notesCard.classList.add("hidden");
-			
+
 		};
 
 		notesButton.onclick = (event) => {
@@ -145,7 +162,7 @@ rhit.SinglePatientPageController = class {
  * PURPOSE: Handle all Authentification (creation, deleting, searching for current users)
  * [USERS ARE HEALTHCARE PROFESSIONALS]
  */
- rhit.AuthManager = class {
+rhit.AuthManager = class {
 	constructor() {
 		this._user = null;
 	}
@@ -213,12 +230,12 @@ rhit.PatientsManager = class {
 	constructor(uid) {
 		this.uid = uid;
 		this._documentSnapshots = [];
-		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_USERS);
+		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS);
 		this._unsubscribe = null;
 	}
 
 	beginListening(changeListener) {
-		let query = this._ref.orderBy(rhit.FB_KEY_PATIENT_LAST_ONLINE, "desc");
+		let query = this._ref.orderBy(rhit.PATIENT_LAST_ONLINE, "desc");
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			console.log("Patient Update!");
 			this._documentSnapshots = querySnapshot.docs;
@@ -230,6 +247,33 @@ rhit.PatientsManager = class {
 		this._unsubscribe();
 	}
 
+	add() {
+		console.log("Added a new Patient");
+
+		this._ref.add({
+				[rhit.PATIENT_ADDRESS]: "address",
+				[rhit.PATIENT_BIRTHDATE]: "birthdate",
+				[rhit.PATIENT_BLOOD_PRESSURE]: {},
+				[rhit.PATIENT_FIRSTNAME]: "Nathan",
+				[rhit.PATIENT_GOOGLE_ID]: "googleID",
+				[rhit.PATIENT_HEIGHT]: {},
+				[rhit.PATIENT_LASTNAME]: "Prescot",
+				[rhit.PATIENT_LAST_ONLINE]: firebase.firestore.Timestamp.now(),
+				[rhit.PATIENT_PRIMARY_PROVIDER]: "primaryProvider",
+				[rhit.PATIENT_PULSE]: {},
+				[rhit.PATIENT_SPO2]: {},
+				[rhit.PATIENT_TEMPERATURE]: {},
+				[rhit.PATIENT_WEIGHT]: {},
+			})
+			.then(function (docRef) {
+				console.log(`Document written: ${docRef.id}`);
+				rhit.single_PatientsManager.createMedicines(docRef.id);
+			})
+			.catch(function (error) {
+				console.log("Error adding document: ", error);
+			});
+	}
+
 	get length() {
 		return this._documentSnapshots.length;
 	}
@@ -237,13 +281,38 @@ rhit.PatientsManager = class {
 	getPatientAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
 		const patient = new rhit.Patient(docSnapshot.id,
-			docSnapshot.get(rhit.FB_KEY_PATIENT_FIRSTNAME),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_LASTNAME),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_GOOGLE_ID),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_PRIMARY_PROVIDER),
-			docSnapshot.get(rhit.FB_KEY_PATIENT_LAST_ONLINE)
+			docSnapshot.get(rhit.PATIENT_ADDRESS),
+			docSnapshot.get(rhit.PATIENT_BIRTHDATE),
+			docSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE),
+			docSnapshot.get(rhit.PATIENT_FIRSTNAME),
+			docSnapshot.get(rhit.PATIENT_GOOGLE_ID),
+			docSnapshot.get(rhit.PATIENT_HEIGHT),
+			docSnapshot.get(rhit.PATIENT_LASTNAME),
+			docSnapshot.get(rhit.PATIENT_LAST_ONLINE),
+			docSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER),
+			docSnapshot.get(rhit.PATIENT_PULSE),
+			docSnapshot.get(rhit.PATIENT_SPO2),
+			docSnapshot.get(rhit.PATIENT_TEMPERATURE),
+			docSnapshot.get(rhit.PATIENT_WEIGHT)
 		);
 		return patient;
+	}
+
+	createMedicines(id) {
+		this._ref.doc(`${id}`).collection('medicines').add({
+			[rhit.PATIENT_ADDRESS]: "address",
+			[rhit.MEDICINE_DOSAGE]: "dosage",
+			[rhit.MEDICINE_NAME]: "name",
+			[rhit.MEDICINE_PRIMARY_PROVIDER]: "primaryProvider",
+			[rhit.MEDICINE_ISVALID]: "isValid", 
+			[rhit.MEDICINE_LAST_TOUCHED]:firebase.firestore.Timestamp.now(),
+		})
+		.then(function () {
+			console.log(`Document created in Medicines Collection`);
+			})
+			.catch(function (error) {
+				console.log("Error adding document: ", error);
+			});
 	}
 }
 
@@ -252,8 +321,7 @@ rhit.PatientsManager = class {
  * PURPOSE: Handles a Single Patient Information
  */
 rhit.SinglePatientManager = class {
-	constructor(uid) {
-	}
+	constructor(uid) {}
 }
 
 
@@ -264,16 +332,25 @@ rhit.SinglePatientManager = class {
  * PURPOSE: Holds all data relevant to a given patient
  */
 rhit.Patient = class {
-	constructor(id, firstName, lastName, googleId, primaryProvider, lastOnline) {
+	constructor(id, address, birthdate, bloodPressure, firstName, googleID,
+		height, lastName, lastOnline, primaryProvider, pulse,
+		spo2, temperature, weight) {
 		this.id = id;
+		this.address = address;
+		this.birthdate = birthdate;
+		this.bloodPressure = bloodPressure;
 		this.firstName = firstName;
+		this.googleID = googleID;
+		this.height = height;
 		this.lastName = lastName;
-		this.googleId = googleId;
-		this.primaryProvider = primaryProvider;
 		this.lastOnline = lastOnline;
+		this.primaryProvider = primaryProvider;
+		this.pulse = pulse;
+		this.spo2 = spo2;
+		this.temperature = temperature;
+		this.weight = weight;
 	}
 }
-
 
 /** PAGE MANAGEMENT **/
 
@@ -321,7 +398,7 @@ rhit.initializePage = () => {
 		rhit.single_SinglePatientsManager = new rhit.SinglePatientManager();
 		new rhit.SinglePatientPageController();
 	}
-	
+
 };
 
 // Page Status
