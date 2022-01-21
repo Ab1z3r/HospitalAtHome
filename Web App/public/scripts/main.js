@@ -1,6 +1,6 @@
 var rhit = rhit || {};
 
-rhit.FB_COLLECTION_USERS = "users";
+rhit.FB_COLLECTION_PATIENTS = "patients";
 rhit.FB_KEY_PATIENT_FIRSTNAME = "firstName";
 rhit.FB_KEY_PATIENT_LASTNAME = "lastName";
 rhit.FB_KEY_PATIENT_GOOGLE_ID = "GoogleID";
@@ -9,7 +9,7 @@ rhit.FB_KEY_PATIENT_LAST_ONLINE = "lastOnline";
 
 rhit.single_AuthManager = null;
 rhit.single_PatientsManager = null;
-rhit.single_SinglePatientsManager = null;
+rhit.single_SinglePatientManager = null;
 
 
 /** PAGE CONTROLLERS **/
@@ -143,6 +143,13 @@ rhit.SinglePatientPageController = class {
 			vitalsCard.classList.add("hidden");
 		};
 
+		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
+	}
+
+	updateView() {
+		document.querySelector("#singlePatientHeader").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
+		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
+		document.querySelector("#singlePatientTitle").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
 	}
 }
 
@@ -151,7 +158,7 @@ rhit.SinglePatientPageController = class {
 
 // Auth Manager
 /**
- * PURPOSE: Handle all Authentification (creation, deleting, searching for current users)
+ * PURPOSE: Handle all Authentication (creation, deleting, searching for current users)
  * [USERS ARE HEALTHCARE PROFESSIONALS]
  */
 rhit.AuthManager = class {
@@ -222,7 +229,7 @@ rhit.PatientsManager = class {
 	constructor(uid) {
 		this.uid = uid;
 		this._documentSnapshots = [];
-		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_USERS);
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_PATIENTS);
 		this._unsubscribe = null;
 	}
 
@@ -261,7 +268,41 @@ rhit.PatientsManager = class {
  * PURPOSE: Handles a Single Patient Information
  */
 rhit.SinglePatientManager = class {
-	constructor(pid) {}
+	constructor(patientId) {
+		this._documentSnapshot = {};
+		this._unsubscribe = null;
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_PATIENTS).doc(patientId);
+	}
+
+	beginListening(changeListener) {
+		this._unsubscribe = this._ref.onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Document data:", doc.data());
+				this._documentSnapshot = doc;
+				changeListener();
+			} else {
+				console.log("No such document!");
+			}
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	// TODO implement update and delete if needed
+
+	update() {}
+
+	delete() {}
+
+	get lastName() {
+		return this._documentSnapshot.get(rhit.FB_KEY_PATIENT_LASTNAME);
+	}
+
+	get firstName() {
+		return this._documentSnapshot.get(rhit.FB_KEY_PATIENT_FIRSTNAME);
+	}
 }
 
 
@@ -325,8 +366,12 @@ rhit.initializePage = () => {
 
 	// * initializes page controller for Patients Page
 	if (document.querySelector("#singlePatientPage")) {
-		console.log("You are on the single patient page.");
-		rhit.single_SinglePatientsManager = new rhit.SinglePatientManager();
+		console.log("You are on a single patient page.");
+		const patientId = urlParams.get("id");
+		if (!patientId) {
+			window.location.href = "/patients.html";
+		}
+		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(patientId);
 		new rhit.SinglePatientPageController();
 	}
 
