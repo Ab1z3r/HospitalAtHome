@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         try {
             val result = GlobalScope.async {
                 // TODO: add api url
-                callOmronAPI("ADD API URL HERE")
+                callOmronAPI("https://ohi-oauth.numerasocial.com/connect/authorize?client_id=test-app-api&response_type=code&scope=bloodpressure+activity+openid+offline_access&redirect_uri=https%3A%2F%2Flocalhost%3A5000")
             }.await()
             onResponse(result)
         } catch (e: Exception) {
