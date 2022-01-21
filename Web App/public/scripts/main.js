@@ -23,9 +23,17 @@ rhit.MEDICINE_PRIMARY_PROVIDER = "primaryProvider"
 rhit.MEDICINE_ISVALID = "isValid"
 rhit.MEDICINE_LAST_TOUCHED = "lastTouched"
 
+/** NOTES **/
+rhit.NOTE_CREATED_BY = "createdBy"
+rhit.NOTE_LAST_TOUCHED = "lastTouched"
+rhit.NOTE_NOTE = "note"
+
 rhit.single_AuthManager = null;
 rhit.single_PatientsManager = null;
 rhit.single_SinglePatientsManager = null;
+
+rhit.single_MedicinesManager = null;
+rhit.single_NotesManager = null;
 
 
 /** PAGE CONTROLLERS **/
@@ -267,7 +275,13 @@ rhit.PatientsManager = class {
 			})
 			.then(function (docRef) {
 				console.log(`Document written: ${docRef.id}`);
-				rhit.single_PatientsManager.createMedicines(docRef.id);
+
+				rhit.single_MedicinesManager.id = docRef.id;
+				rhit.single_MedicinesManager.add();
+
+				rhit.single_NotesManager.id = docRef.id;
+				rhit.single_NotesManager.add();
+
 			})
 			.catch(function (error) {
 				console.log("Error adding document: ", error);
@@ -297,10 +311,30 @@ rhit.PatientsManager = class {
 		);
 		return patient;
 	}
+}
 
-	createMedicines(id) {
-		this._ref.doc(`${id}`).collection('medicines').add({
-			[rhit.PATIENT_ADDRESS]: "address",
+// Single Patients Manager
+/**
+ * PURPOSE: Handles a Single Patient's Information
+ */
+rhit.SinglePatientManager = class {
+	constructor(uid) {}
+}
+
+// Medicine Manager
+/**
+ * PURPOSE: Handles a Single Patient's Medicine Information
+ */
+rhit.MedicinesManager = class {
+	constructor(id) {
+		this._id = id;
+		this._documentSnapshot = {};
+		this._unsubscribe = null;
+		// this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('medicines')
+	}
+
+	add() {
+		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('medicines').add({
 			[rhit.MEDICINE_DOSAGE]: "dosage",
 			[rhit.MEDICINE_NAME]: "name",
 			[rhit.MEDICINE_PRIMARY_PROVIDER]: "primaryProvider",
@@ -311,17 +345,55 @@ rhit.PatientsManager = class {
 			console.log(`Document created in Medicines Collection`);
 			})
 			.catch(function (error) {
-				console.log("Error adding document: ", error);
+				console.log("Error adding medicine document: ", error);
 			});
+	}
+
+	set id(docRef) {
+		 this._id = docRef;
+	}
+
+	get id() {
+		return this._id;
 	}
 }
 
-// Single Patients Manager
+
+
+// Notes Manager
 /**
- * PURPOSE: Handles a Single Patient Information
+ * PURPOSE: Handles a Single Patient's Note Information
  */
-rhit.SinglePatientManager = class {
-	constructor(uid) {}
+rhit.NotesManager = class {
+	constructor(id) {
+		this._id = id;
+		this._documentSnapshot = {};
+		this._unsubscribe = null;
+		// this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('notes')
+	}
+
+	add() {
+		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('notes').add({
+			[rhit.NOTE_CREATED_BY]: "Dr.-----",
+			[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			[rhit.NOTE_NOTE]: "This is a placeholder note",
+		})
+		.then(function () {
+			console.log(`Document created in Notes Collection`);
+			})
+			.catch(function (error) {
+				console.log("Error adding note document: ", error);
+			});
+	}
+
+	set id(docRef) {
+		this._id = docRef;
+   }
+
+   get id() {
+	   return this._id;
+   }
+	
 }
 
 
@@ -389,6 +461,8 @@ rhit.initializePage = () => {
 	if (document.querySelector("#patientsPage")) {
 		console.log("You are on the patients page.");
 		rhit.single_PatientsManager = new rhit.PatientsManager();
+		rhit.single_MedicinesManager = new rhit.MedicinesManager();
+		rhit.single_NotesManager = new rhit.NotesManager();
 		new rhit.PatientsPageController();
 	}
 
