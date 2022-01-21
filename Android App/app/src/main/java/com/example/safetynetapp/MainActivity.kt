@@ -63,8 +63,9 @@ class MainActivity : AppCompatActivity() {
 
         googleSignInButton.setOnClickListener{
             startOneTapUI()
-            //alreadySignedIn()   //comment this line
+            //alreadySignedIn()
         }
+
 
         setListeners()
     }

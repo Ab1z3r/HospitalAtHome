@@ -9,12 +9,14 @@
     tools:context=".MainActivity">
 
     <ImageView
+
         android:id="@+id/union_health_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/union_health_logo">
 
     </ImageView>
+
 
     <TextView
         android:id="@+id/title_text"
