@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/login_box"
+        >
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="Vitals"
+            android:textColor="#ffffff"
+            android:background ="#a6400c"
+
+            >
+
+
+        </Button>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="Medicines"
+            android:background ="#ffffff"
+
+
+            >
+
+
+        </Button>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background ="#ffffff"
+            android:text="Notes"
+            >
+
+
+        </Button>
+
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/login_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerInParent="true"
+        android:background="@color/lightGray"
+        android:padding="20dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
+
+
+        <TableLayout
+            android:id="@+id/credential"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+
+
+            >
+
+            <TableRow>
+
+
+                <TextView
+                    android:id="@+id/weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weight: -"
+                    android:focusable="true"
+                    android:layout_marginEnd="20dp"
+                     />
+
+                <TextView
+                    android:id="@+id/height"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Height: -"
+                    android:focusable="true"
+                    />
+
+            </TableRow>
+
+            <TableRow>
+
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" "
+
+                    />
+
+
+                    />
+            </TableRow>
+
+            <TableRow>
+
+
+                <TextView
+                    android:id="@+id/SPO2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SPO2: -"
+                    android:focusable="true"
+                    android:layout_marginEnd="20dp"
+                    />
+
+                <TextView
+                    android:id="@+id/pulse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pulse: -"
+                    android:focusable="true"
+                    />
+
+
+            </TableRow>
+
+            <TableRow>
+
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" "
+
+                    />
+
+
+                />
+            </TableRow>
+
+            <TableRow>
+
+
+                <TextView
+                    android:id="@+id/bloodPressure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Blood Pressure: -"
+                    android:layout_marginEnd="20dp"
+                    android:focusable="true"
+                    />
+
+                <TextView
+                    android:id="@+id/temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperature: -"
+                    android:focusable="true"
+                    />
+
+            </TableRow>
+
+
+        </TableLayout>
+
+
+
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

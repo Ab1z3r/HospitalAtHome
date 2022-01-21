@@ -22,13 +22,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import androidx.core.app.ActivityCompat.startActivityForResult
 import android.R.attr.data
+import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.xml.datatype.DatatypeFactory.newInstance
 
 
 private lateinit var mGoogleSignInClient: GoogleSignInClient
 private lateinit var signInRequest: BeginSignInRequest
 private const val REQ_ONE_TAP = 2
+var singlePatientFragment =  SinglePatientFragment.newInstance("")
 
 
 class MainActivity : AppCompatActivity() {
@@ -57,16 +63,38 @@ class MainActivity : AppCompatActivity() {
 
         googleSignInButton.setOnClickListener{
             startOneTapUI()
+            //alreadySignedIn()   //comment this line
+        }
+
+        setListeners()
+    }
+
+
+    //swap fragment without logging in
+    fun  setListeners(){
+        var switchTo = singlePatientFragment
+
+//        if(switchTo != null){
+//            val ft = supportFragmentManager.beginTransaction()
+//            ft.replace(R.id.fragment_container, switchTo)
+//            ft.commit()
+//        }
+
+        findViewById<Button>(R.id.login_button).setOnClickListener { _ ->
+            val ft = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.fragment_container, switchTo)
+            ft.commit()
         }
     }
+
 
     fun alreadySignedIn(){
         val account: GoogleSignInAccount = GoogleSignIn.getLastSignedInAccount(this)!!
 
         try {
-            val loggedInUser = User(displayName = account.displayName!!, userPictureURI = account.photoUrl.toString(), username = account.email!!)
+            //val loggedInUser = User(displayName = account.displayName!!, userPictureURI = account.photoUrl.toString(), username = account.email!!)
             val intent = Intent(this@MainActivity, HomeScreen::class.java)
-            intent.putExtra("loggedInUser", loggedInUser)
+            //intent.putExtra("loggedInUser", loggedInUser)     uncomment this line
             startActivity(intent)
             // Signed in successfully, show authenticated UI.
         } catch (e: ApiException) {
