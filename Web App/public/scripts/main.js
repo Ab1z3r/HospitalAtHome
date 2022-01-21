@@ -12,8 +12,8 @@ rhit.single_PatientsManager = null;
 rhit.single_SinglePatientsManager = null;
 
 
-/** PAGE CONTROLLERS **/ 
- 
+/** PAGE CONTROLLERS **/
+
 // Login Page Controller
 /**
  * PURPOSE: Handle all View and Controller interactions for the Patients Page
@@ -61,6 +61,15 @@ rhit.PatientsPageController = class {
 		oldList.removeAttribute("id");
 		oldList.hidden = true;
 		oldList.parentElement.appendChild(newList);
+
+		// * Adds listener to the select button in each patient card in the patients list
+		for (let i = 0; i < rhit.single_PatientsManager.length; i++) {
+			const patient = rhit.single_PatientsManager.getPatientAtIndex(i);
+			document.querySelector(`#selectButton${patient.id}`).onclick = (event) => {
+				console.log(`You clicked on ${patient.id}`);
+				window.location.href = `/single_patient.html?id=${patient.id}`;
+			}
+		}
 	}
 
 	_createCard(patient) {
@@ -72,7 +81,7 @@ rhit.PatientsPageController = class {
           							</div>
           							<div class="patientsCardInfo">
             							<p>Last online: ${this._parseDate(patient.lastOnline)}</p>
-            							<button id="selectButton" class="btn btn-primary" type="button">Select</button>
+            							<button id="selectButton${patient.id}" class="btn btn-primary" type="button">Select</button>
           							</div>
         						</div>
       						</div>`);
@@ -121,7 +130,7 @@ rhit.SinglePatientPageController = class {
 			medicinesCard.classList.remove("hidden");
 			vitalsCard.classList.add("hidden");
 			notesCard.classList.add("hidden");
-			
+
 		};
 
 		notesButton.onclick = (event) => {
@@ -145,7 +154,7 @@ rhit.SinglePatientPageController = class {
  * PURPOSE: Handle all Authentification (creation, deleting, searching for current users)
  * [USERS ARE HEALTHCARE PROFESSIONALS]
  */
- rhit.AuthManager = class {
+rhit.AuthManager = class {
 	constructor() {
 		this._user = null;
 	}
@@ -252,8 +261,7 @@ rhit.PatientsManager = class {
  * PURPOSE: Handles a Single Patient Information
  */
 rhit.SinglePatientManager = class {
-	constructor(uid) {
-	}
+	constructor(pid) {}
 }
 
 
@@ -297,7 +305,7 @@ rhit.checkForRedirects = () => {
 // Page Initialization
 /**
  * PURPOSE: Page Initialization takes place here. Depending what page a user is on
- * will direct the user to the correct webpag
+ * will direct the user to the correct webpage
  * 
  */
 rhit.initializePage = () => {
@@ -321,7 +329,7 @@ rhit.initializePage = () => {
 		rhit.single_SinglePatientsManager = new rhit.SinglePatientManager();
 		new rhit.SinglePatientPageController();
 	}
-	
+
 };
 
 // Page Status
