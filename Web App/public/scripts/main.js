@@ -78,6 +78,7 @@ rhit.PatientsPageController = class {
 		// * Click Listener for sign out on Patients Page
 		document.querySelector("#signOutLink").onclick = (event) => {
 			rhit.single_AuthManager.signOut();
+			window.location.href = "/";
 		};
 
 		document.querySelector("#patientsSearchButton").onclick = (event) => {
@@ -89,8 +90,8 @@ rhit.PatientsPageController = class {
 			if (patientSelect.value == "Last Online") {
 				rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE, "desc");
 
-			} else if (patientSelect.value == "My Patients") {
-
+			} else if (patientSelect.value == "My patients") {
+				rhit.single_PatientsManager.repopulate(this.updateList.bind(this), "patients");
 
 			} else if (patientSelect.value == "First Name") {
 				rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_FIRST_NAME, "asc");
@@ -108,7 +109,7 @@ rhit.PatientsPageController = class {
 				if (searchInput.value.length == 0) {
 					rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE, "desc");
 				} else if (!pressedBack && !/\s/.test(searchInput.value)) {
-					rhit.single_PatientsManager.repopulate(this.updateList.bind(this), searchInput.value);
+					rhit.single_PatientsManager.repopulate(this.updateList.bind(this), "name", searchInput.value);
 					rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 					pressedBack = true;
 				} else {
@@ -121,7 +122,6 @@ rhit.PatientsPageController = class {
 		})
 
 		rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE);
-		rhit.single_PrimaryProviderManager.beginListening();
 	}
 
 	updateList() {
@@ -138,12 +138,11 @@ rhit.PatientsPageController = class {
 		oldList.parentElement.appendChild(newList);
 
 		// * Adds listener to the select button in each patient card in the patients list
-		for (let i = 0; i < rhit.single_PatientsManager.length; i++) {
-			const patient = rhit.single_PatientsManager.getPatientAtIndex(i);
-			document.querySelector(`#selectButton${patient.id}`).onclick = (event) => {
-				console.log(`You clicked on ${patient.id}`);
-				window.location.href = `/single_patient.html?id=${patient.id}`;
-			}
+		const selectButtons = document.querySelectorAll("#selectButton");
+		for (const sel of selectButtons) {
+			sel.addEventListener("click", (event) => {
+				window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${sel.dataset.id}`;
+			})
 		}
 	}
 
@@ -156,7 +155,7 @@ rhit.PatientsPageController = class {
           							</div>
           							<div class="patientsCardInfo">
             							<p>Last online: ${this._parseDate(patient.lastOnline)}</p>
-            							<button id="selectButton${patient.id}" class="btn btn-primary" type="button">Select</button>
+            							<button data-id=${patient.id} id="selectButton" class="btn btn-primary" type="button">Select</button>
           							</div>
         						</div>
       						</div>`);
@@ -182,6 +181,16 @@ rhit.SinglePatientPageController = class {
 		const vitalsCard = document.querySelector("#vitalsCard");
 		const medicinesCard = document.querySelector("#medicinesCard");
 		const notesCard = document.querySelector("#notesCard");
+
+		// * Click Listener for sign out on Single Patient Page
+		document.querySelector("#signOutLink").onclick = (event) => {
+			rhit.single_AuthManager.signOut();
+			window.location.href = "/";
+		};
+
+		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
+			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
+		};
 
 		// When a user clicks any of the buttons from the button group
 		// (VITALS, MEDICINES, NOTES), the cards need to change as well
@@ -253,11 +262,12 @@ rhit.AuthManager = class {
 				const uid = user.uid;
 
 				console.log("The user is signed in ", uid);
-				// console.log('displayName :>> ', displayName);
 				console.log('email :>> ', email);
+				console.log('uid :>> ', uid);
 				// console.log('photoURL :>> ', photoURL);
 				// console.log('phoneNumber :>> ', phoneNumber);
-				console.log('uid :>> ', uid);
+				// console.log('displayName :>> ', displayName);
+
 			} else {
 				console.log("There is no user signed in!");
 			}
@@ -270,12 +280,15 @@ rhit.AuthManager = class {
 		const inputEmailEl = document.querySelector("#logonInput");
 		const inputPasswordEl = document.querySelector("#passwordInput");
 
-		console.log(`Log in for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
-		firebase.auth().signInWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value).catch(function (error) {
-			var errorCode = error.code;
-			var errorMessage = error.message;
-			console.log("Existing account log in error", errorCode, errorMessage);
-		});
+		// console.log(`Log in for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
+		firebase.auth().signInWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value)
+			.then(() => {
+				this.configureSignIn();
+			}).catch(function (error) {
+				var errorCode = error.code;
+				var errorMessage = error.message;
+				console.log("Existing account log in error", errorCode, errorMessage);
+			});
 	}
 
 	// * Handles Sign Out using Firebase
@@ -283,6 +296,12 @@ rhit.AuthManager = class {
 		firebase.auth().signOut().catch((error) => {
 			console.log("Sign out error");
 		});
+	}
+
+	// * Handles setting reference for Primary Provider Document
+	configureSignIn() {
+		rhit.single_PrimaryProviderManager.setReference(rhit.single_AuthManager.uid);
+		rhit.single_PrimaryProviderManager.beginListening();
 	}
 
 	// * Checks if there is currently a user signed
@@ -301,21 +320,24 @@ rhit.AuthManager = class {
  * PURPOSE: Handles Primary Provider documents
  */
 rhit.PrimaryProviderManager = class {
-	constructor(uid) {
-		this.uid = uid;
-		this._documentSnapshots = {};
-		this._ref = firebase.firestore().collection(rhit.COLLECTION_PRIMARY_PROVIDERS).doc(`${this.uid}`);
+	constructor() {
+		this._documentSnapshot = {};
+		this._ref = null;
 		this._unsubscribe = null;
 	}
 
 	beginListening() {
 		this._unsubscribe = this._ref.onSnapshot((doc) => {
 			if (doc.exists) {
-				this._document = doc;
+				this._documentSnapshot = doc;
 			} else {
 				this.add();
 			}
 		});
+	}
+
+	setReference(uid) {
+		this._ref = firebase.firestore().collection(rhit.COLLECTION_PRIMARY_PROVIDERS).doc(uid);
 	}
 
 	stopListening() {
@@ -323,7 +345,7 @@ rhit.PrimaryProviderManager = class {
 	}
 
 	add() {
-		console.log("Added a new Primary Provider");
+		// console.log("Added a new Primary Provider");
 
 		this._ref.set({
 				[rhit.PROVIDER_FIRST_NAME]: `${rhit.single_AuthManager.firstName}`,
@@ -348,6 +370,9 @@ rhit.PrimaryProviderManager = class {
 		);
 		return provider;
 	}
+	get lastName() {
+		return this._documentSnapshot.get(rhit.PROVIDER_LAST_NAME);
+	}
 }
 
 // Patients Manager
@@ -365,32 +390,48 @@ rhit.PatientsManager = class {
 	beginListening(changeListener, sortBy, direction) {
 		let query = this._ref.orderBy(sortBy, direction);
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
-			console.log("Patient Update!");
+			// console.log("Patient Update!");
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
 		});
-
 	}
 
-	//** USED FOR SEARCHING DOCUMENTS
-	repopulate(changeListener, value) {
-		console.log("INSIDE REPOPULATE");
+
+	//** USED FOR SEARCHING / FILTERING DOCUMENTS
+	repopulate(changeListener, searchBy, value = null) {
 		let matched = [];
-		var names = value.split(" ");
-		this._ref.where("firstName", "==", names[0])
-			.get()
-			.then((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					matched.push(doc);
+		if (searchBy == "name") {
+			var names = value.split(" ");
+			this._ref.where("firstName", "==", names[0])
+				.get()
+				.then((querySnapshot) => {
+					querySnapshot.forEach((doc) => {
+						matched.push(doc);
+					});
+					if (matched.length > 0) {
+						this._documentSnapshots = matched;
+						changeListener();
+					}
+				})
+				.catch((error) => {
+					console.log(`Error: ${error}`);
 				});
-				if (matched.length > 0) {
-					this._documentSnapshots = matched;
-					changeListener();
-				}
-			})
-			.catch((error) => {
-				console.log(`Error: ${error}`);
-			});
+		} else if (searchBy = "patients") {
+			this._ref.where("primaryProvider", "==", rhit.single_PrimaryProviderManager.lastName)
+				.get()
+				.then((querySnapshot) => {
+					querySnapshot.forEach((doc) => {
+						matched.push(doc);
+					});
+					if (matched.length > 0) {
+						this._documentSnapshots = matched;
+						changeListener();
+					}
+				})
+				.catch((error) => {
+					console.log(`Error: ${error}`);
+				});
+		}
 	}
 
 	stopListening() {
@@ -398,8 +439,6 @@ rhit.PatientsManager = class {
 	}
 
 	add() {
-		console.log("Added a new Patient");
-
 		this._ref.add({
 				[rhit.PATIENT_ADDRESS]: "address",
 				[rhit.PATIENT_BIRTHDATE]: "birthdate",
@@ -504,7 +543,7 @@ rhit.PatientsManager = class {
  * PURPOSE: Handles a Single Patient's Information
  */
 rhit.SinglePatientManager = class {
-		constructor(patientId) {
+	constructor(patientId) {
 		this._documentSnapshot = {};
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(patientId);
@@ -532,18 +571,18 @@ rhit.SinglePatientManager = class {
 
 	delete() {}
 
-	get lastName() {
-		return this._documentSnapshot.get(rhit.PATIENT_LASTNAME);
+	get firstName() {
+		return this._documentSnapshot.get(rhit.PATIENT_FIRST_NAME);
 	}
 
-	get firstName() {
-		return this._documentSnapshot.get(rhit.PATIENT_FIRSTNAME);
+	get lastName() {
+		return this._documentSnapshot.get(rhit.PATIENT_LAST_NAME);
 	}
 
 	get id() {
 		return this._id;
 	}
- }
+}
 
 // Medicine Manager
 /**
@@ -696,10 +735,13 @@ rhit.initializePage = () => {
 	if (document.querySelector("#patientsPage")) {
 		console.log("You are on the patients page.");
 		const uid = urlParams.get("uid");
-		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager(uid);
 		rhit.single_PatientsManager = new rhit.PatientsManager();
 		rhit.single_MedicinesManager = new rhit.MedicinesManager();
 		rhit.single_NotesManager = new rhit.NotesManager();
+
+		rhit.single_PrimaryProviderManager.setReference(uid);
+		rhit.single_PrimaryProviderManager.beginListening();
+
 		new rhit.PatientsPageController();
 	}
 
@@ -734,6 +776,7 @@ rhit.pageStatus = function () {
 /** MAIN **/
 rhit.main = function () {
 	rhit.single_AuthManager = new rhit.AuthManager();
+	rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
 	rhit.single_AuthManager.beginListening(rhit.pageStatus.bind(this));
 };
 
