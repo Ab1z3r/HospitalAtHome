@@ -73,6 +73,7 @@ rhit.LoginPageController = class {
  */
 rhit.PatientsPageController = class {
 	constructor() {
+		let pressedBack = false;
 		const searchInput = document.querySelector("#patientSearchInput");
 		// * Click Listener for sign out on Patients Page
 		document.querySelector("#signOutLink").onclick = (event) => {
@@ -83,14 +84,31 @@ rhit.PatientsPageController = class {
 			rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 		};
 
-		searchInput.addEventListener("input", (event) => {
-			if (searchInput.value.length == 0) {
-				rhit.single_PatientsManager.beginListening(this.updateList.bind(this));
+		
+		// * Handles Searching for a Patient
+		searchInput.addEventListener("keyup", (event) => {
+			if (event.keyCode === 8) { // 8 is the keyCode for Backspace
+				event.preventDefault();
+				if (searchInput.value.length == 0) {
+					rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE);
+				}
+				else if (!pressedBack && !/\s/.test(searchInput.value)) {
+					rhit.single_PatientsManager.repopulate(this.updateList.bind(this), searchInput.value);
+					rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
+					pressedBack = true;
+				}
+				else {
+					rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
+				}
 			}
-			rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
-		});
+			else {
+				console.log(`${searchInput.value}`);
+				rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
+				pressedBack = false;
+			}
+		})
 
-		rhit.single_PatientsManager.beginListening(this.updateList.bind(this));
+		rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE);
 		rhit.single_PrimaryProviderManager.beginListening();
 	}
 
@@ -316,13 +334,36 @@ rhit.PatientsManager = class {
 		this._unsubscribe = null;
 	}
 
-	beginListening(changeListener) {
-		let query = this._ref.orderBy(rhit.PATIENT_LAST_ONLINE, "desc");
-		this._unsubscribe = query.onSnapshot((querySnapshot) => {
-			console.log("Patient Update!");
-			this._documentSnapshots = querySnapshot.docs;
-			changeListener();
-		});
+	beginListening(changeListener, sortBy) {
+		if (sortBy == rhit.PATIENT_LAST_ONLINE) {
+			let query = this._ref.orderBy(rhit.PATIENT_LAST_ONLINE, "desc");
+			this._unsubscribe = query.onSnapshot((querySnapshot) => {
+				console.log("Patient Update!");
+				this._documentSnapshots = querySnapshot.docs;
+				changeListener();
+			});
+		}
+	}
+
+	//** USED FOR SEARCHING DOCUMENTS
+	repopulate(changeListener, value) {
+		console.log("INSIDE REPOPULATE");
+		let matched = [];
+		var names = value.split(" ");
+		this._ref.where("firstName", "==", names[0])
+			.get()
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					matched.push(doc);
+				});
+				if (matched.length > 0) {
+					this._documentSnapshots = matched;
+					changeListener();
+				}
+			})
+			.catch((error) => {
+				console.log(`Error: ${error}`);
+			});
 	}
 
 	stopListening() {
@@ -365,15 +406,14 @@ rhit.PatientsManager = class {
 	// ** FILTER THROUGH EXISTING DOCUMENT SNAPSHOTS
 	// Make it where you can search/filter without needing to iterating
 	search(value, changeListener) {
-	
-	// Code that iterates through without the need to reload from the firestore
-	// Does not contain space (just first name)
+		// Code that iterates through without the need to reload from the firestore
+		// Does not contain space (just first name)
 		if (!/\s/.test(value)) {
 			let matched = [];
 			for (let i = 0; i < this.length; i++) {
-				if (rhit.single_PatientsManager.getPatientAtIndex(i).firstName == value) {		
+				if (rhit.single_PatientsManager.getPatientAtIndex(i).firstName == value) {
 					matched.push(this._documentSnapshots[i]);
-				 }
+				}
 			}
 			if (matched.length > 0) {
 				this._documentSnapshots = matched;
@@ -386,10 +426,10 @@ rhit.PatientsManager = class {
 			let matched = [];
 			var names = value.split(" ");
 			for (let i = 0; i < this.length; i++) {
-				if (rhit.single_PatientsManager.getPatientAtIndex(i).firstName == names[0]
-				&& rhit.single_PatientsManager.getPatientAtIndex(i).lastName == names[1]) {		
+				if (rhit.single_PatientsManager.getPatientAtIndex(i).firstName == names[0] &&
+					rhit.single_PatientsManager.getPatientAtIndex(i).lastName == names[1]) {
 					matched.push(this._documentSnapshots[i]);
-				 }
+				}
 			}
 			if (matched.length > 0) {
 				this._documentSnapshots = matched;
