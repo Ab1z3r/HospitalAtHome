@@ -89,8 +89,8 @@ rhit.PatientsPageController = class {
 			if (patientSelect.value == "Last Online") {
 				rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE, "desc");
 
-			} else if (patientSelect.value == "My Patients") {
-
+			} else if (patientSelect.value == "My patients") {
+				rhit.single_PatientsManager.repopulate(this.updateList.bind(this), "patients");
 
 			} else if (patientSelect.value == "First Name") {
 				rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_FIRST_NAME, "asc");
@@ -108,7 +108,7 @@ rhit.PatientsPageController = class {
 				if (searchInput.value.length == 0) {
 					rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE, "desc");
 				} else if (!pressedBack && !/\s/.test(searchInput.value)) {
-					rhit.single_PatientsManager.repopulate(this.updateList.bind(this), searchInput.value);
+					rhit.single_PatientsManager.repopulate(this.updateList.bind(this), "name", searchInput.value);
 					rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 					pressedBack = true;
 				} else {
@@ -303,7 +303,7 @@ rhit.AuthManager = class {
 rhit.PrimaryProviderManager = class {
 	constructor(uid) {
 		this.uid = uid;
-		this._documentSnapshots = {};
+		this._documentSnapshot = {};
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PRIMARY_PROVIDERS).doc(`${this.uid}`);
 		this._unsubscribe = null;
 	}
@@ -311,7 +311,7 @@ rhit.PrimaryProviderManager = class {
 	beginListening() {
 		this._unsubscribe = this._ref.onSnapshot((doc) => {
 			if (doc.exists) {
-				this._document = doc;
+				this._documentSnapshot = doc;
 			} else {
 				this.add();
 			}
@@ -348,6 +348,9 @@ rhit.PrimaryProviderManager = class {
 		);
 		return provider;
 	}
+	get lastName() {
+		return this._documentSnapshot.get(rhit.PROVIDER_LAST_NAME);
+	}
 }
 
 // Patients Manager
@@ -369,28 +372,46 @@ rhit.PatientsManager = class {
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
 		});
-
 	}
 
-	//** USED FOR SEARCHING DOCUMENTS
-	repopulate(changeListener, value) {
+
+	//** USED FOR SEARCHING / FILTERING DOCUMENTS
+	repopulate(changeListener, searchBy, value = null) {
 		console.log("INSIDE REPOPULATE");
 		let matched = [];
-		var names = value.split(" ");
-		this._ref.where("firstName", "==", names[0])
-			.get()
-			.then((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					matched.push(doc);
+		if (searchBy == "name") {
+			var names = value.split(" ");
+			this._ref.where("firstName", "==", names[0])
+				.get()
+				.then((querySnapshot) => {
+					querySnapshot.forEach((doc) => {
+						matched.push(doc);
+					});
+					if (matched.length > 0) {
+						this._documentSnapshots = matched;
+						changeListener();
+					}
+				})
+				.catch((error) => {
+					console.log(`Error: ${error}`);
 				});
-				if (matched.length > 0) {
-					this._documentSnapshots = matched;
-					changeListener();
-				}
-			})
-			.catch((error) => {
-				console.log(`Error: ${error}`);
-			});
+		}
+		else if (searchBy = "patients") {
+			this._ref.where("primaryProvider", "==", rhit.single_PrimaryProviderManager.lastName)
+				.get()
+				.then((querySnapshot) => {
+					querySnapshot.forEach((doc) => {
+						matched.push(doc);
+					});
+					if (matched.length > 0) {
+						this._documentSnapshots = matched;
+						changeListener();
+					}
+				})
+				.catch((error) => {
+					console.log(`Error: ${error}`);
+				});
+		}
 	}
 
 	stopListening() {
@@ -532,12 +553,12 @@ rhit.SinglePatientManager = class {
 
 	delete() {}
 
-	get lastName() {
-		return this._documentSnapshot.get(rhit.PATIENT_LASTNAME);
+	get firstName() {
+		return this._documentSnapshot.get(rhit.PATIENT_FIRST_NAME);
 	}
 
-	get firstName() {
-		return this._documentSnapshot.get(rhit.PATIENT_FIRSTNAME);
+	get lastName() {
+		return this._documentSnapshot.get(rhit.PATIENT_LAST_NAME);
 	}
 
 	get id() {
