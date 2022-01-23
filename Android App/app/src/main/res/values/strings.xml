@@ -19,4 +19,6 @@
     <string name="please_enter_the_following_information">Please enter the following information</string>
     <string name="logon_id">Logon ID</string>
     <string name="password">Password</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

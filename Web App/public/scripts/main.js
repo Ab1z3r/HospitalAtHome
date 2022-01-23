@@ -1,6 +1,5 @@
 var rhit = rhit || {};
 
-
 /** PRIMARY PROVIDER COLLECTION **/
 rhit.COLLECTION_PRIMARY_PROVIDERS = "primaryProviders";
 rhit.PROVIDER_FIRST_NAME = "firstName";
@@ -38,14 +37,13 @@ rhit.NOTE_NOTE = "note"
 rhit.single_AuthManager = null;
 rhit.single_PrimaryProviderManager = null;
 rhit.single_PatientsManager = null;
-rhit.single_SinglePatientsManager = null;
+rhit.single_SinglePatientManager = null;
 
 rhit.single_MedicinesManager = null;
 rhit.single_NotesManager = null;
 
 
 /** PAGE CONTROLLERS **/
-
 // Login Page Controller
 /**
  * PURPOSE: Handle all View and Controller interactions for the Patients Page
@@ -138,6 +136,15 @@ rhit.PatientsPageController = class {
 		oldList.removeAttribute("id");
 		oldList.hidden = true;
 		oldList.parentElement.appendChild(newList);
+
+		// * Adds listener to the select button in each patient card in the patients list
+		for (let i = 0; i < rhit.single_PatientsManager.length; i++) {
+			const patient = rhit.single_PatientsManager.getPatientAtIndex(i);
+			document.querySelector(`#selectButton${patient.id}`).onclick = (event) => {
+				console.log(`You clicked on ${patient.id}`);
+				window.location.href = `/single_patient.html?id=${patient.id}`;
+			}
+		}
 	}
 
 	_createCard(patient) {
@@ -149,7 +156,7 @@ rhit.PatientsPageController = class {
           							</div>
           							<div class="patientsCardInfo">
             							<p>Last online: ${this._parseDate(patient.lastOnline)}</p>
-            							<button id="selectButton" class="btn btn-primary" type="button">Select</button>
+            							<button id="selectButton${patient.id}" class="btn btn-primary" type="button">Select</button>
           							</div>
         						</div>
       						</div>`);
@@ -211,6 +218,13 @@ rhit.SinglePatientPageController = class {
 			vitalsCard.classList.add("hidden");
 		};
 
+		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
+	}
+
+	updateView() {
+		document.querySelector("#singlePatientHeader").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
+		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
+		document.querySelector("#singlePatientTitle").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
 	}
 }
 
@@ -219,7 +233,7 @@ rhit.SinglePatientPageController = class {
 
 // Auth Manager
 /**
- * PURPOSE: Handle all Authentification (creation, deleting, searching for current users)
+ * PURPOSE: Handle all Authentication (creation, deleting, searching for current users)
  * [USERS ARE HEALTHCARE PROFESSIONALS]
  */
 rhit.AuthManager = class {
@@ -358,7 +372,6 @@ rhit.PatientsManager = class {
 
 	}
 
-
 	//** USED FOR SEARCHING DOCUMENTS
 	repopulate(changeListener, value) {
 		console.log("INSIDE REPOPULATE");
@@ -491,8 +504,46 @@ rhit.PatientsManager = class {
  * PURPOSE: Handles a Single Patient's Information
  */
 rhit.SinglePatientManager = class {
-	constructor(uid) {}
-}
+		constructor(patientId) {
+		this._documentSnapshot = {};
+		this._unsubscribe = null;
+		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(patientId);
+	}
+
+	beginListening(changeListener) {
+		this._unsubscribe = this._ref.onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Document data:", doc.data());
+				this._documentSnapshot = doc;
+				changeListener();
+			} else {
+				console.log("No such document!");
+			}
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	// TODO implement update and delete if needed
+
+	update() {}
+
+	delete() {}
+
+	get lastName() {
+		return this._documentSnapshot.get(rhit.PATIENT_LASTNAME);
+	}
+
+	get firstName() {
+		return this._documentSnapshot.get(rhit.PATIENT_FIRSTNAME);
+	}
+
+	get id() {
+		return this._id;
+	}
+ }
 
 // Medicine Manager
 /**
@@ -630,7 +681,7 @@ rhit.checkForRedirects = () => {
 // Page Initialization
 /**
  * PURPOSE: Page Initialization takes place here. Depending what page a user is on
- * will direct the user to the correct webpag
+ * will direct the user to the correct webpage
  * 
  */
 rhit.initializePage = () => {
@@ -654,8 +705,12 @@ rhit.initializePage = () => {
 
 	// * initializes page controller for Patients Page
 	if (document.querySelector("#singlePatientPage")) {
-		console.log("You are on the single patient page.");
-		rhit.single_SinglePatientsManager = new rhit.SinglePatientManager();
+		console.log("You are on a single patient page.");
+		const patientId = urlParams.get("id");
+		if (!patientId) {
+			window.location.href = "/patients.html";
+		}
+		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(patientId);
 		new rhit.SinglePatientPageController();
 	}
 
@@ -683,8 +738,6 @@ rhit.main = function () {
 };
 
 rhit.main();
-
-
 
 /**
  * * TOOLS

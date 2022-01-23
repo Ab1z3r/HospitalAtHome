@@ -1,4 +1,4 @@
-package com.example.safetynetapp.ui.gallery
+package com.example.safetynetapp
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,8 +8,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.safetynetapp.R
 import com.example.safetynetapp.databinding.FragmentGalleryBinding
+import com.example.safetynetapp.ui.gallery.GalleryViewModel
 
 class GalleryFragment : Fragment() {
 

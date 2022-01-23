@@ -1,4 +1,4 @@
-package com.example.safetynetapp.ui.home
+package com.example.safetynetapp
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
