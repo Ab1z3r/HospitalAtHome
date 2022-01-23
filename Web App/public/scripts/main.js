@@ -75,6 +75,8 @@ rhit.PatientsPageController = class {
 	constructor() {
 		let pressedBack = false;
 		const searchInput = document.querySelector("#patientSearchInput");
+		const patientSelect = document.querySelector("#patientsSelect");
+
 		// * Click Listener for sign out on Patients Page
 		document.querySelector("#signOutLink").onclick = (event) => {
 			rhit.single_AuthManager.signOut();
@@ -84,25 +86,37 @@ rhit.PatientsPageController = class {
 			rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 		};
 
-		
+		// * Handles filtering of Patients
+		patientSelect.addEventListener('change', (event) => {
+			if (patientSelect.value == "Last Online") {
+				rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE, "desc");
+
+			} else if (patientSelect.value == "My Patients") {
+
+
+			} else if (patientSelect.value == "First Name") {
+				rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_FIRST_NAME, "asc");
+
+			} else if (patientSelect.value == "Last Name") {
+				rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_NAME, "asc");
+			}
+		});
+
+
 		// * Handles Searching for a Patient
 		searchInput.addEventListener("keyup", (event) => {
 			if (event.keyCode === 8) { // 8 is the keyCode for Backspace
 				event.preventDefault();
 				if (searchInput.value.length == 0) {
-					rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE);
-				}
-				else if (!pressedBack && !/\s/.test(searchInput.value)) {
+					rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE, "desc");
+				} else if (!pressedBack && !/\s/.test(searchInput.value)) {
 					rhit.single_PatientsManager.repopulate(this.updateList.bind(this), searchInput.value);
 					rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 					pressedBack = true;
-				}
-				else {
+				} else {
 					rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 				}
-			}
-			else {
-				console.log(`${searchInput.value}`);
+			} else {
 				rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 				pressedBack = false;
 			}
@@ -334,16 +348,16 @@ rhit.PatientsManager = class {
 		this._unsubscribe = null;
 	}
 
-	beginListening(changeListener, sortBy) {
-		if (sortBy == rhit.PATIENT_LAST_ONLINE) {
-			let query = this._ref.orderBy(rhit.PATIENT_LAST_ONLINE, "desc");
-			this._unsubscribe = query.onSnapshot((querySnapshot) => {
-				console.log("Patient Update!");
-				this._documentSnapshots = querySnapshot.docs;
-				changeListener();
-			});
-		}
+	beginListening(changeListener, sortBy, direction) {
+		let query = this._ref.orderBy(sortBy, direction);
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			console.log("Patient Update!");
+			this._documentSnapshots = querySnapshot.docs;
+			changeListener();
+		});
+
 	}
+
 
 	//** USED FOR SEARCHING DOCUMENTS
 	repopulate(changeListener, value) {
@@ -377,10 +391,10 @@ rhit.PatientsManager = class {
 				[rhit.PATIENT_ADDRESS]: "address",
 				[rhit.PATIENT_BIRTHDATE]: "birthdate",
 				[rhit.PATIENT_BLOOD_PRESSURE]: {},
-				[rhit.PATIENT_FIRST_NAME]: "Nathan",
+				[rhit.PATIENT_FIRST_NAME]: "Abby",
 				[rhit.PATIENT_GOOGLE_ID]: "googleID",
 				[rhit.PATIENT_HEIGHT]: {},
-				[rhit.PATIENT_LAST_NAME]: "Drake",
+				[rhit.PATIENT_LAST_NAME]: "Holder",
 				[rhit.PATIENT_LAST_ONLINE]: firebase.firestore.Timestamp.now(),
 				[rhit.PATIENT_PRIMARY_PROVIDER]: "primaryProvider",
 				[rhit.PATIENT_PULSE]: {},
