@@ -1,14 +1,21 @@
 var rhit = rhit || {};
 
+
+/** PRIMARY PROVIDER COLLECTION **/
+rhit.COLLECTION_PRIMARY_PROVIDERS = "primaryProviders";
+rhit.PROVIDER_FIRST_NAME = "firstName";
+rhit.PROVIDER_LAST_NAME = "lastName";
+rhit.PROVIDER_PATIENTS = "patients";
+
 /** PATIENT COLLECTION **/
 rhit.COLLECTION_PATIENTS = "patients";
 rhit.PATIENT_ADDRESS = "address";
 rhit.PATIENT_BIRTHDATE = "birthdate";
 rhit.PATIENT_BLOOD_PRESSURE = "bloodPressure";
-rhit.PATIENT_FIRSTNAME = "firstName";
+rhit.PATIENT_FIRST_NAME = "firstName";
 rhit.PATIENT_GOOGLE_ID = "googleID";
 rhit.PATIENT_HEIGHT = "height";
-rhit.PATIENT_LASTNAME = "lastName";
+rhit.PATIENT_LAST_NAME = "lastName";
 rhit.PATIENT_LAST_ONLINE = "lastOnline";
 rhit.PATIENT_PRIMARY_PROVIDER = "primaryProvider";
 rhit.PATIENT_PULSE = "pulse";
@@ -29,6 +36,7 @@ rhit.NOTE_LAST_TOUCHED = "lastTouched"
 rhit.NOTE_NOTE = "note"
 
 rhit.single_AuthManager = null;
+rhit.single_PrimaryProviderManager = null;
 rhit.single_PatientsManager = null;
 rhit.single_SinglePatientsManager = null;
 
@@ -65,13 +73,25 @@ rhit.LoginPageController = class {
  */
 rhit.PatientsPageController = class {
 	constructor() {
+		const searchInput = document.querySelector("#patientSearchInput");
 		// * Click Listener for sign out on Patients Page
 		document.querySelector("#signOutLink").onclick = (event) => {
 			rhit.single_AuthManager.signOut();
 		};
 
+		document.querySelector("#patientsSearchButton").onclick = (event) => {
+			rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
+		};
+
+		searchInput.addEventListener("input", (event) => {
+			if (searchInput.value.length == 0) {
+				rhit.single_PatientsManager.beginListening(this.updateList.bind(this));
+			}
+			rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
+		});
+
 		rhit.single_PatientsManager.beginListening(this.updateList.bind(this));
-		rhit.single_PatientsManager.add();
+		rhit.single_PrimaryProviderManager.beginListening();
 	}
 
 	updateList() {
@@ -230,6 +250,60 @@ rhit.AuthManager = class {
 	}
 }
 
+// Primary Provider Manager
+/**
+ * PURPOSE: Handles Primary Provider documents
+ */
+rhit.PrimaryProviderManager = class {
+	constructor(uid) {
+		this.uid = uid;
+		this._documentSnapshots = {};
+		this._ref = firebase.firestore().collection(rhit.COLLECTION_PRIMARY_PROVIDERS).doc(`${this.uid}`);
+		this._unsubscribe = null;
+	}
+
+	beginListening() {
+		this._unsubscribe = this._ref.onSnapshot((doc) => {
+			if (doc.exists) {
+				this._document = doc;
+			} else {
+				this.add();
+			}
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	add() {
+		console.log("Added a new Primary Provider");
+
+		this._ref.set({
+				[rhit.PROVIDER_FIRST_NAME]: `${rhit.single_AuthManager.firstName}`,
+				[rhit.PROVIDER_LAST_NAME]: `${rhit.single_AuthManager.lastName}`,
+				[rhit.PROVIDER_PATIENTS]: [],
+			})
+			.then(function (docRef) {
+				console.log(`Document written`);
+			})
+			.catch(function (error) {
+				console.log("Error adding document: ", error);
+			});
+	}
+
+	getProvider() {
+		const docSnapshot = this._document;
+		const provider = new rhit.PrimaryProvider(
+			docSnapshot.id,
+			docSnapshot.get(rhit.PROVIDER_FIRST_NAME),
+			docSnapshot.get(rhit.PROVIDER_LAST_NAME),
+			docSnapshot.get(rhit.PROVIDER_PATIENTS),
+		);
+		return provider;
+	}
+}
+
 // Patients Manager
 /**
  * PURPOSE: Handles a Patient Document [NOT A HEALTHCARE PROFESSIONAL]
@@ -262,10 +336,10 @@ rhit.PatientsManager = class {
 				[rhit.PATIENT_ADDRESS]: "address",
 				[rhit.PATIENT_BIRTHDATE]: "birthdate",
 				[rhit.PATIENT_BLOOD_PRESSURE]: {},
-				[rhit.PATIENT_FIRSTNAME]: "Nathan",
+				[rhit.PATIENT_FIRST_NAME]: "Nathan",
 				[rhit.PATIENT_GOOGLE_ID]: "googleID",
 				[rhit.PATIENT_HEIGHT]: {},
-				[rhit.PATIENT_LASTNAME]: "Prescot",
+				[rhit.PATIENT_LAST_NAME]: "Drake",
 				[rhit.PATIENT_LAST_ONLINE]: firebase.firestore.Timestamp.now(),
 				[rhit.PATIENT_PRIMARY_PROVIDER]: "primaryProvider",
 				[rhit.PATIENT_PULSE]: {},
@@ -288,8 +362,40 @@ rhit.PatientsManager = class {
 			});
 	}
 
-	get length() {
-		return this._documentSnapshots.length;
+	// ** FILTER THROUGH EXISTING DOCUMENT SNAPSHOTS
+	// Make it where you can search/filter without needing to iterating
+	search(value, changeListener) {
+	
+	// Code that iterates through without the need to reload from the firestore
+	// Does not contain space (just first name)
+		if (!/\s/.test(value)) {
+			let matched = [];
+			for (let i = 0; i < this.length; i++) {
+				if (rhit.single_PatientsManager.getPatientAtIndex(i).firstName == value) {		
+					matched.push(this._documentSnapshots[i]);
+				 }
+			}
+			if (matched.length > 0) {
+				this._documentSnapshots = matched;
+			}
+			changeListener();
+		}
+
+		// Does contain space (first and last name)
+		else if (/\s/.test(value)) {
+			let matched = [];
+			var names = value.split(" ");
+			for (let i = 0; i < this.length; i++) {
+				if (rhit.single_PatientsManager.getPatientAtIndex(i).firstName == names[0]
+				&& rhit.single_PatientsManager.getPatientAtIndex(i).lastName == names[1]) {		
+					matched.push(this._documentSnapshots[i]);
+				 }
+			}
+			if (matched.length > 0) {
+				this._documentSnapshots = matched;
+			}
+			changeListener();
+		}
 	}
 
 	getPatientAtIndex(index) {
@@ -298,10 +404,10 @@ rhit.PatientsManager = class {
 			docSnapshot.get(rhit.PATIENT_ADDRESS),
 			docSnapshot.get(rhit.PATIENT_BIRTHDATE),
 			docSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE),
-			docSnapshot.get(rhit.PATIENT_FIRSTNAME),
+			docSnapshot.get(rhit.PATIENT_FIRST_NAME),
 			docSnapshot.get(rhit.PATIENT_GOOGLE_ID),
 			docSnapshot.get(rhit.PATIENT_HEIGHT),
-			docSnapshot.get(rhit.PATIENT_LASTNAME),
+			docSnapshot.get(rhit.PATIENT_LAST_NAME),
 			docSnapshot.get(rhit.PATIENT_LAST_ONLINE),
 			docSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER),
 			docSnapshot.get(rhit.PATIENT_PULSE),
@@ -311,6 +417,19 @@ rhit.PatientsManager = class {
 		);
 		return patient;
 	}
+
+	set documentSnapshots(queries) {
+		this._documentSnapshots = queries;
+	}
+
+	get documentSnapshots() {
+		return this.documentSnapshots;
+	}
+
+	get length() {
+		return this._documentSnapshots.length;
+	}
+
 }
 
 // Single Patients Manager
@@ -335,14 +454,14 @@ rhit.MedicinesManager = class {
 
 	add() {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('medicines').add({
-			[rhit.MEDICINE_DOSAGE]: "dosage",
-			[rhit.MEDICINE_NAME]: "name",
-			[rhit.MEDICINE_PRIMARY_PROVIDER]: "primaryProvider",
-			[rhit.MEDICINE_ISVALID]: "isValid", 
-			[rhit.MEDICINE_LAST_TOUCHED]:firebase.firestore.Timestamp.now(),
-		})
-		.then(function () {
-			console.log(`Document created in Medicines Collection`);
+				[rhit.MEDICINE_DOSAGE]: "dosage",
+				[rhit.MEDICINE_NAME]: "name",
+				[rhit.MEDICINE_PRIMARY_PROVIDER]: "primaryProvider",
+				[rhit.MEDICINE_ISVALID]: "isValid",
+				[rhit.MEDICINE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			})
+			.then(function () {
+				console.log(`Document created in Medicines Collection`);
 			})
 			.catch(function (error) {
 				console.log("Error adding medicine document: ", error);
@@ -350,15 +469,13 @@ rhit.MedicinesManager = class {
 	}
 
 	set id(docRef) {
-		 this._id = docRef;
+		this._id = docRef;
 	}
 
 	get id() {
 		return this._id;
 	}
 }
-
-
 
 // Notes Manager
 /**
@@ -374,12 +491,12 @@ rhit.NotesManager = class {
 
 	add() {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('notes').add({
-			[rhit.NOTE_CREATED_BY]: "Dr.-----",
-			[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
-			[rhit.NOTE_NOTE]: "This is a placeholder note",
-		})
-		.then(function () {
-			console.log(`Document created in Notes Collection`);
+				[rhit.NOTE_CREATED_BY]: "Dr.-----",
+				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+				[rhit.NOTE_NOTE]: "This is a placeholder note",
+			})
+			.then(function () {
+				console.log(`Document created in Notes Collection`);
 			})
 			.catch(function (error) {
 				console.log("Error adding note document: ", error);
@@ -388,12 +505,12 @@ rhit.NotesManager = class {
 
 	set id(docRef) {
 		this._id = docRef;
-   }
+	}
 
-   get id() {
-	   return this._id;
-   }
-	
+	get id() {
+		return this._id;
+	}
+
 }
 
 
@@ -424,6 +541,19 @@ rhit.Patient = class {
 	}
 }
 
+// Primary Provider Wrapper
+/**
+ * PURPOSE: Holds all data relevant to a signed in primary provider
+ */
+rhit.PrimaryProvider = class {
+	constructor(id, firstName, lastName, patients) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.patient = patients;
+	}
+}
+
 /** PAGE MANAGEMENT **/
 
 // Redirects
@@ -435,7 +565,7 @@ rhit.Patient = class {
 rhit.checkForRedirects = () => {
 	// * Checks whether the user is logged in an redirects the page accordingly
 	if (document.querySelector("#loginPage") && rhit.single_AuthManager.isSignedIn) {
-		window.location.href = "/patients.html";
+		window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 	}
 	if (!document.querySelector("#loginPage") && !rhit.single_AuthManager.isSignedIn) {
 		window.location.href = "/";
@@ -460,6 +590,8 @@ rhit.initializePage = () => {
 	// * initializes page controller for Patients Page
 	if (document.querySelector("#patientsPage")) {
 		console.log("You are on the patients page.");
+		const uid = urlParams.get("uid");
+		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager(uid);
 		rhit.single_PatientsManager = new rhit.PatientsManager();
 		rhit.single_MedicinesManager = new rhit.MedicinesManager();
 		rhit.single_NotesManager = new rhit.NotesManager();
