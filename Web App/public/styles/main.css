@@ -358,8 +358,13 @@ body {
 }
 
 [id$=Card] a {
-  color: var(--main-color);
+  color: black;
   text-decoration: none;
+}
+
+[id$=Card] a:hover {
+  color: var(--main-color);
+  text-decoration: underline;
 }
 
 #singlePatientContact {

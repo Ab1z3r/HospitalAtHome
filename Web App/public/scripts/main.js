@@ -204,6 +204,8 @@ rhit.SinglePatientPageController = class {
 			medicinesCard.classList.add("hidden");
 			notesCard.classList.add("hidden");
 
+			updateVitalsView()
+
 		};
 
 		medicinesButton.onclick = (event) => {
@@ -215,6 +217,8 @@ rhit.SinglePatientPageController = class {
 			vitalsCard.classList.add("hidden");
 			notesCard.classList.add("hidden");
 
+			updateMedicinesView()
+
 		};
 
 		notesButton.onclick = (event) => {
@@ -225,6 +229,8 @@ rhit.SinglePatientPageController = class {
 			notesCard.classList.remove("hidden");
 			medicinesCard.classList.add("hidden");
 			vitalsCard.classList.add("hidden");
+
+			updateNoteView();
 		};
 
 		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
@@ -234,6 +240,18 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#singlePatientHeader").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
 		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
 		document.querySelector("#singlePatientTitle").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
+		this.updateVitalsView()
+	}
+
+	updateVitalsView() {
+		const singlePatient = rhit.single_SinglePatientManager.getPatient()
+
+		document.querySelector("#weightData").innerHTML = `Weight: ${singlePatient.weight.values().next().value}`;
+		document.querySelector("#spo2Data").innerHTML = `SPO2: ${singlePatient.spo2.values().next().value}`;
+		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: ${singlePatient.bloodPressure.values().next().value}`;
+		document.querySelector("#heightData").innerHTML = `Height: ${singlePatient.height.values().next().value}`;
+		document.querySelector("#pulseData").innerHTML = `Pulse: ${singlePatient.pulse.values().next().value}`;
+		document.querySelector("#temperatureData").innerHTML = `Temperature: ${singlePatient.temperature.values().next().value}`;
 	}
 }
 
@@ -547,6 +565,7 @@ rhit.SinglePatientManager = class {
 		this._documentSnapshot = {};
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(patientId);
+		this._id = patientId;
 	}
 
 	beginListening(changeListener) {
@@ -571,16 +590,85 @@ rhit.SinglePatientManager = class {
 
 	delete() {}
 
+	
+	get id() {
+		return this._id;
+	}
+
+	get address() {
+		return this._documentSnapshot.get(rhit.PATIENT_ADDRESS);
+	}
+
+	get birthdate() {
+		return this._documentSnapshot.get(rhit.PATIENT_BIRTHDATE);
+	}
+
+	get bloodPressure() {
+		return this._documentSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE);
+	}
+
 	get firstName() {
 		return this._documentSnapshot.get(rhit.PATIENT_FIRST_NAME);
+	}
+
+	get googleID() {
+		return this._documentSnapshot.get(rhit.PATIENT_GOOGLE_ID);
+	}
+
+	get height() {
+		return this._documentSnapshot.get(rhit.PATIENT_HEIGHT);
 	}
 
 	get lastName() {
 		return this._documentSnapshot.get(rhit.PATIENT_LAST_NAME);
 	}
 
+	get lastOnline() {
+		return this._documentSnapshot.get(rhit.PATIENT_LAST_ONLINE);
+	}
+
+	get primaryProvider() {
+		return this._documentSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER);
+	}
+
+	get pulse() {
+		return this._documentSnapshot.get(rhit.PATIENT_PULSE);
+	}
+
+	get spo2() {
+		return this._documentSnapshot.get(rhit.PATIENT_SPO2);
+	}
+
+	get temperature() {
+		return this._documentSnapshot.get(rhit.PATIENT_TEMPERATURE);
+	}
+
+	get weight() {
+		return this._documentSnapshot.get(rhit.PATIENT_WEIGHT);
+	}
+
 	get id() {
 		return this._id;
+	}
+	
+	getPatient() {
+		const docSnapshot = this._documentSnapshot;
+		const patient = new rhit.Patient(docSnapshot.id,
+			docSnapshot.get(rhit.PATIENT_ADDRESS),
+			docSnapshot.get(rhit.PATIENT_BIRTHDATE),
+			docSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE),
+			docSnapshot.get(rhit.PATIENT_FIRST_NAME),
+			docSnapshot.get(rhit.PATIENT_GOOGLE_ID),
+			docSnapshot.get(rhit.PATIENT_HEIGHT),
+			docSnapshot.get(rhit.PATIENT_LAST_NAME),
+			docSnapshot.get(rhit.PATIENT_LAST_ONLINE),
+			docSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER),
+			docSnapshot.get(rhit.PATIENT_PULSE),
+			docSnapshot.get(rhit.PATIENT_SPO2),
+			docSnapshot.get(rhit.PATIENT_TEMPERATURE),
+			docSnapshot.get(rhit.PATIENT_WEIGHT)
+		);
+		return patient;
 	}
 }
 
@@ -671,17 +759,17 @@ rhit.Patient = class {
 		this.id = id;
 		this.address = address;
 		this.birthdate = birthdate;
-		this.bloodPressure = bloodPressure;
+		this.bloodPressure = objectToMap(bloodPressure);
 		this.firstName = firstName;
 		this.googleID = googleID;
-		this.height = height;
+		this.height = objectToMap(height);
 		this.lastName = lastName;
 		this.lastOnline = lastOnline;
 		this.primaryProvider = primaryProvider;
-		this.pulse = pulse;
-		this.spo2 = spo2;
-		this.temperature = temperature;
-		this.weight = weight;
+		this.pulse = objectToMap(pulse);
+		this.spo2 = objectToMap(spo2);
+		this.temperature = objectToMap(temperature);
+		this.weight = objectToMap(weight);
 	}
 }
 
@@ -791,4 +879,14 @@ function htmlToElement(html) {
 	html = html.trim();
 	template.innerHTML = html;
 	return template.content.firstChild;
+}
+
+function objectToMap(obj) {
+	const keys = Object.keys(obj);
+	const map = new Map();
+	for(let i = 0; i < keys.length; i++){
+		 //inserting new key value pair inside map
+		map.set(keys[i], obj[keys[i]]);
+	};
+	return map;
 }
