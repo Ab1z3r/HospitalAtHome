@@ -434,6 +434,10 @@ p.medicationName {
   font-weight: 600;
 }
 
+.noteData {
+  white-space: nowrap;
+}
+
 /* <----- Graphics Page (graphics.html) -----> */
 .graphics-container {
   margin-top: 120px;
