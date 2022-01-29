@@ -188,7 +188,7 @@ rhit.SinglePatientPageController = class {
 			window.location.href = "/";
 		};
 
-		// * Bread Crumbs
+		// * Click Listener for Bread Crumbs
 		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
 			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 		};
@@ -348,7 +348,7 @@ rhit.GraphicsPageController = class {
 			window.location.href = "/";
 		};
 
-		// * Bread Crumbs
+		// * Click Listener for Bread Crumbs
 		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
 			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 		};
