@@ -174,7 +174,6 @@ rhit.PatientsPageController = class {
  */
 rhit.SinglePatientPageController = class {
 	constructor() {
-
 		const vitalsButton = document.querySelector("#vitalsButton");
 		const medicinesButton = document.querySelector("#medicinesButton");
 		const notesButton = document.querySelector("#notesButton");
@@ -189,9 +188,36 @@ rhit.SinglePatientPageController = class {
 			window.location.href = "/";
 		};
 
+		// * Bread Crumbs
 		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
 			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 		};
+
+		// * Redirects to Graphics Page
+		document.querySelector("#weightData").onclick = (event) => {
+			window.location.href = `graphics.html?id=${rhit.single_SinglePatientManager.id}&vital=Weight`;
+		};
+
+		document.querySelector("#spo2Data").onclick = (event) => {
+			window.location.href = `/graphics.html?id=${rhit.single_SinglePatientManager.id}&vital=SPO2`;
+		};
+
+		document.querySelector("#bloodPressureData").onclick = (event) => {
+			window.location.href = `/graphics.html?id=${rhit.single_SinglePatientManager.id}&vital=Blood Pressure`;
+		};
+
+		document.querySelector("#heightData").onclick = (event) => {
+			window.location.href = `/graphics.html?id=${rhit.single_SinglePatientManager.id}&vital=Height`;
+		};
+
+		document.querySelector("#pulseData").onclick = (event) => {
+			window.location.href = `/graphics.html?id=${rhit.single_SinglePatientManager.id}&vital=Pulse`;
+		};
+
+		document.querySelector("#temperatureData").onclick = (event) => {
+			window.location.href = `/graphics.html?id=${rhit.single_SinglePatientManager.id}&vital=Temperature`;
+		};
+
 
 		// When a user clicks any of the buttons from the button group
 		// (VITALS, MEDICINES, NOTES), the cards need to change as well
@@ -236,7 +262,7 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#singlePatientHeader").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
 		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
 		document.querySelector("#singlePatientTitle").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
-	
+
 		this.updateCardsView();
 	}
 
@@ -306,7 +332,84 @@ rhit.SinglePatientPageController = class {
 		const year = date.getYear().toString()
 		return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 	}
-	
+
+}
+
+// Graphics Page Controller
+/**
+ * PURPOSE: Handle all View and Controller interactions for the Graphics Page
+ */
+rhit.GraphicsPageController = class {
+	constructor(vital) {
+		this._vital = vital
+		// * Click Listener for sign out on Single Patient Page
+		document.querySelector("#signOutLink").onclick = (event) => {
+			rhit.single_AuthManager.signOut();
+			window.location.href = "/";
+		};
+
+		// * Bread Crumbs
+		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
+			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
+		};
+
+		document.querySelector("#singlePatientBreadCrumb").onclick = (event) => {
+			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;
+		};
+
+		document.querySelector("#graphicsTitle").innerHTML = `${vital} History`
+
+		rhit.single_SinglePatientManager.beginListening(this.retrieveHistory.bind(this));
+	}
+
+	retrieveHistory() {
+		const singlePatient = rhit.single_SinglePatientManager.getPatient()
+		let vital;
+		switch (this._vital) {
+			case "Weight":
+				vital = singlePatient.weight;
+				break;
+			case "SPO2":
+				vital = singlePatient.spo2;
+				break;
+			case "Blood Pressure":
+				vital = singlePatient.bloodPressure;
+				break;
+			case "Height":
+				vital = singlePatient.height;
+				break;
+			case "Pulse":
+				vital = singlePatient.pulse;
+				break;
+			case "Temperature":
+				vital = singlePatient.temperature;
+				break;
+			default:
+		}
+
+		const historyList = htmlToElement('<div id="graphicsInfo"></div>');
+		for (const[key, value] of vital) {
+			console.log(key + " " + value);
+			const newCard = this._createHistoryCard(key, value);
+			historyList.appendChild(newCard);
+		  }
+
+		const oldHistoryList = document.querySelector("#graphicsInfo");
+		oldHistoryList.removeAttribute("id");
+		oldHistoryList.hidden = true;
+		oldHistoryList.parentElement.appendChild(historyList);
+
+	}
+	_createHistoryCard(key, value) {
+		return htmlToElement(`<div class="historyCard card">
+		<div class="historyCardBody card-body">
+		  <div class="historyCardInfo">
+			<p>Data: ${value}</p>
+			<p>Date: ${key}</p>
+		  </div>
+		</div>
+	  </div>`);
+	}
 }
 
 
@@ -610,11 +713,11 @@ rhit.PatientsManager = class {
  * PURPOSE: Handles a Single Patient's Information
  */
 rhit.SinglePatientManager = class {
-	constructor(patientId) {
+	constructor(id) {
 		this._documentSnapshot = {};
 		this._unsubscribe = null;
-		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(patientId);
-		this._id = patientId;
+		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id);
+		this._id = id;
 	}
 
 	beginListening(changeListener) {
@@ -639,7 +742,7 @@ rhit.SinglePatientManager = class {
 
 	delete() {}
 
-	
+
 	get id() {
 		return this._id;
 	}
@@ -699,7 +802,7 @@ rhit.SinglePatientManager = class {
 	get id() {
 		return this._id;
 	}
-	
+
 	getPatient() {
 		const docSnapshot = this._documentSnapshot;
 		const patient = new rhit.Patient(docSnapshot.id,
@@ -732,7 +835,7 @@ rhit.MedicinesManager = class {
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('medicines')
 	}
-	
+
 	beginListening() {
 		let query = this._ref.orderBy(rhit.MEDICINE_LAST_TOUCHED, "desc");
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
@@ -893,7 +996,7 @@ rhit.PrimaryProvider = class {
 /**
  * PURPOSE: Holds all data relevant to a Single Patient's Medicine
  */
- rhit.Medicine = class {
+rhit.Medicine = class {
 	constructor(id, dosage, name, primaryProvider, isValid, lastTouched) {
 		this.id = id;
 		this.dosage = dosage;
@@ -908,7 +1011,7 @@ rhit.PrimaryProvider = class {
 /**
  * PURPOSE: Holds all data relevant to a Single Patient's Note
  */
- rhit.Note = class {
+rhit.Note = class {
 	constructor(id, createdBy, lastTouched, note) {
 		this.id = id;
 		this.createdBy = createdBy;
@@ -956,26 +1059,38 @@ rhit.initializePage = () => {
 		const uid = urlParams.get("uid");
 		rhit.single_PatientsManager = new rhit.PatientsManager();
 
-		rhit.single_PrimaryProviderManager.setReference(uid);
+		rhit.single_PrimaryProviderManager.setReference(rhit.single_AuthManager.uid);
 		rhit.single_PrimaryProviderManager.beginListening();
 
 		new rhit.PatientsPageController();
 	}
 
-	// * initializes page controller for Patients Page
+	// * initializes page controller for Single Patient Page
 	if (document.querySelector("#singlePatientPage")) {
 		console.log("You are on a single patient page.");
-		const patientId = urlParams.get("id");
-		if (!patientId) {
+		const id = urlParams.get("id");
+		if (!id) {
 			window.location.href = "/patients.html";
 		}
-		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(patientId);
-		rhit.single_MedicinesManager = new rhit.MedicinesManager(patientId);
-		rhit.single_NotesManager = new rhit.NotesManager(patientId);
+		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
+		rhit.single_MedicinesManager = new rhit.MedicinesManager(id);
+		rhit.single_NotesManager = new rhit.NotesManager(id);
 
 		new rhit.SinglePatientPageController();
 	}
 
+	// * initializes page controller for Graphics Page
+	if (document.querySelector("#graphicsPage")) {
+		console.log("You are on the graphics page.");
+		const id = urlParams.get("id");
+		const vital = urlParams.get("vital");
+		if (!id) {
+			window.location.href = "/patients.html";
+		}
+		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
+
+		new rhit.GraphicsPageController(vital);
+	}
 };
 
 // Page Status
@@ -1017,8 +1132,8 @@ function htmlToElement(html) {
 function objectToMap(obj) {
 	const keys = Object.keys(obj);
 	const map = new Map();
-	for(let i = 0; i < keys.length; i++){
-		 //inserting new key value pair inside map
+	for (let i = 0; i < keys.length; i++) {
+		//inserting new key value pair inside map
 		map.set(keys[i], obj[keys[i]]);
 	};
 	return map;
