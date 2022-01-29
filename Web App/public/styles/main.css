@@ -475,6 +475,8 @@ p.medicationName {
 }
 
 #graphicsChart {
+  width: 100%;
+  height: 400px;
   margin-bottom: 20px;
 }
 
@@ -487,10 +489,6 @@ p.medicationName {
 #graphicsCardBody {
   justify-content: start;
   padding-top: 10px;
-}
-
-#graphicsPage img {
-  width: 100%;
 }
 
 #graphicsPage h3 {
@@ -506,6 +504,11 @@ p.medicationName {
 #graphicsInfo .card {
   border-radius: 0px;
   margin-bottom: 1px;
+}
+
+#graphicsTitle {
+  text-align: center;
+  font-size: 50px;
 }
 
 .historyCardBody{
@@ -587,10 +590,6 @@ p.medicationName {
   height: 400px;
 }
 
-#graphicsTitle {
-  text-align: center;
-  font-size: 50px;
-}
 
 
 /* Small devices (phones, 576px and up) */
@@ -692,6 +691,10 @@ p.medicationName {
     text-align: center;
     margin-right: 0px;
   }
+
+  #graphicsChart {
+    margin-right: 20px;
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -757,7 +760,6 @@ p.medicationName {
   #graphicsContent {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
     margin-bottom: 15px;
   }
 
@@ -768,10 +770,6 @@ p.medicationName {
   #graphicsCard {
     width: 250px;
     height: 400px;
-  }
-
-  #graphicsPage img {
-    width: 500px;
   }
 
   #contactContent {
@@ -797,9 +795,7 @@ p.medicationName {
 }
 
 @media screen and (min-width: 992px) {
-  #graphicsPage img {
-    width: 600px;
-  }
+}
 
   @media screen and (min-width: 1280px) {
     #contactScreen div {
@@ -818,7 +814,6 @@ p.medicationName {
     #notesTextArea {
       height: 415px;
     }
-  }
 }
 
 /* <----- Additional Classes -----> */
