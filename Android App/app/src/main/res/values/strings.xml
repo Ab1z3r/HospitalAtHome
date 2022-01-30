@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">SafetyNetApp</string>
+    <string name="app_name">Union Health Patient Monitor</string>
     <string name="Android_client_id">204108993001-grcc2vpufpm784apujfnrhedh320dirv.apps.googleusercontent.com</string>
-    <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_home">Home</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Union Health</string>
+    <string name="nav_header_subtitle">Patient Monitor</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -21,4 +21,11 @@
     <string name="password">Password</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_splash">Splash</string>
+    <string name="google_signin">Sign in using Google</string>
+    <string name="missing_data">--</string>
+    <string name="card_title">Vital</string>
 </resources>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="10dp"
+    android:background="@color/secondaryDarkColor"
+    tools:context=".ui.DashboardFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dashboard_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/secondaryDarkColor"/>
+
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/pulse_card"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:paddingHorizontal="10dp"-->
+<!--        app:cardCornerRadius="10dp">-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/pulse_title"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:paddingVertical="5dp"-->
+<!--                android:background="@color/secondaryColor"-->
+<!--                android:textSize="20sp"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:text="Pulse" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/pulse_average"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@+id/pulse_title"-->
+<!--                android:paddingTop="3dp"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:textColor="@color/secondaryTextColor"-->
+<!--                android:text="Average"/>-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/pulse_data"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@+id/pulse_average"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:textSize="30sp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:text="77 bpm"/>-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/pulse_timestamp"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@+id/pulse_data"-->
+<!--                android:paddingTop="3dp"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:text="MM/DD/YYYY, HH:MM"/>-->
+<!--        </RelativeLayout>-->
+
+<!--    </androidx.cardview.widget.CardView>-->
+
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/spo2_card"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:paddingHorizontal="10dp"-->
+<!--        android:layout_below="@id/pulse_card"-->
+<!--        app:cardCornerRadius="10dp">-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/spo2_title"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:paddingVertical="5dp"-->
+<!--                android:background="@color/secondaryColor"-->
+<!--                android:textSize="20sp"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:text="Oxygen Saturation" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/spo2_average"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/spo2_title"-->
+<!--                android:paddingTop="3dp"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:textColor="@color/secondaryTextColor"-->
+<!--                android:text="Average"/>-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/spo2_data"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/spo2_average"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:textSize="30sp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:text="98%"/>-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/spo2_timestamp"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/spo2_data"-->
+<!--                android:paddingTop="3dp"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/mukta_regular"-->
+<!--                android:text="MM/DD/YYYY, HH:MM"/>-->
+<!--        </RelativeLayout>-->
+
+<!--    </androidx.cardview.widget.CardView>-->
+<!--    &lt;!&ndash;    <TextView&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:id="@+id/text_home"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_width="match_parent"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_marginStart="8dp"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_marginTop="8dp"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_marginEnd="8dp"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:textAlignment="center"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:textSize="20sp"&ndash;&gt;-->
+<!--    &lt;!&ndash;        app:layout_constraintBottom_toBottomOf="parent"&ndash;&gt;-->
+<!--    &lt;!&ndash;        app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
+<!--    &lt;!&ndash;        app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
+<!--    &lt;!&ndash;        app:layout_constraintTop_toTopOf="parent" />&ndash;&gt;-->
+</RelativeLayout>
