@@ -11,6 +11,7 @@ import com.example.safetynetapp.R
 import com.example.safetynetapp.models.DashboardViewModel
 import com.example.safetynetapp.models.Vital
 import com.example.safetynetapp.ui.DashboardFragment
+import com.google.firebase.Timestamp
 
 class DashboardAdapter(val fragment: DashboardFragment): RecyclerView.Adapter<DashboardAdapter.DashboardViewHolder>() {
     val model = ViewModelProvider(fragment.requireActivity()).get(DashboardViewModel::class.java)

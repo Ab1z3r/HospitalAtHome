@@ -10,5 +10,4 @@ class Pulse(
     override val cardTimestamp: String = "--"
 ) : Vital {
 
-
 }

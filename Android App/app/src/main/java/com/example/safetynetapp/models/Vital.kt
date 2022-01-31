@@ -9,6 +9,6 @@ interface Vital {
     val cardTimestamp: String
 
     fun timestampToString(time: Timestamp) : String{
-        return "%02d/%02d/%d, %02d:%02d".format(time.toDate().month+1, time.toDate().date, time.toDate().year, time.toDate().hours, time.toDate().minutes)
+        return "%02d/%02d/%d, %02d:%02d".format(time.toDate().month+1, time.toDate().date, time.toDate().year+1900, time.toDate().hours, time.toDate().minutes)
     }
 }
