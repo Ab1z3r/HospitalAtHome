@@ -188,7 +188,7 @@ rhit.SinglePatientPageController = class {
 			window.location.href = "/";
 		};
 
-		// * Bread Crumbs
+		// * Click Listener for Bread Crumbs
 		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
 			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 		};
@@ -348,7 +348,7 @@ rhit.GraphicsPageController = class {
 			window.location.href = "/";
 		};
 
-		// * Bread Crumbs
+		// * Click Listener for Bread Crumbs
 		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
 			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 		};
@@ -359,8 +359,14 @@ rhit.GraphicsPageController = class {
 
 		document.querySelector("#graphicsTitle").innerHTML = `${vital} History`
 
-		rhit.single_SinglePatientManager.beginListening(this.retrieveHistory.bind(this));
+		rhit.single_SinglePatientManager.beginListening(this.constructPage.bind(this));
 	}
+
+	constructPage() {
+		google.charts.setOnLoadCallback(drawChart(this._vital));
+		this.retrieveHistory()
+	}
+
 
 	retrieveHistory() {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
@@ -388,11 +394,11 @@ rhit.GraphicsPageController = class {
 		}
 
 		const historyList = htmlToElement('<div id="graphicsInfo"></div>');
-		for (const[key, value] of vital) {
+		for (const [key, value] of vital) {
 			console.log(key + " " + value);
 			const newCard = this._createHistoryCard(key, value);
 			historyList.appendChild(newCard);
-		  }
+		}
 
 		const oldHistoryList = document.querySelector("#graphicsInfo");
 		oldHistoryList.removeAttribute("id");
@@ -718,6 +724,7 @@ rhit.SinglePatientManager = class {
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id);
 		this._id = id;
+		this._vital = null;
 	}
 
 	beginListening(changeListener) {
@@ -821,6 +828,14 @@ rhit.SinglePatientManager = class {
 			docSnapshot.get(rhit.PATIENT_WEIGHT)
 		);
 		return patient;
+	}
+
+	get vital() {
+		return this._vital
+	}
+
+	set vital(v) {
+		this._vital = v;
 	}
 }
 
@@ -1020,6 +1035,7 @@ rhit.Note = class {
 	}
 }
 
+
 /** PAGE MANAGEMENT **/
 
 // Redirects
@@ -1088,6 +1104,12 @@ rhit.initializePage = () => {
 			window.location.href = "/patients.html";
 		}
 		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
+		rhit.single_SinglePatientManager.vital = vital;
+
+		// Load the Visualization API and the corechart package.
+		google.charts.load('current', {
+			'packages': ['corechart']
+		});
 
 		new rhit.GraphicsPageController(vital);
 	}
@@ -1137,4 +1159,79 @@ function objectToMap(obj) {
 		map.set(keys[i], obj[keys[i]]);
 	};
 	return map;
+}
+
+// Google Charts function needed to create Graphic.
+function drawChart() {
+	const singlePatient = rhit.single_SinglePatientManager.getPatient()
+	var data = new google.visualization.DataTable();
+	let yAxis = "";
+	let vital;
+	data.addColumn('date', 'Date');
+	data.addColumn('number', 'Value');
+
+	switch (rhit.single_SinglePatientManager.vital) {
+		case "Weight":
+			vital = singlePatient.weight;
+			yAxis = "Pounds (Lbs)";
+			break;
+		case "SPO2":
+			vital = singlePatient.spo2;
+			yAxis = "Percent Saturation";
+			break;
+		case "Blood Pressure":
+			vital = singlePatient.bloodPressure;
+			yAxis = "mmHg";
+			break;
+		case "Height":
+			vital = singlePatient.height;
+			yAxis = "Inches";
+			break;
+		case "Pulse":
+			vital = singlePatient.pulse;
+			yAxis = "Beats per minute";
+			break;
+		case "Temperature":
+			vital = singlePatient.temperature;
+			yAxis = "Degrees";
+			break;
+		default:
+	}
+
+	var vals = new Array(vital.size);
+	let i = 0;
+
+	for (const [key, value] of vital) {
+		let point = [parseDate(key), parseInt(value)];
+		console.log(key + " " + value);
+		vals[i] = point;
+		i++;
+	}
+
+	data.addRows(vals);
+
+	var options = {
+		hAxis: {
+			title: 'Time'
+		},
+		vAxis: {
+			title: yAxis
+		},
+		backgroundColor: '#f1f8e9',
+	};
+
+	// Instantiate and draw our chart, passing in some options.
+	var chart = new google.visualization.LineChart(document.getElementById('graphicsChart'));
+	chart.draw(data, options);
+	window.addEventListener('resize', drawChart, false);
+}
+
+// Function written to parse the time keys of the different vital maps
+function parseDate(key) {
+	let year = key.substring(0,4);
+	let month = key.substring(4,6);
+	let day = key.substring(6,8);
+	let hour = key.substring(9,11);
+	let minute = key.substring(12,14);
+	return new Date(year, month, day, hour, minute);
 }
