@@ -270,12 +270,12 @@ rhit.SinglePatientPageController = class {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
 
 		// VITALS CARD
-		document.querySelector("#weightData").innerHTML = `Weight: ${singlePatient.weight.values().next().value}`;
-		document.querySelector("#spo2Data").innerHTML = `SPO2: ${singlePatient.spo2.values().next().value}`;
-		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: ${singlePatient.bloodPressure.values().next().value}`;
-		document.querySelector("#heightData").innerHTML = `Height: ${singlePatient.height.values().next().value}`;
-		document.querySelector("#pulseData").innerHTML = `Pulse: ${singlePatient.pulse.values().next().value}`;
-		document.querySelector("#temperatureData").innerHTML = `Temperature: ${singlePatient.temperature.values().next().value}`;
+		document.querySelector("#weightData").innerHTML = `Weight: ${singlePatient.weight.values().next().value} lbs`;
+		document.querySelector("#spo2Data").innerHTML = `SPO2: ${singlePatient.spo2.values().next().value} %`;
+		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: ${singlePatient.bloodPressure.values().next().value} mmHg`;
+		document.querySelector("#heightData").innerHTML = `Height: ${singlePatient.height.values().next().value} in`;
+		document.querySelector("#pulseData").innerHTML = `Pulse: ${singlePatient.pulse.values().next().value} bpm`;
+		document.querySelector("#temperatureData").innerHTML = `Temperature: ${singlePatient.temperature.values().next().value} \xB0`;
 
 		// MEDICINE CARD
 		const medList = htmlToElement('<div id="medicinesInfo"></div>');
@@ -395,7 +395,6 @@ rhit.GraphicsPageController = class {
 
 		const historyList = htmlToElement('<div id="graphicsInfo"></div>');
 		for (const [key, value] of vital) {
-			console.log(key + " " + value);
 			const newCard = this._createHistoryCard(key, value);
 			historyList.appendChild(newCard);
 		}
@@ -407,11 +406,12 @@ rhit.GraphicsPageController = class {
 
 	}
 	_createHistoryCard(key, value) {
+		let date = parseDate(key)
 		return htmlToElement(`<div class="historyCard card">
 		<div class="historyCardBody card-body">
 		  <div class="historyCardInfo">
 			<p>Data: ${value}</p>
-			<p>Date: ${key}</p>
+			<p>Date: ${date.getMonth()}/${date.getDate()}/${date.getYear()}</p>
 		  </div>
 		</div>
 	  </div>`);
@@ -980,17 +980,17 @@ rhit.Patient = class {
 		this.id = id;
 		this.address = address;
 		this.birthdate = birthdate;
-		this.bloodPressure = objectToMap(bloodPressure);
+		this.bloodPressure = sortMap(objectToMap(bloodPressure));
 		this.firstName = firstName;
 		this.googleID = googleID;
-		this.height = objectToMap(height);
+		this.height = sortMap(objectToMap(height));
 		this.lastName = lastName;
 		this.lastOnline = lastOnline;
 		this.primaryProvider = primaryProvider;
-		this.pulse = objectToMap(pulse);
-		this.spo2 = objectToMap(spo2);
-		this.temperature = objectToMap(temperature);
-		this.weight = objectToMap(weight);
+		this.pulse = sortMap(objectToMap(pulse));
+		this.spo2 = sortMap(objectToMap(spo2));
+		this.temperature = sortMap(objectToMap(temperature));
+		this.weight = sortMap(objectToMap(weight));
 	}
 }
 
@@ -1161,6 +1161,17 @@ function objectToMap(obj) {
 	return map;
 }
 
+// From: https://javascript.plainenglish.io/how-to-sort-a-map-in-javascript-es6-59751f06f692
+function sortMap(map) {
+	let unSorted = Array.from(map);
+	let sorted = unSorted.sort(([key1, value1], [key2, value2]) => key1.localeCompare(key2));
+
+	console.log(sorted);
+
+	let sortedMap = new Map(sorted);
+	return sortedMap
+}
+
 // Google Charts function needed to create Graphic.
 function drawChart() {
 	const singlePatient = rhit.single_SinglePatientManager.getPatient()
@@ -1177,7 +1188,7 @@ function drawChart() {
 			break;
 		case "SPO2":
 			vital = singlePatient.spo2;
-			yAxis = "Percent Saturation";
+			yAxis = "Oxygen Saturation (%)";
 			break;
 		case "Blood Pressure":
 			vital = singlePatient.bloodPressure;
@@ -1193,31 +1204,37 @@ function drawChart() {
 			break;
 		case "Temperature":
 			vital = singlePatient.temperature;
-			yAxis = "Degrees";
+			yAxis = "Degrees (\xB0)";
 			break;
 		default:
 	}
 
-	var vals = new Array(vital.size);
-	let i = 0;
+	let vals = []
 
 	for (const [key, value] of vital) {
 		let point = [parseDate(key), parseInt(value)];
 		console.log(key + " " + value);
-		vals[i] = point;
-		i++;
+		vals.push(point);
 	}
-
 	data.addRows(vals);
 
 	var options = {
+		series: {
+			0: {
+				color: '#c15027'
+			},
+		},
 		hAxis: {
 			title: 'Time'
 		},
 		vAxis: {
 			title: yAxis
+
 		},
-		backgroundColor: '#f1f8e9',
+		backgroundColor: '#F5F5F5',
+		lineWidth: 3,
+		fontName: 'Mukta',
+		fontSize: 16
 	};
 
 	// Instantiate and draw our chart, passing in some options.
@@ -1228,10 +1245,11 @@ function drawChart() {
 
 // Function written to parse the time keys of the different vital maps
 function parseDate(key) {
-	let year = key.substring(0,4);
-	let month = key.substring(4,6);
-	let day = key.substring(6,8);
-	let hour = key.substring(9,11);
-	let minute = key.substring(12,14);
+	let year = parseInt(key.substring(0, 4));
+	let month = parseInt(key.substring(4, 6));
+	let day = parseInt(key.substring(6, 8));
+	let hour = parseInt(key.substring(9, 11));
+	let minute = parseInt(key.substring(12, 14));
+
 	return new Date(year, month, day, hour, minute);
 }

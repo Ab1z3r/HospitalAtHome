@@ -356,11 +356,13 @@ body {
 [id$=Card] p {
   color: black;
   text-decoration: none;
+  cursor: default;
 }
 
-[id$=Card] p:hover {
+#vitalsCard p:hover {
   color: var(--main-color);
   text-decoration: underline;
+  font-weight: 600;
 
 }
 
