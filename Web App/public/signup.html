@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
-  <link rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/5.0.0/firebase-ui-auth.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="styles/main.css">
@@ -18,36 +17,39 @@
     <a id="title" class="navbar-brand" href="#">Login Page</a>
   </nav> -->
 
-  <div id="loginPage" class="container login-container">
+  <div id="signupPage" class="container signup-container">
 
-    <div id="loginHeader">
+    <div id="signupHeader">
       <img src="images/union_health_logo.png" alt="Union Health Logo">
       <h3>Hospital At Home</h3>
       <p>For healthcare professionals</p>
     </div>
 
-    <div id="loginForm">
-      <h2>Log in to your account</h2>
+    <div id="signupForm">
+      <h2>Create account</h2>
       <p>Please enter the following information</p>
 
-      <div id="loginInputs">
-        <div id="loginEmail">
-          <label for=logonInput name="logon">Logon ID (required)</label>
+      <div id="signupInputs">
+        <div id="signupEmail">
+          <label for=logonInput name="logon">UH Email (required)</label>
           <input id="logonInput" type="text" name="logon" size="30">
         </div>
 
-        <div id="loginPassword">
+        <div id="signupPassword">
           <label for=passwordInput name="logon">Password (required)</label>
           <input id="passwordInput" type="password" name="password" size="30">
+        </div>
+
+        <div id="signupName">
+          <label for=nameInput name="name">First & Last Name (required)</label>
+          <input id="nameInput" type="text" name="Name" size="30">
         </div>
       </div>
 
       <!-- <input type="checkbox" class="" checked=""> -->
-      <button id="loginButton" class="btn btn-primary" type="button">Log in</button>
-      <a href="signup.html" id="authLink">Create Account Here</a>
-
-      <p id="loginCopyright">Copyright &copy; Your Website 2021</p>
-
+      <button id="signupButton" class="btn btn-primary" type="button">Log in</button>
+      <a href="/" id="authLink">Back to Login Page</a>
+      <p id="signupCopyright">Copyright &copy; Your Website 2021</p>
 
     </div>
 
@@ -69,7 +71,6 @@
   <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
   <script src="https://kit.fontawesome.com/d72a543e49.js" crossorigin="anonymous"></script>
   <script src="/__/firebase/init.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/ui/5.0.0/firebase-ui-auth.js"></script>
   <script src="scripts/main.js"></script>
 </body>
 

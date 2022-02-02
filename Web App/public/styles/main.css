@@ -158,7 +158,18 @@ body {
   background: var(--main-color);
   padding: 10px 150px;
   color: white;
-  margin-bottom: 30px;
+}
+
+a#authLink {
+  color: black;
+  text-decoration: none;
+  display: block;
+}
+
+a#authLink:hover {
+  color: var(--main-color);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 #loginForm #loginCopyright {
@@ -173,6 +184,100 @@ body {
 .bmd-form-group {
   padding-top: 0px;
 }
+
+/* <----- Signup Page (signup.html) -----> */
+.signup-container {
+  margin-top: 40px;
+}
+
+#signupPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#signupHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#signupHeader img {
+  width: 60%;
+}
+
+#signupHeader h3 {
+  color: var(--main-color);
+  font-weight: 700;
+  margin-bottom: 0px;
+}
+
+#signupForm {
+  width: 100%;
+  height: 350px;
+  background-color: #ececec;
+  box-shadow: 5px 10px 5px #dbdbdb;
+  text-align: center;
+}
+
+#signupForm h2 {
+  margin-top: 20px;
+  margin-bottom: 0px;
+  font-weight: 600;
+}
+
+#signupForm p {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+#signupInputs {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#signupEmail,
+#signupPassword,
+#signupName {
+  display: flex;
+  flex-direction: column;
+  margin: 0px 30px;
+}
+
+#signupEmail {
+  margin-bottom: 10px;
+}
+
+#signupInputs label {
+  text-align: center;
+}
+
+#signupButton {
+  background: var(--main-color);
+  padding: 10px 150px;
+  color: white;
+  margin-bottom: 30px;
+}
+
+#signupForm #signupCopyright {
+  font-weight: 200;
+  font-size: 12px;
+}
+
+#signupPage footer {
+  font-weight: 200;
+}
+
+.bmd-form-group {
+  padding-top: 0px;
+}
+
 
 /* <----- Patient Page (patients.html) -----> */
 .patients-container {
@@ -593,7 +698,6 @@ p.medicationName {
 }
 
 
-
 /* Small devices (phones, 576px and up) */
 @media screen and (min-width: 576px) {
   #patientsHeader {
@@ -648,8 +752,12 @@ p.medicationName {
     text-decoration: underline;
   }
 
+  #singlePatientPage #vitalsEditButton {
+    margin-bottom: 15px;
+  }
+
   #vitalsCard p {
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
   }
 
@@ -700,6 +808,10 @@ p.medicationName {
 }
 
 @media screen and (min-width: 768px) {
+  #loginButton {
+    margin-bottom: 15px;
+  }
+
   #loginForm p {
     font-weight: 600;
     font-size: 14px;
@@ -713,7 +825,7 @@ p.medicationName {
 
   #loginInputs {
     flex-direction: row;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
   }
 
   #loginInputs label {
@@ -722,6 +834,18 @@ p.medicationName {
 
   #loginEmail {
     margin-bottom: 10px;
+  }
+
+  #signupForm {
+    width: 800px;
+  }
+
+  #signupButton {
+    margin-bottom: 15px;
+  }
+
+  #signupForm h2 {
+    margin-top: 20px;
   }
 
   #patientsSelect {
@@ -749,6 +873,10 @@ p.medicationName {
   #patientsPage .card-body .patientsCardInfo:nth-child(2) p {
     margin-right: 20px;
     margin-left: 20px;
+  }
+
+  #vitalsCard p {
+    font-size: 20px;
   }
 
   [id$=Card] {
@@ -797,6 +925,9 @@ p.medicationName {
 }
 
 @media screen and (min-width: 992px) {
+  #singlePatientPage #vitalsEditButton {
+    margin-bottom: 20px;
+  }
 }
 
   @media screen and (min-width: 1280px) {

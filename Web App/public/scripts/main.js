@@ -46,13 +46,16 @@ rhit.single_NotesManager = null;
 /** PAGE CONTROLLERS **/
 // Login Page Controller
 /**
- * PURPOSE: Handle all View and Controller interactions for the Patients Page
+ * PURPOSE: Handle all View and Controller interactions for the Login Page
  */
 rhit.LoginPageController = class {
 	constructor() {
+		const inputEmailEl = document.querySelector("#logonInput");
+		const inputPasswordEl = document.querySelector("#passwordInput");
+		
 		// * Click Listener for Login Button
 		document.querySelector("#loginButton").onclick = (event) => {
-			rhit.single_AuthManager.signIn();
+			rhit.single_AuthManager.signIn(inputEmailEl, inputPasswordEl);
 		};
 
 		// * Handles Login on Press of the Enter Key
@@ -62,6 +65,23 @@ rhit.LoginPageController = class {
 				document.querySelector('#loginButton').click();
 			}
 		})
+	}
+}
+
+/** PAGE CONTROLLERS **/
+// Signup Page Controller
+/**
+ * PURPOSE: Handle all View and Controller interactions for the Signup Page
+ */
+rhit.SignupPageController = class {
+	constructor() {
+		let emailInput = document.querySelector("#logonInput");
+		let passwordInput = document.querySelector("#passwordInput");
+		let nameInput = document.querySelector("#nameInput");
+
+		document.querySelector("#signupButton").onclick = (event) => {
+			rhit.single_AuthManager.signUp(emailInput, passwordInput, nameInput);
+		};
 	}
 }
 
@@ -436,18 +456,13 @@ rhit.AuthManager = class {
 		firebase.auth().onAuthStateChanged((user) => {
 			this._user = user;
 			if (user) {
-				// const displayName = user.displayName;
 				const email = user.email;
-				// const photoURL = user.photoURL;
-				// const phoneNumber = user.phoneNumber;
 				const uid = user.uid;
 
 				console.log("The user is signed in ", uid);
 				console.log('email :>> ', email);
 				console.log('uid :>> ', uid);
-				// console.log('photoURL :>> ', photoURL);
-				// console.log('phoneNumber :>> ', phoneNumber);
-				// console.log('displayName :>> ', displayName);
+				console.log('email verified :>>', user.emailVerified);
 
 			} else {
 				console.log("There is no user signed in!");
@@ -457,12 +472,8 @@ rhit.AuthManager = class {
 	}
 
 	// * Handles Sign with Email and Password using Firebase
-	signIn() {
-		const inputEmailEl = document.querySelector("#logonInput");
-		const inputPasswordEl = document.querySelector("#passwordInput");
-
-		// console.log(`Log in for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
-		firebase.auth().signInWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value)
+	signIn(logonInput, passwordInput) {
+		firebase.auth().signInWithEmailAndPassword(logonInput.value, passwordInput.value)
 			.then(() => {
 				this.configureSignIn();
 			}).catch(function (error) {
@@ -479,6 +490,39 @@ rhit.AuthManager = class {
 		});
 	}
 
+	signUp(emailInput,passwordInput, nameInput) {
+		firebase.auth().createUserWithEmailAndPassword(emailInput.value, passwordInput.value)
+			.then(() => {
+				this.sendLink();
+			})
+			.catch((error) => {
+				const code = error.code;
+				const errorMessage = error.message;
+				console.log("Exisiting account log in error", code, errorMessage);
+			});
+	}
+
+	sendLink() {
+		firebase.auth().currentUser.sendEmailVerification()
+			.then(() => {
+				// Email verification sent!
+				// ...
+			});
+
+		// firebase.auth().sendSignInLinkToEmail(emailInput.value, actionCodeSettings)
+		// 	.then(() => {
+		// 		// The link was successfully sent. Inform the user.
+		// 		// Save the email locally so you don't need to ask the user for it again
+		// 		// if they open the link on the same device.
+		// 		window.localStorage.setItem('emailForSignIn', emailInput.value);
+		// 	})
+		// 	.catch((error) => {
+		// 		var errorCode = error.code;
+		// 		var errorMessage = error.message;
+		// 		console.log("Error:", errorCode, errorMessage);
+		// 	});
+	}
+
 	// * Handles setting reference for Primary Provider Document
 	configureSignIn() {
 		rhit.single_PrimaryProviderManager.setReference(rhit.single_AuthManager.uid);
@@ -493,6 +537,10 @@ rhit.AuthManager = class {
 	// * Gets the current user's id
 	get uid() {
 		return this._user.uid;
+	}
+
+	get isVerified() {
+		return this._user.emailVerified;
 	}
 }
 
@@ -1046,12 +1094,13 @@ rhit.Note = class {
  */
 rhit.checkForRedirects = () => {
 	// * Checks whether the user is logged in an redirects the page accordingly
-	if (document.querySelector("#loginPage") && rhit.single_AuthManager.isSignedIn) {
+	if (document.querySelector("#loginPage") && rhit.single_AuthManager.isSignedIn && rhit.single_AuthManager.isVerified) {
 		window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 	}
-	if (!document.querySelector("#loginPage") && !rhit.single_AuthManager.isSignedIn) {
-		window.location.href = "/";
-	}
+
+	// if (!document.querySelector("#loginPage") && !rhit.single_AuthManager.isSignedIn) {
+	// 	window.location.href = "/";
+	// }
 };
 
 
@@ -1067,6 +1116,12 @@ rhit.initializePage = () => {
 	if (document.querySelector("#loginPage")) {
 		console.log("You are on the login page.");
 		new rhit.LoginPageController();
+	}
+
+	// * initializes page controller for Login Page
+	if (document.querySelector("#signupPage")) {
+		console.log("You are on the signup page.");
+		new rhit.SignupPageController();
 	}
 
 	// * initializes page controller for Patients Page
@@ -1166,8 +1221,6 @@ function sortMap(map) {
 	let unSorted = Array.from(map);
 	let sorted = unSorted.sort(([key1, value1], [key2, value2]) => key1.localeCompare(key2));
 
-	console.log(sorted);
-
 	let sortedMap = new Map(sorted);
 	return sortedMap
 }
@@ -1213,7 +1266,6 @@ function drawChart() {
 
 	for (const [key, value] of vital) {
 		let point = [parseDate(key), parseInt(value)];
-		console.log(key + " " + value);
 		vals.push(point);
 	}
 	data.addRows(vals);
@@ -1253,3 +1305,24 @@ function parseDate(key) {
 
 	return new Date(year, month, day, hour, minute);
 }
+
+// From Firebase Console
+rhit.startFirebaseUI = function () {
+	var uiConfig = {
+		signInSuccessUrl: '/',
+		signInOptions: [
+			firebase.auth.EmailAuthProvider.PROVIDER_ID
+		],
+	};
+
+	const ui = new firebaseui.auth.AuthUI(firebase.auth());
+	ui.start('#firebaseui-auth-container', uiConfig);
+}
+
+// var actionCodeSettings = {
+// 	// URL you want to redirect back to. The domain (www.example.com) for this
+// 	// URL must be in the authorized domains list in the Firebase Console.
+// 	url: 'http://localhost:5000',
+// 	// This must be true.
+// 	handleCodeInApp: true
+// }
