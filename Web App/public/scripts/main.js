@@ -375,18 +375,22 @@ rhit.GraphicsPageController = class {
 
 		document.querySelector("#singlePatientBreadCrumb").onclick = (event) => {
 			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;
-		};
-
-		document.querySelector("#graphicsTitle").innerHTML = `${vital} History`
-
+		};	
 		rhit.single_SinglePatientManager.beginListening(this.constructPage.bind(this));
 	}
 
 	constructPage() {
+		this.updateView(this._vital)
 		google.charts.setOnLoadCallback(drawChart(this._vital));
 		this.retrieveHistory()
 	}
 
+	updateView(vital) {
+		document.querySelector("#graphicsTitle").innerHTML = `${vital} History`
+		document.querySelector("#graphicsHeader").innerHTML = `${vital}`
+		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
+		document.querySelector("#vitalBreadCrumb").innerHTML = `${vital}`.toUpperCase()
+	}
 
 	retrieveHistory() {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
