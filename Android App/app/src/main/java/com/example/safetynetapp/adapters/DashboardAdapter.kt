@@ -1,17 +1,27 @@
 package com.example.safetynetapp.adapters
 
+import android.app.PendingIntent.getActivity
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.safetynetapp.R
 import com.example.safetynetapp.models.DashboardViewModel
 import com.example.safetynetapp.models.Vital
+import com.example.safetynetapp.ui.ChartActivity
 import com.example.safetynetapp.ui.DashboardFragment
 import com.google.firebase.Timestamp
+import com.example.safetynetapp.MainActivity
+
+
+
 
 class DashboardAdapter(val fragment: DashboardFragment): RecyclerView.Adapter<DashboardAdapter.DashboardViewHolder>() {
     val model = ViewModelProvider(fragment.requireActivity()).get(DashboardViewModel::class.java)
@@ -41,6 +51,8 @@ class DashboardAdapter(val fragment: DashboardFragment): RecyclerView.Adapter<Da
                 // TODO: Create updatePos method in view model
                 //model.updatePos(adapterPosition)
                 // TODO: Navigate to proper detail page
+                val intent = Intent(itemView.getContext(), ChartActivity::class.java)
+                itemView.getContext().startActivity(intent)
             }
         }
 

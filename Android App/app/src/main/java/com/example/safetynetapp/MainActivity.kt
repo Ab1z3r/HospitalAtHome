@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
          */
         if(isSignedIn()){
             Log.d("[INFO]", "already logged in bro")
-            alreadySignedIn()
+            //alreadySignedIn()
         }
 
         googleSignInButton.setOnClickListener{
