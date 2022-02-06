@@ -4,30 +4,30 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import com.google.android.material.navigation.NavigationView
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import com.example.safetynetapp.models.User
 import com.bumptech.glide.Glide
-import android.widget.TextView
 import com.example.safetynetapp.databinding.ActivityHomeBinding
+import com.example.safetynetapp.models.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
+import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class HomeActivity : AppCompatActivity() {
@@ -35,6 +35,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding
     private lateinit var heightVal: TextView
+    private lateinit var callButton: ImageButton
     private var loggedInUser: User? = null
     private var fitnessOptions: FitnessOptions? = null
 
@@ -48,6 +49,9 @@ class HomeActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_home)
+        callButton = findViewById<ImageButton>(R.id.call_button)
+        callButton.setOnClickListener{
+            call_button_listener()       }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -97,6 +101,12 @@ class HomeActivity : AppCompatActivity() {
 //        }
 
 
+    }
+
+    private fun call_button_listener(){
+        Log.d("[INFO]", "Call button pressed")
+        val intent = Intent(this@HomeActivity, Call_Activity::class.java)
+        startActivity(intent)
     }
 
     private fun hasPermissions(): Boolean {

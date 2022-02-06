@@ -55,6 +55,7 @@
             android:paddingTop="3dp"
             android:text="@string/missing_data"
             android:textSize="12sp" />
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

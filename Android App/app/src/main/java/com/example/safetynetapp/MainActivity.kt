@@ -22,7 +22,7 @@ import com.google.android.gms.tasks.Task
 
 private lateinit var mGoogleSignInClient: GoogleSignInClient
 private lateinit var signInRequest: BeginSignInRequest
-private const val REQ_ONE_TAP = 2
+private const val REQ_ONE_TAP = 9001
 var singlePatientFragment = SinglePatientFragment.newInstance("")
 
 class MainActivity : AppCompatActivity() {
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         /*
-        Check to see i there is already a google account signed in to the app
+        Check to see if there is already a google account signed in to the app
          */
         if(isSignedIn()){
             Log.d("[INFO]", "already logged in bro")
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             //alreadySignedIn()
         }
 
-        setListeners()
+       // setListeners()
     }
 
     //swap fragment without logging in
@@ -95,12 +95,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startOneTapUI(){
+        Log.d("[INFO]", "In Start One Tap UI")
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, REQ_ONE_TAP)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d("[INFO]", "in activity result")
         when (requestCode) {
             REQ_ONE_TAP -> {
                 val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
