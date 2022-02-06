@@ -46,13 +46,16 @@ rhit.single_NotesManager = null;
 /** PAGE CONTROLLERS **/
 // Login Page Controller
 /**
- * PURPOSE: Handle all View and Controller interactions for the Patients Page
+ * PURPOSE: Handle all View and Controller interactions for the Login Page
  */
 rhit.LoginPageController = class {
 	constructor() {
+		const inputEmailEl = document.querySelector("#logonInput");
+		const inputPasswordEl = document.querySelector("#passwordInput");
+		
 		// * Click Listener for Login Button
 		document.querySelector("#loginButton").onclick = (event) => {
-			rhit.single_AuthManager.signIn();
+			rhit.single_AuthManager.signIn(inputEmailEl, inputPasswordEl);
 		};
 
 		// * Handles Login on Press of the Enter Key
@@ -62,6 +65,23 @@ rhit.LoginPageController = class {
 				document.querySelector('#loginButton').click();
 			}
 		})
+	}
+}
+
+/** PAGE CONTROLLERS **/
+// Signup Page Controller
+/**
+ * PURPOSE: Handle all View and Controller interactions for the Signup Page
+ */
+rhit.SignupPageController = class {
+	constructor() {
+		let emailInput = document.querySelector("#logonInput");
+		let passwordInput = document.querySelector("#passwordInput");
+		let nameInput = document.querySelector("#nameInput");
+
+		document.querySelector("#signupButton").onclick = (event) => {
+			rhit.single_AuthManager.signUp(emailInput, passwordInput, nameInput);
+		};
 	}
 }
 
@@ -270,12 +290,12 @@ rhit.SinglePatientPageController = class {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
 
 		// VITALS CARD
-		document.querySelector("#weightData").innerHTML = `Weight: ${singlePatient.weight.values().next().value}`;
-		document.querySelector("#spo2Data").innerHTML = `SPO2: ${singlePatient.spo2.values().next().value}`;
-		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: ${singlePatient.bloodPressure.values().next().value}`;
-		document.querySelector("#heightData").innerHTML = `Height: ${singlePatient.height.values().next().value}`;
-		document.querySelector("#pulseData").innerHTML = `Pulse: ${singlePatient.pulse.values().next().value}`;
-		document.querySelector("#temperatureData").innerHTML = `Temperature: ${singlePatient.temperature.values().next().value}`;
+		document.querySelector("#weightData").innerHTML = `Weight: ${singlePatient.weight.values().next().value} lbs`;
+		document.querySelector("#spo2Data").innerHTML = `SPO2: ${singlePatient.spo2.values().next().value} %`;
+		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: ${singlePatient.bloodPressure.values().next().value} mmHg`;
+		document.querySelector("#heightData").innerHTML = `Height: ${singlePatient.height.values().next().value} in`;
+		document.querySelector("#pulseData").innerHTML = `Pulse: ${singlePatient.pulse.values().next().value} bpm`;
+		document.querySelector("#temperatureData").innerHTML = `Temperature: ${singlePatient.temperature.values().next().value} \xB0`;
 
 		// MEDICINE CARD
 		const medList = htmlToElement('<div id="medicinesInfo"></div>');
@@ -355,18 +375,22 @@ rhit.GraphicsPageController = class {
 
 		document.querySelector("#singlePatientBreadCrumb").onclick = (event) => {
 			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;
-		};
-
-		document.querySelector("#graphicsTitle").innerHTML = `${vital} History`
-
+		};	
 		rhit.single_SinglePatientManager.beginListening(this.constructPage.bind(this));
 	}
 
 	constructPage() {
+		this.updateView(this._vital)
 		google.charts.setOnLoadCallback(drawChart(this._vital));
 		this.retrieveHistory()
 	}
 
+	updateView(vital) {
+		document.querySelector("#graphicsTitle").innerHTML = `${vital} History`
+		document.querySelector("#graphicsHeader").innerHTML = `${vital}`
+		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
+		document.querySelector("#vitalBreadCrumb").innerHTML = `${vital}`.toUpperCase()
+	}
 
 	retrieveHistory() {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
@@ -395,7 +419,6 @@ rhit.GraphicsPageController = class {
 
 		const historyList = htmlToElement('<div id="graphicsInfo"></div>');
 		for (const [key, value] of vital) {
-			console.log(key + " " + value);
 			const newCard = this._createHistoryCard(key, value);
 			historyList.appendChild(newCard);
 		}
@@ -407,11 +430,12 @@ rhit.GraphicsPageController = class {
 
 	}
 	_createHistoryCard(key, value) {
+		let date = parseDate(key)
 		return htmlToElement(`<div class="historyCard card">
 		<div class="historyCardBody card-body">
 		  <div class="historyCardInfo">
 			<p>Data: ${value}</p>
-			<p>Date: ${key}</p>
+			<p>Date: ${date.getMonth()}/${date.getDate()}/${date.getYear()}</p>
 		  </div>
 		</div>
 	  </div>`);
@@ -436,18 +460,13 @@ rhit.AuthManager = class {
 		firebase.auth().onAuthStateChanged((user) => {
 			this._user = user;
 			if (user) {
-				// const displayName = user.displayName;
 				const email = user.email;
-				// const photoURL = user.photoURL;
-				// const phoneNumber = user.phoneNumber;
 				const uid = user.uid;
 
 				console.log("The user is signed in ", uid);
 				console.log('email :>> ', email);
 				console.log('uid :>> ', uid);
-				// console.log('photoURL :>> ', photoURL);
-				// console.log('phoneNumber :>> ', phoneNumber);
-				// console.log('displayName :>> ', displayName);
+				console.log('email verified :>>', user.emailVerified);
 
 			} else {
 				console.log("There is no user signed in!");
@@ -457,12 +476,8 @@ rhit.AuthManager = class {
 	}
 
 	// * Handles Sign with Email and Password using Firebase
-	signIn() {
-		const inputEmailEl = document.querySelector("#logonInput");
-		const inputPasswordEl = document.querySelector("#passwordInput");
-
-		// console.log(`Log in for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
-		firebase.auth().signInWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value)
+	signIn(logonInput, passwordInput) {
+		firebase.auth().signInWithEmailAndPassword(logonInput.value, passwordInput.value)
 			.then(() => {
 				this.configureSignIn();
 			}).catch(function (error) {
@@ -479,6 +494,39 @@ rhit.AuthManager = class {
 		});
 	}
 
+	signUp(emailInput,passwordInput, nameInput) {
+		firebase.auth().createUserWithEmailAndPassword(emailInput.value, passwordInput.value)
+			.then(() => {
+				this.sendLink();
+			})
+			.catch((error) => {
+				const code = error.code;
+				const errorMessage = error.message;
+				console.log("Exisiting account log in error", code, errorMessage);
+			});
+	}
+
+	sendLink() {
+		firebase.auth().currentUser.sendEmailVerification()
+			.then(() => {
+				// Email verification sent!
+				// ...
+			});
+
+		// firebase.auth().sendSignInLinkToEmail(emailInput.value, actionCodeSettings)
+		// 	.then(() => {
+		// 		// The link was successfully sent. Inform the user.
+		// 		// Save the email locally so you don't need to ask the user for it again
+		// 		// if they open the link on the same device.
+		// 		window.localStorage.setItem('emailForSignIn', emailInput.value);
+		// 	})
+		// 	.catch((error) => {
+		// 		var errorCode = error.code;
+		// 		var errorMessage = error.message;
+		// 		console.log("Error:", errorCode, errorMessage);
+		// 	});
+	}
+
 	// * Handles setting reference for Primary Provider Document
 	configureSignIn() {
 		rhit.single_PrimaryProviderManager.setReference(rhit.single_AuthManager.uid);
@@ -493,6 +541,10 @@ rhit.AuthManager = class {
 	// * Gets the current user's id
 	get uid() {
 		return this._user.uid;
+	}
+
+	get isVerified() {
+		return this._user.emailVerified;
 	}
 }
 
@@ -980,17 +1032,17 @@ rhit.Patient = class {
 		this.id = id;
 		this.address = address;
 		this.birthdate = birthdate;
-		this.bloodPressure = objectToMap(bloodPressure);
+		this.bloodPressure = sortMap(objectToMap(bloodPressure));
 		this.firstName = firstName;
 		this.googleID = googleID;
-		this.height = objectToMap(height);
+		this.height = sortMap(objectToMap(height));
 		this.lastName = lastName;
 		this.lastOnline = lastOnline;
 		this.primaryProvider = primaryProvider;
-		this.pulse = objectToMap(pulse);
-		this.spo2 = objectToMap(spo2);
-		this.temperature = objectToMap(temperature);
-		this.weight = objectToMap(weight);
+		this.pulse = sortMap(objectToMap(pulse));
+		this.spo2 = sortMap(objectToMap(spo2));
+		this.temperature = sortMap(objectToMap(temperature));
+		this.weight = sortMap(objectToMap(weight));
 	}
 }
 
@@ -1046,12 +1098,13 @@ rhit.Note = class {
  */
 rhit.checkForRedirects = () => {
 	// * Checks whether the user is logged in an redirects the page accordingly
-	if (document.querySelector("#loginPage") && rhit.single_AuthManager.isSignedIn) {
+	if (document.querySelector("#loginPage") && rhit.single_AuthManager.isSignedIn && rhit.single_AuthManager.isVerified) {
 		window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 	}
-	if (!document.querySelector("#loginPage") && !rhit.single_AuthManager.isSignedIn) {
-		window.location.href = "/";
-	}
+
+	// if (!document.querySelector("#loginPage") && !rhit.single_AuthManager.isSignedIn) {
+	// 	window.location.href = "/";
+	// }
 };
 
 
@@ -1067,6 +1120,12 @@ rhit.initializePage = () => {
 	if (document.querySelector("#loginPage")) {
 		console.log("You are on the login page.");
 		new rhit.LoginPageController();
+	}
+
+	// * initializes page controller for Login Page
+	if (document.querySelector("#signupPage")) {
+		console.log("You are on the signup page.");
+		new rhit.SignupPageController();
 	}
 
 	// * initializes page controller for Patients Page
@@ -1161,6 +1220,15 @@ function objectToMap(obj) {
 	return map;
 }
 
+// From: https://javascript.plainenglish.io/how-to-sort-a-map-in-javascript-es6-59751f06f692
+function sortMap(map) {
+	let unSorted = Array.from(map);
+	let sorted = unSorted.sort(([key1, value1], [key2, value2]) => key1.localeCompare(key2));
+
+	let sortedMap = new Map(sorted);
+	return sortedMap
+}
+
 // Google Charts function needed to create Graphic.
 function drawChart() {
 	const singlePatient = rhit.single_SinglePatientManager.getPatient()
@@ -1177,7 +1245,7 @@ function drawChart() {
 			break;
 		case "SPO2":
 			vital = singlePatient.spo2;
-			yAxis = "Percent Saturation";
+			yAxis = "Oxygen Saturation (%)";
 			break;
 		case "Blood Pressure":
 			vital = singlePatient.bloodPressure;
@@ -1193,31 +1261,36 @@ function drawChart() {
 			break;
 		case "Temperature":
 			vital = singlePatient.temperature;
-			yAxis = "Degrees";
+			yAxis = "Degrees (\xB0)";
 			break;
 		default:
 	}
 
-	var vals = new Array(vital.size);
-	let i = 0;
+	let vals = []
 
 	for (const [key, value] of vital) {
 		let point = [parseDate(key), parseInt(value)];
-		console.log(key + " " + value);
-		vals[i] = point;
-		i++;
+		vals.push(point);
 	}
-
 	data.addRows(vals);
 
 	var options = {
+		series: {
+			0: {
+				color: '#c15027'
+			},
+		},
 		hAxis: {
 			title: 'Time'
 		},
 		vAxis: {
 			title: yAxis
+
 		},
-		backgroundColor: '#f1f8e9',
+		backgroundColor: '#F5F5F5',
+		lineWidth: 3,
+		fontName: 'Mukta',
+		fontSize: 16
 	};
 
 	// Instantiate and draw our chart, passing in some options.
@@ -1228,10 +1301,32 @@ function drawChart() {
 
 // Function written to parse the time keys of the different vital maps
 function parseDate(key) {
-	let year = key.substring(0,4);
-	let month = key.substring(4,6);
-	let day = key.substring(6,8);
-	let hour = key.substring(9,11);
-	let minute = key.substring(12,14);
+	let year = parseInt(key.substring(0, 4));
+	let month = parseInt(key.substring(4, 6));
+	let day = parseInt(key.substring(6, 8));
+	let hour = parseInt(key.substring(9, 11));
+	let minute = parseInt(key.substring(12, 14));
+
 	return new Date(year, month, day, hour, minute);
 }
+
+// From Firebase Console
+rhit.startFirebaseUI = function () {
+	var uiConfig = {
+		signInSuccessUrl: '/',
+		signInOptions: [
+			firebase.auth.EmailAuthProvider.PROVIDER_ID
+		],
+	};
+
+	const ui = new firebaseui.auth.AuthUI(firebase.auth());
+	ui.start('#firebaseui-auth-container', uiConfig);
+}
+
+// var actionCodeSettings = {
+// 	// URL you want to redirect back to. The domain (www.example.com) for this
+// 	// URL must be in the authorized domains list in the Firebase Console.
+// 	url: 'http://localhost:5000',
+// 	// This must be true.
+// 	handleCodeInApp: true
+// }
