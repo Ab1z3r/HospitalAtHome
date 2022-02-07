@@ -297,7 +297,8 @@ rhit.SinglePatientPageController = class {
 		// VITALS CARD
 		document.querySelector("#weightData").innerHTML = `Weight: ${singlePatient.weight.values().next().value} lbs`;
 		document.querySelector("#spo2Data").innerHTML = `SPO2: ${singlePatient.spo2.values().next().value} %`;
-		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: ${singlePatient.bloodPressure.values().next().value} mmHg`;
+		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: 
+			${singlePatient.bloodPressure_sys.values().next().value}/${singlePatient.bloodPressure_dia.values().next().value} mmHg`;
 		document.querySelector("#heightData").innerHTML = `Height: ${singlePatient.height.values().next().value} in`;
 		document.querySelector("#pulseData").innerHTML = `Pulse: ${singlePatient.pulse.values().next().value} bpm`;
 		document.querySelector("#temperatureData").innerHTML = `Temperature: ${singlePatient.temperature.values().next().value} \xB0`;
@@ -399,39 +400,55 @@ rhit.GraphicsPageController = class {
 
 	retrieveHistory() {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
-		let vital;
-		switch (this._vital) {
-			case "Weight":
-				vital = singlePatient.weight;
-				break;
-			case "SPO2":
-				vital = singlePatient.spo2;
-				break;
-			case "Blood Pressure":
-				vital = singlePatient.bloodPressure;
-				break;
-			case "Height":
-				vital = singlePatient.height;
-				break;
-			case "Pulse":
-				vital = singlePatient.pulse;
-				break;
-			case "Temperature":
-				vital = singlePatient.temperature;
-				break;
-			default:
-		}
 
-		const historyList = htmlToElement('<div id="graphicsInfo"></div>');
-		for (const [key, value] of vital) {
-			const newCard = this._createHistoryCard(key, value);
-			historyList.appendChild(newCard);
+		if (this._vital != "Blood Pressure") {
+			let vital;
+			switch (this._vital) {
+				case "Weight":
+					vital = singlePatient.weight;
+					break;
+				case "SPO2":
+					vital = singlePatient.spo2;
+					break;
+				case "Height":
+					vital = singlePatient.height;
+					break;
+				case "Pulse":
+					vital = singlePatient.pulse;
+					break;
+				case "Temperature":
+					vital = singlePatient.temperature;
+					break;
+				default:
+			}
+	
+			const historyList = htmlToElement('<div id="graphicsInfo"></div>');
+			for (const [key, value] of vital) {
+				const newCard = this._createHistoryCard(key, value);
+				historyList.appendChild(newCard);
+			}
+	
+			const oldHistoryList = document.querySelector("#graphicsInfo");
+			oldHistoryList.removeAttribute("id");
+			oldHistoryList.hidden = true;
+			oldHistoryList.parentElement.appendChild(historyList);
 		}
+		else {
+			let sys_vital = Array.from(singlePatient.bloodPressure_sys);
+			let dia_vital = Array.from(singlePatient.bloodPressure_dia);
 
-		const oldHistoryList = document.querySelector("#graphicsInfo");
-		oldHistoryList.removeAttribute("id");
-		oldHistoryList.hidden = true;
-		oldHistoryList.parentElement.appendChild(historyList);
+			const historyList = htmlToElement('<div id="graphicsInfo"></div>');
+			for (let i = 0; i < sys_vital.length; i++) {
+				let value = `${sys_vital[i][1]}/${dia_vital[i][1]}`;
+				const newCard = this._createHistoryCard(sys_vital[i][0], value);
+				historyList.appendChild(newCard);
+			}
+
+			const oldHistoryList = document.querySelector("#graphicsInfo");
+			oldHistoryList.removeAttribute("id");
+			oldHistoryList.hidden = true;
+			oldHistoryList.parentElement.appendChild(historyList);
+		}
 
 	}
 	_createHistoryCard(key, value) {
@@ -440,7 +457,7 @@ rhit.GraphicsPageController = class {
 		<div class="historyCardBody card-body">
 		  <div class="historyCardInfo">
 			<p>Data: ${value}</p>
-			<p>Date: ${date.getMonth()}/${date.getDate()}/${date.getYear()}</p>
+			<p>Date: ${date.getMonth()}/${date.getDate()}/${date.getYear()%100}</p>
 		  </div>
 		</div>
 	  </div>`);
@@ -1047,7 +1064,8 @@ rhit.Patient = class {
 		this.id = id;
 		this.address = address;
 		this.birthdate = birthdate;
-		this.bloodPressure = sortMap(objectToMap(bloodPressure));
+		this.bloodPressure_sys = sortMap(objectToMap(bloodPressure[0]));
+		this.bloodPressure_dia =  sortMap(objectToMap(bloodPressure[1]));
 		this.firstName = firstName;
 		this.googleID = googleID;
 		this.height = sortMap(objectToMap(height));
@@ -1245,50 +1263,100 @@ function drawChart() {
 	var data = new google.visualization.DataTable();
 	let yAxis = "";
 	let vital;
+
+	if (rhit.single_SinglePatientManager.vital != "Blood Pressure") {
+		data.addColumn('date', 'Date');
+		data.addColumn('number', 'Value');
+
+		switch (rhit.single_SinglePatientManager.vital) {
+			case "Weight":
+				vital = singlePatient.weight;
+				yAxis = "Pounds (Lbs)";
+				break;
+			case "SPO2":
+				vital = singlePatient.spo2;
+				yAxis = "Oxygen Saturation (%)";
+				break;
+			case "Height":
+				vital = singlePatient.height;
+				yAxis = "Inches";
+				break;
+			case "Pulse":
+				vital = singlePatient.pulse;
+				yAxis = "Beats per minute";
+				break;
+			case "Temperature":
+				vital = singlePatient.temperature;
+				yAxis = "Degrees (\xB0)";
+				break;
+			default:
+		}
+	
+		let vals = Array.from(vital)
+	
+		for (let i = 0; i < vals.length; i++) {
+			vals[i][0] = parseDate(vals[i][0]);
+			vals[i][1] = parseInt(vals[i][1]);
+		}
+
+
+		data.addRows(vals);
+	
+		var options = {
+			colors : ['#c15027'],
+			series: {
+				0: { pointShape: { type: 'circle', dent: 0.2 } },
+			},
+			hAxis: {
+				title: 'Time'
+			},
+			vAxis: {
+				title: yAxis
+	
+			},
+			pointSize: 8,
+			backgroundColor: '#F5F5F5',
+			lineWidth: 3,
+			fontName: 'Mukta',
+			fontSize: 16
+		};
+	
+		// Instantiate and draw our chart, passing in some options.
+		var chart = new google.visualization.LineChart(document.getElementById('graphicsChart'));
+		chart.draw(data, options);
+		window.addEventListener('resize', drawChart, false);
+	}
+
+	else {
+
+	let sys_vital = singlePatient.bloodPressure_sys;
+	let dia_vital = singlePatient.bloodPressure_dia;
+
+		
 	data.addColumn('date', 'Date');
-	data.addColumn('number', 'Value');
+	data.addColumn('number', 'Systolic BP');
+	data.addColumn('number', 'Diastolic BP');
 
-	switch (rhit.single_SinglePatientManager.vital) {
-		case "Weight":
-			vital = singlePatient.weight;
-			yAxis = "Pounds (Lbs)";
-			break;
-		case "SPO2":
-			vital = singlePatient.spo2;
-			yAxis = "Oxygen Saturation (%)";
-			break;
-		case "Blood Pressure":
-			vital = singlePatient.bloodPressure;
-			yAxis = "mmHg";
-			break;
-		case "Height":
-			vital = singlePatient.height;
-			yAxis = "Inches";
-			break;
-		case "Pulse":
-			vital = singlePatient.pulse;
-			yAxis = "Beats per minute";
-			break;
-		case "Temperature":
-			vital = singlePatient.temperature;
-			yAxis = "Degrees (\xB0)";
-			break;
-		default:
+	let sys_vals = Array.from(sys_vital);
+	let dia_sys = Array.from(dia_vital)
+
+	console.log(sys_vals);
+
+	for (let i = 0; i < sys_vals.length; i++) {
+		sys_vals[i][0] = parseDate(sys_vals[i][0], true);
+		sys_vals[i][1] = parseInt(sys_vals[i][1]);
+		sys_vals[i].push(parseInt(dia_sys[i][1]));
 	}
 
-	let vals = []
+	console.log(sys_vals);
 
-	for (const [key, value] of vital) {
-		let point = [parseDate(key), parseInt(value)];
-		vals.push(point);
-	}
-	data.addRows(vals);
+	data.addRows(sys_vals);
 
 	var options = {
+		colors : ['#c15027', '#43459d'],
 		series: {
-			0: {
-				color: '#c15027'
-			},
+            0: { pointShape: { type: 'circle', dent: 0.2 } },
+            1: { pointShape: { type: 'circle', dent: 0.2 } },
 		},
 		hAxis: {
 			title: 'Time'
@@ -1297,6 +1365,8 @@ function drawChart() {
 			title: yAxis
 
 		},
+		pointSize: 8,
+		legend: { position: 'bottom' },
 		backgroundColor: '#F5F5F5',
 		lineWidth: 3,
 		fontName: 'Mukta',
@@ -1307,28 +1377,26 @@ function drawChart() {
 	var chart = new google.visualization.LineChart(document.getElementById('graphicsChart'));
 	chart.draw(data, options);
 	window.addEventListener('resize', drawChart, false);
+
+	}
 }
 
 // Function written to parse the time keys of the different vital maps
-function parseDate(key) {
+function parseDate(key, seconds = false) {
 	let year = parseInt(key.substring(0, 4));
 	let month = parseInt(key.substring(4, 6));
 	let day = parseInt(key.substring(6, 8));
 	let hour = parseInt(key.substring(9, 11));
 	let minute = parseInt(key.substring(12, 14));
 
-	return new Date(year, month, day, hour, minute);
-}
+	if (!seconds) {
+		return new Date(year, month, day, hour, minute);
 
-// From Firebase Console
-rhit.startFirebaseUI = function () {
-	var uiConfig = {
-		signInSuccessUrl: '/',
-		signInOptions: [
-			firebase.auth.EmailAuthProvider.PROVIDER_ID
-		],
-	};
+	}
 
-	const ui = new firebaseui.auth.AuthUI(firebase.auth());
-	ui.start('#firebaseui-auth-container', uiConfig);
+	else {
+		let seconds = parseInt(key.substring(15, 17));
+		return new Date(year, month, day, hour, minute, seconds);
+
+	}
 }
