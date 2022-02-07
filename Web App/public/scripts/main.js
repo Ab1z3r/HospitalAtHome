@@ -5,6 +5,7 @@ rhit.COLLECTION_PRIMARY_PROVIDERS = "primaryProviders";
 rhit.PROVIDER_FIRST_NAME = "firstName";
 rhit.PROVIDER_LAST_NAME = "lastName";
 rhit.PROVIDER_PATIENTS = "patients";
+rhit.PROVIDER_UID = "uid";
 
 /** PATIENT COLLECTION **/
 rhit.COLLECTION_PATIENTS = "patients";
@@ -52,7 +53,7 @@ rhit.LoginPageController = class {
 	constructor() {
 		const inputEmailEl = document.querySelector("#logonInput");
 		const inputPasswordEl = document.querySelector("#passwordInput");
-		
+
 		// * Click Listener for Login Button
 		document.querySelector("#loginButton").onclick = (event) => {
 			rhit.single_AuthManager.signIn(inputEmailEl, inputPasswordEl);
@@ -82,7 +83,10 @@ rhit.SignupPageController = class {
 		document.querySelector("#signupButton").onclick = (event) => {
 			rhit.single_AuthManager.signUp(emailInput, passwordInput, nameInput);
 		};
+
+		rhit.single_PrimaryProviderManager.beginListeningForCollection();
 	}
+
 }
 
 // Patients Page Controller
@@ -142,6 +146,7 @@ rhit.PatientsPageController = class {
 		})
 
 		rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE);
+		rhit.single_PrimaryProviderManager.beginListenForDocument();
 	}
 
 	updateList() {
@@ -375,7 +380,7 @@ rhit.GraphicsPageController = class {
 
 		document.querySelector("#singlePatientBreadCrumb").onclick = (event) => {
 			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;
-		};	
+		};
 		rhit.single_SinglePatientManager.beginListening(this.constructPage.bind(this));
 	}
 
@@ -388,7 +393,7 @@ rhit.GraphicsPageController = class {
 	updateView(vital) {
 		document.querySelector("#graphicsTitle").innerHTML = `${vital} History`
 		document.querySelector("#graphicsHeader").innerHTML = `${vital}`
-		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
+		document.querySelector("#singlePatientBreadCrumb").innerHTML = `<a>${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}</a>`.toUpperCase()
 		document.querySelector("#vitalBreadCrumb").innerHTML = `${vital}`.toUpperCase()
 	}
 
@@ -479,7 +484,7 @@ rhit.AuthManager = class {
 	signIn(logonInput, passwordInput) {
 		firebase.auth().signInWithEmailAndPassword(logonInput.value, passwordInput.value)
 			.then(() => {
-				this.configureSignIn();
+				// this.configureSignIn();
 			}).catch(function (error) {
 				var errorCode = error.code;
 				var errorMessage = error.message;
@@ -494,10 +499,11 @@ rhit.AuthManager = class {
 		});
 	}
 
-	signUp(emailInput,passwordInput, nameInput) {
+	// * Handles when a Primary Provider sign-ups new account
+	signUp(emailInput, passwordInput, nameInput) {
 		firebase.auth().createUserWithEmailAndPassword(emailInput.value, passwordInput.value)
 			.then(() => {
-				this.sendLink();
+				this.sendLink(nameInput);
 			})
 			.catch((error) => {
 				const code = error.code;
@@ -506,31 +512,21 @@ rhit.AuthManager = class {
 			});
 	}
 
-	sendLink() {
+	sendLink(nameInput) {
 		firebase.auth().currentUser.sendEmailVerification()
 			.then(() => {
-				// Email verification sent!
-				// ...
+				console.log("Sending Email Verification!");
+				const names = nameInput.value.split(" ");
+				// TODO: Create Patient Document
+				// Sign the Primary Provider Out
+				// Return back to the Login Page after a certain amount time
+				rhit.single_PrimaryProviderManager.add(names[0], names[1], rhit.single_AuthManager.uid);
+			})
+			.catch((error) => {
+				var errorCode = error.code;
+				var errorMessage = error.message;
+				console.log("Error:", errorCode, errorMessage);
 			});
-
-		// firebase.auth().sendSignInLinkToEmail(emailInput.value, actionCodeSettings)
-		// 	.then(() => {
-		// 		// The link was successfully sent. Inform the user.
-		// 		// Save the email locally so you don't need to ask the user for it again
-		// 		// if they open the link on the same device.
-		// 		window.localStorage.setItem('emailForSignIn', emailInput.value);
-		// 	})
-		// 	.catch((error) => {
-		// 		var errorCode = error.code;
-		// 		var errorMessage = error.message;
-		// 		console.log("Error:", errorCode, errorMessage);
-		// 	});
-	}
-
-	// * Handles setting reference for Primary Provider Document
-	configureSignIn() {
-		rhit.single_PrimaryProviderManager.setReference(rhit.single_AuthManager.uid);
-		rhit.single_PrimaryProviderManager.beginListening();
 	}
 
 	// * Checks if there is currently a user signed
@@ -554,41 +550,62 @@ rhit.AuthManager = class {
  */
 rhit.PrimaryProviderManager = class {
 	constructor() {
-		this._documentSnapshot = {};
-		this._ref = null;
+		this._documentSnapshots = [];
+		this._document = {};
+		this._ref = firebase.firestore().collection(rhit.COLLECTION_PRIMARY_PROVIDERS);
 		this._unsubscribe = null;
 	}
 
-	beginListening() {
-		this._unsubscribe = this._ref.onSnapshot((doc) => {
-			if (doc.exists) {
-				this._documentSnapshot = doc;
-			} else {
-				this.add();
-			}
+	beginListeningForCollection() {
+		let query = this._ref;
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			this._documentSnapshots = querySnapshot.docs;
 		});
 	}
 
-	setReference(uid) {
-		this._ref = firebase.firestore().collection(rhit.COLLECTION_PRIMARY_PROVIDERS).doc(uid);
+	beginListenForDocument() {
+		this._unsubscribe = this._ref.doc(rhit.single_AuthManager.uid).onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Docoument exists!");
+				this._document = doc;
+			} else {
+				console.log("Document does not exist!");
+			}
+		});
+
 	}
 
 	stopListening() {
 		this._unsubscribe();
 	}
 
-	add() {
-		this._ref.set({
-				[rhit.PROVIDER_FIRST_NAME]: `${rhit.single_AuthManager.firstName}`,
-				[rhit.PROVIDER_LAST_NAME]: `${rhit.single_AuthManager.lastName}`,
+	add(firstName, lastName, uid) {
+		this._ref.doc(`${uid}`).set({
+				[rhit.PROVIDER_FIRST_NAME]: firstName,
+				[rhit.PROVIDER_LAST_NAME]: lastName,
 				[rhit.PROVIDER_PATIENTS]: [],
 			})
 			.then(function (docRef) {
-				console.log(`Document written`);
+				// Sign the current user out and then return to login
+				// TODO: Have Modal come up that user clicks first before returning
+				rhit.single_AuthManager.signOut();
+				window.location.href = "/";
 			})
 			.catch(function (error) {
 				console.log("Error adding document: ", error);
 			});
+	}
+
+	set documentSnapshots(queries) {
+		this._documentSnapshots = queries;
+	}
+
+	get documentSnapshots() {
+		return this.documentSnapshots;
+	}
+
+	get length() {
+		return this._documentSnapshots.length;
 	}
 
 	getProvider() {
@@ -602,7 +619,7 @@ rhit.PrimaryProviderManager = class {
 		return provider;
 	}
 	get lastName() {
-		return this._documentSnapshot.get(rhit.PROVIDER_LAST_NAME);
+		return this._document.get(rhit.PROVIDER_LAST_NAME);
 	}
 }
 
@@ -625,7 +642,6 @@ rhit.PatientsManager = class {
 			changeListener();
 		});
 	}
-
 
 	//** USED FOR SEARCHING / FILTERING DOCUMENTS
 	repopulate(changeListener, searchBy, value = null) {
@@ -1018,7 +1034,6 @@ rhit.NotesManager = class {
 
 }
 
-
 /** DATA MANAGEMENT **/
 
 // Patient Wrapper
@@ -1125,6 +1140,8 @@ rhit.initializePage = () => {
 	// * initializes page controller for Login Page
 	if (document.querySelector("#signupPage")) {
 		console.log("You are on the signup page.");
+		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
+
 		new rhit.SignupPageController();
 	}
 
@@ -1133,9 +1150,8 @@ rhit.initializePage = () => {
 		console.log("You are on the patients page.");
 		const uid = urlParams.get("uid");
 		rhit.single_PatientsManager = new rhit.PatientsManager();
+		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
 
-		rhit.single_PrimaryProviderManager.setReference(rhit.single_AuthManager.uid);
-		rhit.single_PrimaryProviderManager.beginListening();
 
 		new rhit.PatientsPageController();
 	}
@@ -1165,11 +1181,6 @@ rhit.initializePage = () => {
 		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
 		rhit.single_SinglePatientManager.vital = vital;
 
-		// Load the Visualization API and the corechart package.
-		google.charts.load('current', {
-			'packages': ['corechart']
-		});
-
 		new rhit.GraphicsPageController(vital);
 	}
 };
@@ -1192,7 +1203,6 @@ rhit.pageStatus = function () {
 /** MAIN **/
 rhit.main = function () {
 	rhit.single_AuthManager = new rhit.AuthManager();
-	rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
 	rhit.single_AuthManager.beginListening(rhit.pageStatus.bind(this));
 };
 
@@ -1322,11 +1332,3 @@ rhit.startFirebaseUI = function () {
 	const ui = new firebaseui.auth.AuthUI(firebase.auth());
 	ui.start('#firebaseui-auth-container', uiConfig);
 }
-
-// var actionCodeSettings = {
-// 	// URL you want to redirect back to. The domain (www.example.com) for this
-// 	// URL must be in the authorized domains list in the Firebase Console.
-// 	url: 'http://localhost:5000',
-// 	// This must be true.
-// 	handleCodeInApp: true
-// }
