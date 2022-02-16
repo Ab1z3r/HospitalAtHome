@@ -83,6 +83,19 @@ body {
   border-color: #ccc;
 }
 
+.dropdown-menu-right {
+  left: -128px;
+}
+
+#menuDropdown a.dropdown-item {
+  text-decoration: none;
+}
+
+#menuDropdown a.dropdown-item:hover{
+  text-decoration: underline;
+  color: var(--main-color);
+}
+
 /* <----- Login Page (index.html) -----> */
 .login-container {
   margin-top: 40px;
@@ -358,15 +371,6 @@ a#authLink:hover {
 #patientsPage footer {
   margin-right: 60px;
   margin-bottom: 10px;
-}
-
-#signOutLink {
-  text-decoration: none;
-  color: var(--main-color);
-}
-
-#signOutLink:hover {
-  text-decoration: underline;
 }
 
 #patientsPage .card {
