@@ -37,4 +37,18 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="first_name_label">First Name:</string>
+    <string name="last_name_label">Last Name:</string>
+    <string name="email_label">Email:</string>
+    <string name="phone_label">Phone:</string>
+    <string name="birthday_label">Birthday:</string>
+    <string name="gender_label">Gender:</string>
+    <string name="country_label">Country:</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="email_hint">Email</string>
+    <string name="phone_hint">Phone</string>
+    <string name="birthday_hint">Birthday</string>
+    <string name="gender_hint">Gender</string>
+    <string name="country_hint">Country</string>
 </resources>
