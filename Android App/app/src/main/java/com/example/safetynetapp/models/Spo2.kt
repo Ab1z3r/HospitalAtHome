@@ -17,7 +17,7 @@ class Spo2(
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
-        dataType: DataType,
+        dataType: DataType?,
         textView: TextView,
         defaultVal: String
     ) {
@@ -25,9 +25,9 @@ class Spo2(
     }
 
     override fun dataPointToValueString(dp: DataPoint?, defaultVal: String): String {
-        if(dp == null){
+        if (dp == null) {
             return defaultVal
-        }else{
+        } else {
             // Get data from Maximo
             return defaultVal
         }

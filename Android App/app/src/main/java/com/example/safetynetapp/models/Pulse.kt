@@ -20,12 +20,12 @@ class Pulse(
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
-        dataType: DataType,
+        dataType: DataType?,
         textView: TextView,
         defaultVal: String
     ) {
         Fitness.getHistoryClient(callingActivity, googleSignInAccount)
-            .readDailyTotal(dataType)
+            .readDailyTotal(dataType!!)
             .addOnSuccessListener { response ->
                 Log.d("[INFO]", response.dataPoints.toString())
                 if(response.dataPoints.size == 0){

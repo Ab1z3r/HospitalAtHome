@@ -17,7 +17,7 @@ class Temperature(
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
-        dataType: DataType,
+        dataType: DataType?,
         textView: TextView,
         defaultVal: String
     ) {

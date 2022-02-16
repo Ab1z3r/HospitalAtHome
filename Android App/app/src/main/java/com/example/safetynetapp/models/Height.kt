@@ -19,12 +19,12 @@ class Height(
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
-        dataType: DataType,
+        dataType: DataType?,
         textView: TextView,
         defaultVal: String
     ) {
         Fitness.getHistoryClient(callingActivity, googleSignInAccount)
-            .readDailyTotal(dataType)
+            .readDailyTotal(dataType!!)
             .addOnSuccessListener { response ->
                 if(response.dataPoints.isEmpty()){
                     textView.text = defaultVal

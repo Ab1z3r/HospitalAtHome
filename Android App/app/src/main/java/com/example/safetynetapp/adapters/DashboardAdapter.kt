@@ -72,7 +72,7 @@ class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: Home
             titleTextView.text = vital.title
             timestampTextView.text = vital.cardTimestamp
             averageTextView.text = "Average"
-//            vital.fetchVital(parentActivity, usermodel.googleSigninUser, vital.dataType!!, dataTextView, vital.cardData)
+            vital.fetchVital(parentActivity, usermodel.googleSigninUser, vital.dataType, dataTextView, vital.cardData)
             dataTextView.text = vital.cardData
         }
     }
