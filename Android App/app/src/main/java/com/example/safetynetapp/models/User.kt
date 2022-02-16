@@ -9,6 +9,7 @@ class User() : Serializable {
     private var username: String = ""
 
 
+
     constructor(displayName: String, userPictureURI: String, username: String) : this() {
         this.displayName = displayName
         this.userPictureURI = userPictureURI

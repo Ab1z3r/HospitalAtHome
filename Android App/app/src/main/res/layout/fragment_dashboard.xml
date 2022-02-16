@@ -8,6 +8,12 @@
     android:background="@color/secondaryDarkColor"
     tools:context=".ui.DashboardFragment">
 
+    <TextView
+        android:id="@+id/heightVal"
+        android:layout_width="match_parent"
+        android:layout_height="50px" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dashboard_recycler_view"
         android:layout_width="match_parent"

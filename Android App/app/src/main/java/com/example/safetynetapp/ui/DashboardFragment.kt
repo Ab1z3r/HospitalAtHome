@@ -1,11 +1,13 @@
 package com.example.safetynetapp.ui
 
 import android.os.Bundle
+import com.example.safetynetapp.HomeActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +16,9 @@ import com.example.safetynetapp.HomeViewModel
 import com.example.safetynetapp.adapters.DashboardAdapter
 import com.example.safetynetapp.databinding.FragmentDashboardBinding
 import com.example.safetynetapp.models.DashboardViewModel
+import com.example.safetynetapp.models.User
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
 class DashboardFragment : Fragment() {
 
@@ -28,7 +33,8 @@ class DashboardFragment : Fragment() {
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
 
-        adapter = DashboardAdapter(this)
+
+        adapter = DashboardAdapter(this, activity as HomeActivity)
         binding.dashboardRecyclerView.adapter = adapter
         binding.dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.dashboardRecyclerView.setHasFixedSize(true)

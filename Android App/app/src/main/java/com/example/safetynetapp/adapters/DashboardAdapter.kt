@@ -2,16 +2,20 @@ package com.example.safetynetapp.adapters
 
 import android.app.PendingIntent.getActivity
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.safetynetapp.HomeActivity
 import com.example.safetynetapp.R
 import com.example.safetynetapp.models.DashboardViewModel
 import com.example.safetynetapp.models.Vital
@@ -19,12 +23,19 @@ import com.example.safetynetapp.ui.ChartActivity
 import com.example.safetynetapp.ui.DashboardFragment
 import com.google.firebase.Timestamp
 import com.example.safetynetapp.MainActivity
+import com.example.safetynetapp.models.UserViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataPoint
+import com.google.android.gms.fitness.data.DataType
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
-
-
-class DashboardAdapter(val fragment: DashboardFragment): RecyclerView.Adapter<DashboardAdapter.DashboardViewHolder>() {
+class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: HomeActivity): RecyclerView.Adapter<DashboardAdapter.DashboardViewHolder>() {
     val model = ViewModelProvider(fragment.requireActivity()).get(DashboardViewModel::class.java)
+    val usermodel = ViewModelProvider(fragment.requireActivity()).get(UserViewModel::class.java)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -35,6 +46,7 @@ class DashboardAdapter(val fragment: DashboardFragment): RecyclerView.Adapter<Da
     }
 
     override fun onBindViewHolder(holder: DashboardViewHolder, position: Int) {
+        Log.d("[INFO]", "In onBindViewHolder")
         holder.bind(model.getVitalAt(position))
     }
 
@@ -58,8 +70,10 @@ class DashboardAdapter(val fragment: DashboardFragment): RecyclerView.Adapter<Da
 
         fun bind(vital: Vital) {
             titleTextView.text = vital.title
-            dataTextView.text = vital.cardData
             timestampTextView.text = vital.cardTimestamp
+            averageTextView.text = "Average"
+            vital.fetchVital(parentActivity, usermodel.googleSigninUser, vital.dataType!!, dataTextView, vital.cardData)
+            dataTextView.text = vital.cardData
         }
     }
 }

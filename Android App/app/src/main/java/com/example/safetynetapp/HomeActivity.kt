@@ -8,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -15,7 +16,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.safetynetapp.databinding.ActivityHomeBinding
+import com.example.safetynetapp.models.DashboardViewModel
 import com.example.safetynetapp.models.User
+import com.example.safetynetapp.models.UserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.Fitness
@@ -68,7 +71,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
 //        val fabbutton = findViewById<FloatingActionButton>(R.id.fab)
-//        heightVal = findViewById<TextView>(R.id.heightValue)
+        heightVal = findViewById<TextView>(R.id.heightVal)
         val displayImage = binding.navView.getHeaderView(0)
             .findViewById<CircleImageView>(R.id.profile_picture_image_view)
         val displayNameTextView =
@@ -88,28 +91,32 @@ class HomeActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+
         fitnessOptions = FitnessOptions.builder()
+            .addDataType(DataType.TYPE_HEART_RATE_BPM, FitnessOptions.ACCESS_READ)
             .addDataType(DataType.TYPE_HEIGHT, FitnessOptions.ACCESS_READ)
+            .addDataType(DataType.TYPE_WEIGHT, FitnessOptions.ACCESS_READ)
             .build()
+
+         var usermodel = ViewModelProvider(this@HomeActivity).get(UserViewModel::class.java)
+        usermodel.user = loggedInUser!!
+        usermodel.googleSigninUser = getGoogleAccount()
+        usermodel.fitnessoptions = fitnessOptions!!
+
 
         if (!hasPermissions()) {
             getPermissions()
         }
-
-//        while (!hasPermissions()){
-//
-//        }
-
-
     }
 
     private fun call_button_listener(){
-        Log.d("[INFO]", "Call button pressed")
-        val intent = Intent(this@HomeActivity, Call_Activity::class.java)
-        startActivity(intent)
+//        Log.d("[INFO]", "Call button pressed")
+//        val intent = Intent(this@HomeActivity, Call_Activity::class.java)
+//        startActivity(intent)
     }
 
     private fun hasPermissions(): Boolean {
+        Log.d("[INFO] hasPermissions: ", GoogleSignIn.hasPermissions(getGoogleAccount(), fitnessOptions).toString())
         return GoogleSignIn.hasPermissions(getGoogleAccount(), fitnessOptions)
     }
 
@@ -122,7 +129,7 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
-    private fun getData() {
+    fun getData(dataType: DataType) {
         // Read the data that's been collected throughout the past week.
         val endTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
         val startTime = endTime.minusWeeks(1)
@@ -130,7 +137,7 @@ class HomeActivity : AppCompatActivity() {
 
 
         Fitness.getHistoryClient(this, getGoogleAccount())
-            .readDailyTotal(DataType.TYPE_HEIGHT)
+            .readDailyTotal(dataType)
             .addOnSuccessListener { response ->
                 // The aggregate query puts datasets into buckets, so flatten into a
                 // single list of datasets
