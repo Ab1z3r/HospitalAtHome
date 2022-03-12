@@ -31,6 +31,8 @@ class ProfileFragment : Fragment() {
     fun updateView() {
         with (model.user!!) {
             Log.d("TAG", "in profile update view")
+
+
         }
     }
 }
