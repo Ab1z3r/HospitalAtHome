@@ -14,8 +14,19 @@
 
 <body>
   <nav class="navbar navbar-dark fixed-top">
-    <a id="title" class="navbar-brand" href="#"><img id="navLogo" src="images/union_health_logo.png"
+    <img id="navLogo" src="images/union_health_logo.png"
         alt="Union Health Logo"></a>
+
+        <div class="dropdown navbar-brand">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Menu
+          </button>
+          <div id="menuDropdown" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" id="signOutLink" href="index.html">Sign Out</a>
+            <a class="dropdown-item" id="primaryProviderProfile">View Profile</a>
+          </div>
+        </div>
+
   </nav>
   <div id="contactPage" class="contact-container">
     <h1>Video Call</h1>

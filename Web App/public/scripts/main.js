@@ -2,6 +2,7 @@ var rhit = rhit || {};
 
 /** PRIMARY PROVIDER COLLECTION **/
 rhit.COLLECTION_PRIMARY_PROVIDERS = "primaryProviders";
+rhit.PROVIDER_EMAIL = "email";
 rhit.PROVIDER_FIRST_NAME = "firstName";
 rhit.PROVIDER_LAST_NAME = "lastName";
 rhit.PROVIDER_PATIENTS = "patients";
@@ -42,7 +43,6 @@ rhit.single_SinglePatientManager = null;
 
 rhit.single_MedicinesManager = null;
 rhit.single_NotesManager = null;
-
 
 /** PAGE CONTROLLERS **/
 // Login Page Controller
@@ -86,7 +86,6 @@ rhit.SignupPageController = class {
 
 		rhit.single_PrimaryProviderManager.beginListeningForCollection();
 	}
-
 }
 
 // Patients Page Controller
@@ -104,6 +103,12 @@ rhit.PatientsPageController = class {
 			rhit.single_AuthManager.signOut();
 			window.location.href = "/";
 		};
+
+		// * Click Listener for viewing primary provider profile
+		document.querySelector("#primaryProviderProfile").onclick = (event) => {
+			window.location.href = `/provider_profile.html?uid=${rhit.single_AuthManager.uid}`;
+		};
+
 
 		document.querySelector("#patientsSearchButton").onclick = (event) => {
 			rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
@@ -192,6 +197,22 @@ rhit.PatientsPageController = class {
 		return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 	}
 }
+
+// Primary Provider Profile Page Controller
+/**
+ * PURPOSE: Handle all View and Controller interactions for the Provider Profile Page
+ */
+rhit.ProviderProfilePageController = class {
+	constructor() {
+		rhit.single_PatientsManager.beginListening();
+		rhit.single_PrimaryProviderManager.beginListenForDocument(this.updateView.bind(this));
+	}
+
+	updateView() {
+		document.querySelector("#providerProfileTitle").innerHTML = `Primary Provider: ${rhit.single_PrimaryProviderManager.firstName} ${rhit.single_PrimaryProviderManager.lastName}`
+	}
+}
+
 
 // Single Patients Page Controller
 /**
@@ -421,19 +442,18 @@ rhit.GraphicsPageController = class {
 					break;
 				default:
 			}
-	
+
 			const historyList = htmlToElement('<div id="graphicsInfo"></div>');
 			for (const [key, value] of vital) {
 				const newCard = this._createHistoryCard(key, value);
 				historyList.appendChild(newCard);
 			}
-	
+
 			const oldHistoryList = document.querySelector("#graphicsInfo");
 			oldHistoryList.removeAttribute("id");
 			oldHistoryList.hidden = true;
 			oldHistoryList.parentElement.appendChild(historyList);
-		}
-		else {
+		} else {
 			let sys_vital = Array.from(singlePatient.bloodPressure_sys);
 			let dia_vital = Array.from(singlePatient.bloodPressure_dia);
 
@@ -520,7 +540,7 @@ rhit.AuthManager = class {
 	signUp(emailInput, passwordInput, nameInput) {
 		firebase.auth().createUserWithEmailAndPassword(emailInput.value, passwordInput.value)
 			.then(() => {
-				this.sendLink(nameInput);
+				this.sendLink(emailInput, nameInput);
 			})
 			.catch((error) => {
 				const code = error.code;
@@ -529,15 +549,19 @@ rhit.AuthManager = class {
 			});
 	}
 
-	sendLink(nameInput) {
+	sendLink(emailInput, nameInput) {
 		firebase.auth().currentUser.sendEmailVerification()
 			.then(() => {
 				console.log("Sending Email Verification!");
 				const names = nameInput.value.split(" ");
-				// TODO: Create Patient Document
 				// Sign the Primary Provider Out
 				// Return back to the Login Page after a certain amount time
-				rhit.single_PrimaryProviderManager.add(names[0], names[1], rhit.single_AuthManager.uid);
+				// Save Users Email, First Name, and Last Name in Local Storage
+				window.localStorage.setItem("Email", emailInput.value);
+				window.localStorage.setItem("First Name", names[0]);
+				window.localStorage.setItem("Last Name", names[1]);
+				rhit.single_AuthManager.signOut();
+				window.location.href = "/";
 			})
 			.catch((error) => {
 				var errorCode = error.code;
@@ -587,7 +611,23 @@ rhit.PrimaryProviderManager = class {
 				this._document = doc;
 			} else {
 				console.log("Document does not exist!");
+				rhit.single_PrimaryProviderManager.add(window.localStorage.getItem("Email"), window.localStorage.getItem("First Name"), window.localStorage.getItem("Last Name"),
+					rhit.single_AuthManager.uid);
+				window.localStorage.removeItem("Email");
+				window.localStorage.removeItem("First Name");
+				window.localStorage.removeItem("Last Name");
 			}
+		});
+
+	}
+
+	beginListenForDocument(changeListener) {
+		this._unsubscribe = this._ref.doc(rhit.single_AuthManager.uid).onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Docoument exists!");
+				this._document = doc;
+			} else {}
+			changeListener();
 		});
 
 	}
@@ -596,17 +636,12 @@ rhit.PrimaryProviderManager = class {
 		this._unsubscribe();
 	}
 
-	add(firstName, lastName, uid) {
+	add(email, firstName, lastName, uid) {
 		this._ref.doc(`${uid}`).set({
+				[rhit.PROVIDER_EMAIL]: email,
 				[rhit.PROVIDER_FIRST_NAME]: firstName,
 				[rhit.PROVIDER_LAST_NAME]: lastName,
 				[rhit.PROVIDER_PATIENTS]: [],
-			})
-			.then(function (docRef) {
-				// Sign the current user out and then return to login
-				// TODO: Have Modal come up that user clicks first before returning
-				rhit.single_AuthManager.signOut();
-				window.location.href = "/";
 			})
 			.catch(function (error) {
 				console.log("Error adding document: ", error);
@@ -625,16 +660,26 @@ rhit.PrimaryProviderManager = class {
 		return this._documentSnapshots.length;
 	}
 
+	get firstName() {
+		return this._document.get(rhit.PROVIDER_FIRST_NAME);
+	}
+
 	getProvider() {
 		const docSnapshot = this._document;
 		const provider = new rhit.PrimaryProvider(
 			docSnapshot.id,
+			docSnapshot.get(rhit.PROVIDER_EMAIL),
 			docSnapshot.get(rhit.PROVIDER_FIRST_NAME),
 			docSnapshot.get(rhit.PROVIDER_LAST_NAME),
 			docSnapshot.get(rhit.PROVIDER_PATIENTS),
 		);
 		return provider;
 	}
+
+	get firstName() {
+		return this._document.get(rhit.PROVIDER_FIRST_NAME);
+	}
+
 	get lastName() {
 		return this._document.get(rhit.PROVIDER_LAST_NAME);
 	}
@@ -657,6 +702,13 @@ rhit.PatientsManager = class {
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
+		});
+	}
+
+	beginListening() {
+		let query = this._ref.orderBy(rhit.PATIENT_LAST_NAME, "desc");
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			this._documentSnapshots = querySnapshot.docs;
 		});
 	}
 
@@ -1065,7 +1117,7 @@ rhit.Patient = class {
 		this.address = address;
 		this.birthdate = birthdate;
 		this.bloodPressure_sys = sortMap(objectToMap(bloodPressure[0]));
-		this.bloodPressure_dia =  sortMap(objectToMap(bloodPressure[1]));
+		this.bloodPressure_dia = sortMap(objectToMap(bloodPressure[1]));
 		this.firstName = firstName;
 		this.googleID = googleID;
 		this.height = sortMap(objectToMap(height));
@@ -1084,8 +1136,9 @@ rhit.Patient = class {
  * PURPOSE: Holds all data relevant to a signed in primary provider
  */
 rhit.PrimaryProvider = class {
-	constructor(id, firstName, lastName, patients) {
+	constructor(id, email, firstName, lastName, patients) {
 		this.id = id;
+		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.patient = patients;
@@ -1134,10 +1187,6 @@ rhit.checkForRedirects = () => {
 	if (document.querySelector("#loginPage") && rhit.single_AuthManager.isSignedIn && rhit.single_AuthManager.isVerified) {
 		window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 	}
-
-	// if (!document.querySelector("#loginPage") && !rhit.single_AuthManager.isSignedIn) {
-	// 	window.location.href = "/";
-	// }
 };
 
 
@@ -1170,8 +1219,17 @@ rhit.initializePage = () => {
 		rhit.single_PatientsManager = new rhit.PatientsManager();
 		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
 
-
 		new rhit.PatientsPageController();
+	}
+
+	// * initializes page controller for Provider Profile Page
+	if (document.querySelector("#providerProfilePage")) {
+		console.log("You are on the provider profile page.");
+		const uid = urlParams.get("uid");
+		rhit.single_PatientsManager = new rhit.PatientsManager();
+		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
+
+		new rhit.ProviderProfilePageController();
 	}
 
 	// * initializes page controller for Single Patient Page
@@ -1291,9 +1349,9 @@ function drawChart() {
 				break;
 			default:
 		}
-	
+
 		let vals = Array.from(vital)
-	
+
 		for (let i = 0; i < vals.length; i++) {
 			vals[i][0] = parseDate(vals[i][0]);
 			vals[i][1] = parseInt(vals[i][1]);
@@ -1301,18 +1359,23 @@ function drawChart() {
 
 
 		data.addRows(vals);
-	
+
 		var options = {
-			colors : ['#c15027'],
+			colors: ['#c15027'],
 			series: {
-				0: { pointShape: { type: 'circle', dent: 0.2 } },
+				0: {
+					pointShape: {
+						type: 'circle',
+						dent: 0.2
+					}
+				},
 			},
 			hAxis: {
 				title: 'Time'
 			},
 			vAxis: {
 				title: yAxis
-	
+
 			},
 			pointSize: 8,
 			backgroundColor: '#F5F5F5',
@@ -1320,63 +1383,73 @@ function drawChart() {
 			fontName: 'Mukta',
 			fontSize: 16
 		};
-	
+
 		// Instantiate and draw our chart, passing in some options.
 		var chart = new google.visualization.LineChart(document.getElementById('graphicsChart'));
 		chart.draw(data, options);
 		window.addEventListener('resize', drawChart, false);
-	}
+	} else {
 
-	else {
+		let sys_vital = singlePatient.bloodPressure_sys;
+		let dia_vital = singlePatient.bloodPressure_dia;
 
-	let sys_vital = singlePatient.bloodPressure_sys;
-	let dia_vital = singlePatient.bloodPressure_dia;
 
-		
-	data.addColumn('date', 'Date');
-	data.addColumn('number', 'Systolic BP');
-	data.addColumn('number', 'Diastolic BP');
+		data.addColumn('date', 'Date');
+		data.addColumn('number', 'Systolic BP');
+		data.addColumn('number', 'Diastolic BP');
 
-	let sys_vals = Array.from(sys_vital);
-	let dia_sys = Array.from(dia_vital)
+		let sys_vals = Array.from(sys_vital);
+		let dia_sys = Array.from(dia_vital)
 
-	console.log(sys_vals);
+		console.log(sys_vals);
 
-	for (let i = 0; i < sys_vals.length; i++) {
-		sys_vals[i][0] = parseDate(sys_vals[i][0], true);
-		sys_vals[i][1] = parseInt(sys_vals[i][1]);
-		sys_vals[i].push(parseInt(dia_sys[i][1]));
-	}
+		for (let i = 0; i < sys_vals.length; i++) {
+			sys_vals[i][0] = parseDate(sys_vals[i][0], true);
+			sys_vals[i][1] = parseInt(sys_vals[i][1]);
+			sys_vals[i].push(parseInt(dia_sys[i][1]));
+		}
 
-	console.log(sys_vals);
+		console.log(sys_vals);
 
-	data.addRows(sys_vals);
+		data.addRows(sys_vals);
 
-	var options = {
-		colors : ['#c15027', '#43459d'],
-		series: {
-            0: { pointShape: { type: 'circle', dent: 0.2 } },
-            1: { pointShape: { type: 'circle', dent: 0.2 } },
-		},
-		hAxis: {
-			title: 'Time'
-		},
-		vAxis: {
-			title: yAxis
+		var options = {
+			colors: ['#c15027', '#43459d'],
+			series: {
+				0: {
+					pointShape: {
+						type: 'circle',
+						dent: 0.2
+					}
+				},
+				1: {
+					pointShape: {
+						type: 'circle',
+						dent: 0.2
+					}
+				},
+			},
+			hAxis: {
+				title: 'Time'
+			},
+			vAxis: {
+				title: yAxis
 
-		},
-		pointSize: 8,
-		legend: { position: 'bottom' },
-		backgroundColor: '#F5F5F5',
-		lineWidth: 3,
-		fontName: 'Mukta',
-		fontSize: 16
-	};
+			},
+			pointSize: 8,
+			legend: {
+				position: 'bottom'
+			},
+			backgroundColor: '#F5F5F5',
+			lineWidth: 3,
+			fontName: 'Mukta',
+			fontSize: 16
+		};
 
-	// Instantiate and draw our chart, passing in some options.
-	var chart = new google.visualization.LineChart(document.getElementById('graphicsChart'));
-	chart.draw(data, options);
-	window.addEventListener('resize', drawChart, false);
+		// Instantiate and draw our chart, passing in some options.
+		var chart = new google.visualization.LineChart(document.getElementById('graphicsChart'));
+		chart.draw(data, options);
+		window.addEventListener('resize', drawChart, false);
 
 	}
 }
@@ -1392,9 +1465,7 @@ function parseDate(key, seconds = false) {
 	if (!seconds) {
 		return new Date(year, month, day, hour, minute);
 
-	}
-
-	else {
+	} else {
 		let seconds = parseInt(key.substring(15, 17));
 		return new Date(year, month, day, hour, minute, seconds);
 
