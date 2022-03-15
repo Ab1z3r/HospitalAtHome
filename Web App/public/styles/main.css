@@ -9,7 +9,6 @@
 - Bold: 700            */
 
 /* <----- Universal -----> */
-
 :root {
   --main-color: #c15027;
   --secondardy-color: #f8f8f8;
@@ -85,7 +84,7 @@ body {
 }
 
 .dropdown-menu-right {
-  left: -128px;
+  left: -75px;
 }
 
 #menuDropdown a.dropdown-item {
@@ -292,7 +291,6 @@ a#authLink:hover {
   padding-top: 0px;
 }
 
-
 /* <----- Patient Page (patients.html) -----> */
 .patients-container {
   margin-top: 120px;
@@ -406,6 +404,23 @@ a#authLink:hover {
 .is-focused .custom-file-control,
 .is-focused .form-control {
   background-image: none;
+}
+
+/* <----- Provider Profile Page (provider_profile.html) -----> */
+.providerProfile-container {
+  margin-top: 120px;
+}
+
+#providerProfilePage {
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
+}
+
+#providerProfileTitle {
+  text-align: center;
+  font-size: 50px;
 }
 
 /* <----- Single Patient Page (single_patient.html) -----> */

@@ -14,7 +14,8 @@
 
 <body>
   <nav class="navbar navbar-dark fixed-top">
-    <img id="navLogo" src="images/union_health_logo.png" alt="Union Health Logo"> 
+    <img id="navLogo" src="images/union_health_logo.png"
+        alt="Union Health Logo"></a>
 
         <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -22,43 +23,20 @@
           </button>
           <div id="menuDropdown" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" id="signOutLink" href="index.html">Sign Out</a>
-            <a class="dropdown-item" id="primaryProviderProfile">View Profile</a>
+            <a class="dropdown-item" id="primaryProviderProfile" href="">View Profile</a>
           </div>
         </div>
-        
+
   </nav>
-  <div id="patientsPage" class="patients-container">
-    <h1>Patients</h1>
+  <div id="providerProfilePage" class="providerProfile-container">
+    <h1 id="providerProfileHeader">&nbsp;</h1>
+    
+    <h1 id="providerProfileTitle">&nbsp;</h1>
 
-    <div id="patientsHeader">
-      <nav aria-label="patientsBreadCrumb">
-        <ol id="breadCrumbs" class="breadcrumb">
-          <li class="breadcrumb-item active" aria-current="page">PATIENTS</li>
-        </ol>
-      </nav>
-
-      <div id="patientsFilter">
-        <select id="patientsSelect" class="form-select form-select-lg" aria-label=".form-select-lg example">
-          <option selected>Last Online</option>
-          <option value="My patients">My patients</option>
-          <option value="First Name">First Name</option>
-          <option value="Last Name">Last Name</option>
-        </select>
-
-        <input type="search" id="patientSearchInput" class="form-control" />
-        <button id="patientsSearchButton" type="button" class="btn">
-          <i class="fas fa-search fa-sm"></i>
-        </button>
-      </div>
-    </div>
-
-    <div id="patientsCards">
-      <h4 id="loadingPatients">Loading Patients...</h4>
-      <!-- Created Dynamically -->
-    </div>
   </div>
 
 
+  </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap-material-design.js"></script>
