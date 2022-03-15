@@ -423,6 +423,12 @@ a#authLink:hover {
   font-size: 50px;
 }
 
+#providerProfilePatients {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 /* <----- Single Patient Page (single_patient.html) -----> */
 .singlePatient-container {
   margin-top: 120px;
