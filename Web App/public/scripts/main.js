@@ -109,7 +109,6 @@ rhit.PatientsPageController = class {
 			window.location.href = `/provider_profile.html?uid=${rhit.single_AuthManager.uid}`;
 		};
 
-
 		document.querySelector("#patientsSearchButton").onclick = (event) => {
 			rhit.single_PatientsManager.search(searchInput.value, this.updateList.bind(this));
 		};
@@ -151,7 +150,6 @@ rhit.PatientsPageController = class {
 		})
 
 		rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE);
-		rhit.single_PrimaryProviderManager.beginListenForDocument();
 	}
 
 	updateList() {
@@ -204,12 +202,87 @@ rhit.PatientsPageController = class {
  */
 rhit.ProviderProfilePageController = class {
 	constructor() {
-		rhit.single_PatientsManager.beginListening();
+		// * Click Listener for sign out on Single Patient Page
+		document.querySelector("#signOutLink").onclick = (event) => {
+			rhit.single_AuthManager.signOut();
+			window.location.href = "/";
+		};
+
+		// * Click Listener for Go Back
+		document.querySelector("#goBackLink").onclick = (event) => {
+			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
+		};
+
+		// * Click Listener for save button on modal
+		document.querySelector("#saveButton").onclick = (event) => {
+			this.updatePatients();
+		};
+
+		rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_NAME, "desc");
 		rhit.single_PrimaryProviderManager.beginListenForDocument(this.updateView.bind(this));
 	}
 
 	updateView() {
-		document.querySelector("#providerProfileTitle").innerHTML = `Primary Provider: ${rhit.single_PrimaryProviderManager.firstName} ${rhit.single_PrimaryProviderManager.lastName}`
+		document.querySelector("#providerProfileName").innerHTML = `Name: ${rhit.single_PrimaryProviderManager.firstName} ${rhit.single_PrimaryProviderManager.lastName}`
+		document.querySelector("#providerProfileEmail").innerHTML = `Email: ${rhit.single_PrimaryProviderManager.email}`
+
+		const newList = htmlToElement('<div id="providerProfilePatients"></div>');
+		for (let i = 0; i < rhit.single_PrimaryProviderManager.patients.length; i++) {
+			let patient = rhit.single_PrimaryProviderManager.patients[i];
+			let item = document.createElement('p');
+			item.id = "providerProfileItem";
+			item.innerHTML = `&bull; ${patient}`;
+			newList.appendChild(item);
+		}
+
+		const oldList = document.querySelector("#providerProfilePatients");
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+		oldList.parentElement.appendChild(newList);
+	}
+
+	updateList() {
+		const newList = htmlToElement('<ul id="modalList"></ul>');
+		for (let i = 0; i < rhit.single_PatientsManager.length; i++) {
+			const patient = rhit.single_PatientsManager.getPatientAtIndex(i);
+			let item = this._createItem(patient);
+			let checkbox = document.createElement('input');
+			checkbox.type = 'checkbox';
+
+			if (patient.primaryProvider == rhit.single_PrimaryProviderManager.lastName) {
+				checkbox.checked = true;
+			}
+
+			item.appendChild(checkbox);
+			newList.appendChild(item);
+		}
+
+		const oldList = document.querySelector("#modalList");
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+		oldList.parentElement.appendChild(newList);
+	}
+
+	updatePatients() {
+		let newPatients = [];
+		let patients = document.querySelectorAll("#patientItem");
+		for (let i = patients.length - 3; i < patients.length; i++) {
+			if (patients[i].firstElementChild.checked == true) {
+				rhit.single_SinglePatientManager = new rhit.SinglePatientManager(patients[i].dataset.id);
+				rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update(rhit.single_PrimaryProviderManager.lastName))
+
+				newPatients.push(patients[i].dataset.name);
+			} else if (patients[i].firstElementChild.checked == false) {
+				rhit.single_SinglePatientManager = new rhit.SinglePatientManager(patients[i].dataset.id);
+				rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update("None"));
+			}
+		}
+		console.log(newPatients.length);
+		rhit.single_PrimaryProviderManager.update(newPatients);
+	}
+
+	_createItem(patient) {
+		return htmlToElement(`<li id="patientItem" data-id=${patient.id} data-name="${patient.firstName} ${patient.lastName}"> ${patient.firstName} ${patient.lastName} - Current Provider: ${patient.primaryProvider} </li>`);
 	}
 }
 
@@ -232,6 +305,11 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#signOutLink").onclick = (event) => {
 			rhit.single_AuthManager.signOut();
 			window.location.href = "/";
+		};
+
+		// * Click Listener for viewing primary provider profile
+		document.querySelector("#primaryProviderProfile").onclick = (event) => {
+			window.location.href = `/provider_profile.html?uid=${rhit.single_AuthManager.uid}`;
 		};
 
 		// * Click Listener for Bread Crumbs
@@ -393,6 +471,11 @@ rhit.GraphicsPageController = class {
 		document.querySelector("#signOutLink").onclick = (event) => {
 			rhit.single_AuthManager.signOut();
 			window.location.href = "/";
+		};
+
+		// * Click Listener for viewing primary provider profile
+		document.querySelector("#primaryProviderProfile").onclick = (event) => {
+			window.location.href = `/provider_profile.html?uid=${rhit.single_AuthManager.uid}`;
 		};
 
 		// * Click Listener for Bread Crumbs
@@ -604,11 +687,14 @@ rhit.PrimaryProviderManager = class {
 		});
 	}
 
-	beginListenForDocument() {
+	beginListenForDocument(changeListener = null) {
 		this._unsubscribe = this._ref.doc(rhit.single_AuthManager.uid).onSnapshot((doc) => {
 			if (doc.exists) {
 				console.log("Docoument exists!");
 				this._document = doc;
+				if (changeListener != null) {
+					changeListener();
+				}
 			} else {
 				console.log("Document does not exist!");
 				rhit.single_PrimaryProviderManager.add(window.localStorage.getItem("Email"), window.localStorage.getItem("First Name"), window.localStorage.getItem("Last Name"),
@@ -617,17 +703,6 @@ rhit.PrimaryProviderManager = class {
 				window.localStorage.removeItem("First Name");
 				window.localStorage.removeItem("Last Name");
 			}
-		});
-
-	}
-
-	beginListenForDocument(changeListener) {
-		this._unsubscribe = this._ref.doc(rhit.single_AuthManager.uid).onSnapshot((doc) => {
-			if (doc.exists) {
-				console.log("Docoument exists!");
-				this._document = doc;
-			} else {}
-			changeListener();
 		});
 
 	}
@@ -648,6 +723,18 @@ rhit.PrimaryProviderManager = class {
 			});
 	}
 
+	update(patients) {
+		this._ref.doc(`${rhit.single_AuthManager.uid}`).set({
+				[rhit.PROVIDER_EMAIL]: rhit.single_PrimaryProviderManager.email,
+				[rhit.PROVIDER_FIRST_NAME]: rhit.single_PrimaryProviderManager.firstName,
+				[rhit.PROVIDER_LAST_NAME]: rhit.single_PrimaryProviderManager.lastName,
+				[rhit.PROVIDER_PATIENTS]: patients,
+			})
+			.catch(function (error) {
+				console.log("Error adding document: ", error);
+			});
+	}
+
 	set documentSnapshots(queries) {
 		this._documentSnapshots = queries;
 	}
@@ -658,10 +745,6 @@ rhit.PrimaryProviderManager = class {
 
 	get length() {
 		return this._documentSnapshots.length;
-	}
-
-	get firstName() {
-		return this._document.get(rhit.PROVIDER_FIRST_NAME);
 	}
 
 	getProvider() {
@@ -683,6 +766,14 @@ rhit.PrimaryProviderManager = class {
 	get lastName() {
 		return this._document.get(rhit.PROVIDER_LAST_NAME);
 	}
+
+	get email() {
+		return this._document.get(rhit.PROVIDER_EMAIL);
+	}
+
+	get patients() {
+		return this._document.get(rhit.PROVIDER_PATIENTS);
+	}
 }
 
 // Patients Manager
@@ -702,13 +793,7 @@ rhit.PatientsManager = class {
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
-		});
-	}
 
-	beginListening() {
-		let query = this._ref.orderBy(rhit.PATIENT_LAST_NAME, "desc");
-		this._unsubscribe = query.onSnapshot((querySnapshot) => {
-			this._documentSnapshots = querySnapshot.docs;
 		});
 	}
 
@@ -864,12 +949,14 @@ rhit.SinglePatientManager = class {
 		this._vital = null;
 	}
 
-	beginListening(changeListener) {
+	beginListening(changeListener = null) {
 		this._unsubscribe = this._ref.onSnapshot((doc) => {
 			if (doc.exists) {
-				console.log("Document data:", doc.data());
+				// console.log("Document data:", doc.data());
 				this._documentSnapshot = doc;
-				changeListener();
+				if (changeListener != null) {
+					changeListener();
+				}
 			} else {
 				console.log("No such document!");
 			}
@@ -882,7 +969,11 @@ rhit.SinglePatientManager = class {
 
 	// TODO implement update and delete if needed
 
-	update() {}
+	update(primaryProvider) {
+		this._ref.update({
+			[rhit.PATIENT_PRIMARY_PROVIDER]: primaryProvider,
+		})
+	}
 
 	delete() {}
 
@@ -1226,8 +1317,11 @@ rhit.initializePage = () => {
 	if (document.querySelector("#providerProfilePage")) {
 		console.log("You are on the provider profile page.");
 		const uid = urlParams.get("uid");
+
 		rhit.single_PatientsManager = new rhit.PatientsManager();
 		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
+
+		rhit.single_PrimaryProviderManager.beginListenForDocument();
 
 		new rhit.ProviderProfilePageController();
 	}
