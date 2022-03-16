@@ -96,6 +96,10 @@ body {
   color: var(--main-color);
 }
 
+#primaryProviderProfile {
+  cursor: pointer;
+}
+
 /* <----- Login Page (index.html) -----> */
 .login-container {
   margin-top: 40px;
@@ -419,8 +423,44 @@ a#authLink:hover {
 }
 
 #providerProfileTitle {
+  margin: 30px 0px;
   text-align: center;
   font-size: 50px;
+}
+
+#providerProfileName, #providerProfileEmail {
+  margin-bottom: 20px;
+}
+
+#providerProfileSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#providerProfilePatientsHeader {
+  margin: 0px 5px 0px 0px;
+}
+
+#providerProfilePatients {
+  display: flex;
+  flex-direction: row;
+}
+
+#providerProfileItem {
+  margin: 4px;
+  font-weight: 200;
+  font-size: 18px;
+}
+
+#goBackLink {
+  font-size: 20px;
+}
+
+#goBackLink:hover {
+  color: var(--main-color);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 /* <----- Single Patient Page (single_patient.html) -----> */
