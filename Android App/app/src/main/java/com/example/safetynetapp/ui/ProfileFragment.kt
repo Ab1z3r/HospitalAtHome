@@ -31,8 +31,14 @@ class ProfileFragment : Fragment() {
     fun updateView() {
         with (model.user!!) {
             Log.d("TAG", "in profile update view")
-
-
+            Log.d("TAG", "$userPictureURI, $displayName, $username")
+            binding.profileFirstName.text = firstName
+            binding.profileLastName.text = lastName
+            binding.profileEmail.text = email
+            binding.profilePhone.text = phone
+            binding.profileBirthday.text = birthdate
+            binding.profileGender.text = gender
+            binding.profileCountry.text = country
         }
     }
 }
