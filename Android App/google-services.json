@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "204108993001",
+    "project_id": "safetynet-1636515641171",
+    "storage_bucket": "safetynet-1636515641171.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204108993001:android:84c55bbbc0af005f583b78",
+        "android_client_info": {
+          "package_name": "com.example.safetynetapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "204108993001-t5fp822njoeko6u4qsuc8bckun79i7ob.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.safetynetapp",
+            "certificate_hash": "2f52cc106911a65a0176f241d1050f3975fb1404"
+          }
+        },
+        {
+          "client_id": "204108993001-cuui1ri3bmajpgf6vdaghgqejhbb0i2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDucRL9J2Mc8LLN80FLOjXPvP0EuPCVqC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "204108993001-cuui1ri3bmajpgf6vdaghgqejhbb0i2l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
