@@ -78,15 +78,15 @@ class HomeActivity : AppCompatActivity() {
             binding.navView.getHeaderView(0).findViewById<TextView>(R.id.display_name_text_view)
         val usernameTextView =
             binding.navView.getHeaderView(0).findViewById<TextView>(R.id.username_text_view)
-        val uriOfImage: String? = loggedInUser?.getterPictureURI()
+        val uriOfImage: String? = loggedInUser?.userPictureURI
 
 //        fabbutton.setOnClickListener {
 //            getData()
 //        }
 
         Glide.with(this).load(uriOfImage).into(displayImage)
-        displayNameTextView.setText(loggedInUser?.getdisplayName())
-        usernameTextView.setText(loggedInUser?.getusername())
+        displayNameTextView.setText(loggedInUser?.displayName)
+        usernameTextView.setText(loggedInUser?.username)
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
