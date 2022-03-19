@@ -1,19 +1,26 @@
 package com.example.safetynetapp.models
 
+import com.google.firebase.Timestamp
 import java.io.Serializable
+import java.util.*
+import javax.xml.datatype.DatatypeConfigurationException
 
 data class User(
     var userPictureURI: String = "",
     var displayName: String = "",
     var username: String = "",
+
     var firstName: String = "",
     var lastName: String = "",
     var email: String = "",
     var phone: String = "",
-    var birthdate: String = "",
+    var birthdate: Date = Date(),
     var gender: String = "",
-    var country: String = ""
-) : Serializable {
+
+    var emContactName: String = "",
+    var emContactPhone: String = "",
+
+    ) : Serializable {
     companion object {
         const val COLLECTION_PATH = "patients"
     }

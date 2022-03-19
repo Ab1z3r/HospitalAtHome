@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ProfileFragment">
+
+    <ImageView
+        android:id="@+id/profile_edit_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/ic_baseline_person_24" />
+
+    <TextView
+        android:id="@+id/profile_edit_first_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@id/profile_edit_image"
+        android:textSize="18sp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:text="@string/first_name_label" />
+
+    <EditText
+        android:id="@+id/profile_edit_first_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_toRightOf="@id/profile_edit_first_name_label"
+        android:textSize="18sp"
+        android:textColor="@color/lightGray"
+        android:hint="@string/first_name_hint"
+        android:text="" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_first_name_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/profile_edit_image"
+        android:background="@color/lightGray" />
+
+    <TextView
+        android:id="@+id/profile_edit_last_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_first_name_label"
+        android:layout_toRightOf="@id/profile_edit_image"
+        android:textSize="18sp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:text="@string/last_name_label" />
+
+    <EditText
+        android:id="@+id/profile_edit_last_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/profile_edit_first_name"
+        android:layout_toRightOf="@id/profile_edit_first_name_label"
+        android:textSize="18sp"
+        android:textColor="@color/lightGray"
+        android:hint="@string/last_name_hint"
+        android:text="" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/profile_edit_image"
+        android:layout_alignParentRight="true"
+        android:background="@color/lightGray" />
+
+    <TextView
+        android:id="@+id/profile_edit_email_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_image"
+        android:textSize="18sp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:text="@string/email_label" />
+
+    <EditText
+        android:id="@+id/profile_edit_email"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/profile_edit_image"
+        android:layout_toRightOf="@id/profile_edit_birthday_label"
+        android:textSize="18sp"
+        android:textColor="@color/lightGray"
+        android:hint="@string/email_hint"
+        android:text="" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_email_label"
+        android:layout_alignParentRight="true"
+        android:background="@color/lightGray" />
+
+    <TextView
+        android:id="@+id/profile_edit_phone_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_email_label"
+        android:textSize="18sp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:text="@string/phone_label" />
+
+    <EditText
+        android:id="@+id/profile_edit_phone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/profile_edit_email"
+        android:layout_toRightOf="@id/profile_edit_birthday_label"
+        android:textSize="18sp"
+        android:textColor="@color/lightGray"
+        android:hint="@string/phone_hint"
+        android:text="" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_phone_label"
+        android:layout_alignParentRight="true"
+        android:background="@color/lightGray" />
+
+    <TextView
+        android:id="@+id/profile_edit_birthday_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_phone_label"
+        android:textSize="18sp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:text="@string/birthday_label" />
+
+    <EditText
+        android:id="@+id/profile_edit_birthday"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/profile_edit_phone"
+        android:layout_toRightOf="@id/profile_edit_birthday_label"
+        android:textSize="18sp"
+        android:textColor="@color/lightGray"
+        android:hint="@string/birthday_hint"
+        android:text="" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_birthday_label"
+        android:layout_alignParentRight="true"
+        android:background="@color/lightGray" />
+
+    <TextView
+        android:id="@+id/profile_edit_gender_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_birthday_label"
+        android:textSize="18sp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:text="@string/gender_label" />
+
+    <EditText
+        android:id="@+id/profile_edit_gender"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/profile_edit_birthday"
+        android:layout_toRightOf="@id/profile_edit_birthday_label"
+        android:textSize="18sp"
+        android:textColor="@color/lightGray"
+        android:hint="@string/gender_hint"
+        android:text="" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_gender_label"
+        android:layout_alignParentRight="true"
+        android:background="@color/lightGray" />
+
+    <TextView
+        android:id="@+id/profile_edit_country_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_gender_label"
+        android:textSize="18sp"
+        android:textColor="@color/design_default_color_on_secondary"
+        android:text="@string/country_label" />
+
+    <EditText
+        android:id="@+id/profile_edit_country"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/profile_edit_gender"
+        android:layout_toRightOf="@id/profile_edit_birthday_label"
+        android:textSize="18sp"
+        android:textColor="@color/lightGray"
+        android:hint="@string/country_hint"
+        android:text="" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/profile_edit_country_label"
+        android:layout_alignParentRight="true"
+        android:background="@color/lightGray" />
+
+
+</RelativeLayout>

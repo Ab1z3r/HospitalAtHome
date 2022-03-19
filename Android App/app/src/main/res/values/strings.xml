@@ -51,4 +51,7 @@
     <string name="birthday_hint">Birthday</string>
     <string name="gender_hint">Gender</string>
     <string name="country_hint">Country</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="menu_profile_edit">Edit Profile</string>
+    <string name="save_profile">Save Profile</string>
 </resources>

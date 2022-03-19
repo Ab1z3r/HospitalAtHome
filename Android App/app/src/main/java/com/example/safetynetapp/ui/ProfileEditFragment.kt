@@ -9,12 +9,12 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.safetynetapp.R
-import com.example.safetynetapp.databinding.FragmentProfileBinding
+import com.example.safetynetapp.databinding.FragmentProfileEditBinding
 import com.example.safetynetapp.models.UserViewModel
 
-class ProfileFragment : Fragment() {
+class ProfileEditFragment : Fragment() {
 
-    private lateinit var binding: FragmentProfileBinding
+    private lateinit var binding: FragmentProfileEditBinding
     private lateinit var model: UserViewModel
 
 
@@ -28,7 +28,7 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding = FragmentProfileEditBinding.inflate(inflater, container, false)
         model = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
         updateView()
@@ -38,13 +38,13 @@ class ProfileFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.profile_menu, menu)
+        inflater.inflate(R.menu.profile_edit_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_edit_profile -> {
-            findNavController().navigate(R.id.nav_profile_edit)
+        R.id.action_save_profile -> {
+            findNavController().navigate(R.id.nav_profile)
             true
         }
 
@@ -53,21 +53,17 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    fun navToEditProfile() {
-        findNavController().navigate(R.id.nav_profile_edit)
-    }
-
     fun updateView() {
         with (model.user!!) {
             Log.d("TAG", "in profile update view")
             Log.d("TAG", "$userPictureURI, $displayName, $username")
-            binding.profileFirstName.text = firstName
-            binding.profileLastName.text = lastName
-            binding.profileEmail.text = email
-            binding.profilePhone.text = phone
-            binding.profileBirthday.text = birthdate.toString()
-            binding.profileGender.text = gender
-            binding.profileImage.load(userPictureURI) {
+            binding.profileEditFirstName.setText(firstName)
+            binding.profileEditLastName.setText(lastName)
+            binding.profileEditEmail.setText(email)
+            binding.profileEditPhone.setText(phone)
+            binding.profileEditBirthday.setText(birthdate.toString())
+            binding.profileEditGender.setText(gender)
+            binding.profileEditImage.load(userPictureURI) {
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
