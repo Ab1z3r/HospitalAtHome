@@ -9,7 +9,6 @@
 - Bold: 700            */
 
 /* <----- Universal -----> */
-
 :root {
   --main-color: #c15027;
   --secondardy-color: #f8f8f8;
@@ -33,6 +32,7 @@ body {
 #navLogo {
   width: 30%;
   margin-left: 20px;
+  max-width: 135px;
 }
 
 #breadCrumbs {
@@ -81,6 +81,23 @@ body {
   color: var(--main-color);
   background-color: transparent;
   border-color: #ccc;
+}
+
+.dropdown-menu-right {
+  left: -75px;
+}
+
+#menuDropdown a.dropdown-item {
+  text-decoration: none;
+}
+
+#menuDropdown a.dropdown-item:hover{
+  text-decoration: underline;
+  color: var(--main-color);
+}
+
+#primaryProviderProfile {
+  cursor: pointer;
 }
 
 /* <----- Login Page (index.html) -----> */
@@ -278,7 +295,6 @@ a#authLink:hover {
   padding-top: 0px;
 }
 
-
 /* <----- Patient Page (patients.html) -----> */
 .patients-container {
   margin-top: 120px;
@@ -360,15 +376,6 @@ a#authLink:hover {
   margin-bottom: 10px;
 }
 
-#signOutLink {
-  text-decoration: none;
-  color: var(--main-color);
-}
-
-#signOutLink:hover {
-  text-decoration: underline;
-}
-
 #patientsPage .card {
   background-color: var(--secondardy-color);
   margin: 20px;
@@ -401,6 +408,59 @@ a#authLink:hover {
 .is-focused .custom-file-control,
 .is-focused .form-control {
   background-image: none;
+}
+
+/* <----- Provider Profile Page (provider_profile.html) -----> */
+.providerProfile-container {
+  margin-top: 120px;
+}
+
+#providerProfilePage {
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
+}
+
+#providerProfileTitle {
+  margin: 30px 0px;
+  text-align: center;
+  font-size: 50px;
+}
+
+#providerProfileName, #providerProfileEmail {
+  margin-bottom: 20px;
+}
+
+#providerProfileSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#providerProfilePatientsHeader {
+  margin: 0px 5px 0px 0px;
+}
+
+#providerProfilePatients {
+  display: flex;
+  flex-direction: row;
+}
+
+#providerProfileItem {
+  margin: 4px;
+  font-weight: 200;
+  font-size: 18px;
+}
+
+#goBackLink {
+  font-size: 20px;
+}
+
+#goBackLink:hover {
+  color: var(--main-color);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 /* <----- Single Patient Page (single_patient.html) -----> */

@@ -30,8 +30,9 @@ class Weight(
             .addOnSuccessListener { response ->
                 if(response.dataPoints.isEmpty()){
                     textView.text = defaultVal
+                }else{
+                    textView.text = dataPointToValueString(response.dataPoints[0], defaultVal)
                 }
-                textView.text = dataPointToValueString(response.dataPoints[0], defaultVal)
             }
             .addOnFailureListener { e ->
                 Log.w("[ERROR]", "There was an error reading data from Google Fit", e)
