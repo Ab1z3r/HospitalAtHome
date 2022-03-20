@@ -13,11 +13,16 @@ rhit.COLLECTION_PATIENTS = "patients";
 rhit.PATIENT_ADDRESS = "address";
 rhit.PATIENT_BIRTHDATE = "birthdate";
 rhit.PATIENT_BLOOD_PRESSURE = "bloodPressure";
+rhit.PATIENT_EM_CONTACT_NAME = "emContactName";
+rhit.PATIENT_EM_CONTACT_PHONE = "emContactPhone";
+rhit.PATIENT_EMAIL = "email";
 rhit.PATIENT_FIRST_NAME = "firstName";
+rhit.PATIENT_GENDER = "gender";
 rhit.PATIENT_GOOGLE_ID = "googleID";
 rhit.PATIENT_HEIGHT = "height";
 rhit.PATIENT_LAST_NAME = "lastName";
 rhit.PATIENT_LAST_ONLINE = "lastOnline";
+rhit.PATIENT_PHONE = "phone";
 rhit.PATIENT_PRIMARY_PROVIDER = "primaryProvider";
 rhit.PATIENT_PULSE = "pulse";
 rhit.PATIENT_SPO2 = "spo2";
@@ -190,8 +195,8 @@ rhit.PatientsPageController = class {
 	}
 
 	_parseDate(timestamp) {
-		const date = timestamp.toDate()
-		const year = date.getYear().toString()
+		const date = timestamp.toDate();
+		const year = date.getYear().toString();
 		return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 	}
 }
@@ -843,11 +848,16 @@ rhit.PatientsManager = class {
 				[rhit.PATIENT_ADDRESS]: "address",
 				[rhit.PATIENT_BIRTHDATE]: "birthdate",
 				[rhit.PATIENT_BLOOD_PRESSURE]: {},
+				[rhit.PATIENT_EM_CONTACT_NAME]: "Contact Name",
+				[rhit.PATIENT_EM_CONTACT_PHONE]: "18005006464",
+				[rhit.PATIENT_EMAIL]: "---@gmail.com",
 				[rhit.PATIENT_FIRST_NAME]: "Abby",
+				[rhit.PATIENT_GENDER]: "m/f",
 				[rhit.PATIENT_GOOGLE_ID]: "googleID",
 				[rhit.PATIENT_HEIGHT]: {},
 				[rhit.PATIENT_LAST_NAME]: "Holder",
 				[rhit.PATIENT_LAST_ONLINE]: firebase.firestore.Timestamp.now(),
+				[rhit.PATIENT_PHONE]: "1800050005000",
 				[rhit.PATIENT_PRIMARY_PROVIDER]: "primaryProvider",
 				[rhit.PATIENT_PULSE]: {},
 				[rhit.PATIENT_SPO2]: {},
@@ -908,11 +918,16 @@ rhit.PatientsManager = class {
 			docSnapshot.get(rhit.PATIENT_ADDRESS),
 			docSnapshot.get(rhit.PATIENT_BIRTHDATE),
 			docSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE),
+			docSnapshot.get(rhit.PATIENT_EM_CONTACT_NAME),
+			docSnapshot.get(rhit.PATIENT_EM_CONTACT_PHONE),
+			docSnapshot.get(rhit.PATIENT_EMAIL),
 			docSnapshot.get(rhit.PATIENT_FIRST_NAME),
+			docSnapshot.get(rhit.PATIENT_GENDER),
 			docSnapshot.get(rhit.PATIENT_GOOGLE_ID),
 			docSnapshot.get(rhit.PATIENT_HEIGHT),
 			docSnapshot.get(rhit.PATIENT_LAST_NAME),
 			docSnapshot.get(rhit.PATIENT_LAST_ONLINE),
+			docSnapshot.get(rhit.PATIENT_PHONE),
 			docSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER),
 			docSnapshot.get(rhit.PATIENT_PULSE),
 			docSnapshot.get(rhit.PATIENT_SPO2),
@@ -1201,19 +1216,24 @@ rhit.NotesManager = class {
  * PURPOSE: Holds all data relevant to a given patient
  */
 rhit.Patient = class {
-	constructor(id, address, birthdate, bloodPressure, firstName, googleID,
-		height, lastName, lastOnline, primaryProvider, pulse,
+	constructor(id, address, birthdate, bloodPressure, emContactName, emContactPhone, email, firstName, gender, googleID,
+		height, lastName, lastOnline, phone, primaryProvider, pulse,
 		spo2, temperature, weight) {
 		this.id = id;
 		this.address = address;
 		this.birthdate = birthdate;
 		this.bloodPressure_sys = sortMap(objectToMap(bloodPressure[0]));
 		this.bloodPressure_dia = sortMap(objectToMap(bloodPressure[1]));
+		this.emContactName = emContactName;
+		this.emContactPhone = emContactPhone;
+		this.email = email;
 		this.firstName = firstName;
+		this.gender = gender;
 		this.googleID = googleID;
 		this.height = sortMap(objectToMap(height));
 		this.lastName = lastName;
 		this.lastOnline = lastOnline;
+		this.phone = phone;
 		this.primaryProvider = primaryProvider;
 		this.pulse = sortMap(objectToMap(pulse));
 		this.spo2 = sortMap(objectToMap(spo2));
