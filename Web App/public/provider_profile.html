@@ -28,9 +28,11 @@
     </div>
   </nav>
 
-  <!-- Modal -->
+  <!-- MODALS SECTION -->
+
+  <!-- Patient Modal -->
   <div class="modal fade" id="editPatientsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Patients List</h5>
@@ -49,8 +51,30 @@
     </div>
   </div>
 
+    <!-- Delete Acccount Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Patients List</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete your account?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="deleteButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Delete Accoount</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <div id="providerProfilePage" class="providerProfile-container">
-    <a id="goBackLink"><i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back to Patients List</a>
+    <div id="providerProfileHeader">
+      <a id="goBackLink"><i class="fa fa-arrow-left" aria-hidden="true"></i> Go Back to Patients List</a>
+      <a id="deleteAccountLink" data-bs-toggle="modal" data-bs-target="#deleteAccountModal"><i class="fa fa-trash" aria-hidden="true"></i> Delete Account</a>
+    </div>
 
     <h1 id="providerProfileTitle">Primary Provider Profile</h1>
     <h3 id="providerProfileName">&nbsp;</h3>
@@ -65,7 +89,7 @@
 
     <div id="providerProfilePatients">
       <!-- Created Dynamically -->
-      </div>
+    </div>    
 
   </div>
 

@@ -155,6 +155,7 @@ rhit.PatientsPageController = class {
 		})
 
 		rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_ONLINE);
+		rhit.single_PrimaryProviderManager.beginListenForDocument(true);
 	}
 
 	updateList() {
@@ -218,13 +219,19 @@ rhit.ProviderProfilePageController = class {
 			window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
 		};
 
-		// * Click Listener for save button on modal
+		// * Click Listener for save button on account modal
+		document.querySelector("#deleteButton").onclick = (event) => {
+			rhit.single_PatientsManager.repopulate(this.removePatients.bind(this), "patients", null);
+		};
+
+
+		// * Click Listener for save button on patient modal
 		document.querySelector("#saveButton").onclick = (event) => {
 			this.updatePatients();
 		};
 
 		rhit.single_PatientsManager.beginListening(this.updateList.bind(this), rhit.PATIENT_LAST_NAME, "desc");
-		rhit.single_PrimaryProviderManager.beginListenForDocument(this.updateView.bind(this));
+		rhit.single_PrimaryProviderManager.beginListenForDocument(false, this.updateView.bind(this));
 	}
 
 	updateView() {
@@ -282,8 +289,15 @@ rhit.ProviderProfilePageController = class {
 				rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update("None"));
 			}
 		}
-		console.log(newPatients.length);
 		rhit.single_PrimaryProviderManager.update(newPatients);
+	}
+
+	removePatients() {
+		for (let i = 0; i < rhit.single_PatientsManager.length; i++) {
+			rhit.single_SinglePatientManager = new rhit.SinglePatientManager(rhit.single_PatientsManager.getPatientAtIndex(i).id);
+			rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update("None"));
+		}
+		rhit.single_PrimaryProviderManager.delete();
 	}
 
 	_createItem(patient) {
@@ -637,6 +651,14 @@ rhit.AuthManager = class {
 			});
 	}
 
+	deleteUser() {
+		firebase.auth().currentUser.delete().then(() => {
+			window.location.href = "/";
+		}).catch((error) => {
+			console.log(`Error: ${error}`);
+		});
+	}
+
 	sendLink(emailInput, nameInput) {
 		firebase.auth().currentUser.sendEmailVerification()
 			.then(() => {
@@ -692,7 +714,7 @@ rhit.PrimaryProviderManager = class {
 		});
 	}
 
-	beginListenForDocument(changeListener = null) {
+	beginListenForDocument(check = false, changeListener = null) {
 		this._unsubscribe = this._ref.doc(rhit.single_AuthManager.uid).onSnapshot((doc) => {
 			if (doc.exists) {
 				console.log("Docoument exists!");
@@ -700,13 +722,10 @@ rhit.PrimaryProviderManager = class {
 				if (changeListener != null) {
 					changeListener();
 				}
-			} else {
+			} if (!doc.exists && check) {
 				console.log("Document does not exist!");
 				rhit.single_PrimaryProviderManager.add(window.localStorage.getItem("Email"), window.localStorage.getItem("First Name"), window.localStorage.getItem("Last Name"),
 					rhit.single_AuthManager.uid);
-				window.localStorage.removeItem("Email");
-				window.localStorage.removeItem("First Name");
-				window.localStorage.removeItem("Last Name");
 			}
 		});
 
@@ -723,7 +742,11 @@ rhit.PrimaryProviderManager = class {
 				[rhit.PROVIDER_LAST_NAME]: lastName,
 				[rhit.PROVIDER_PATIENTS]: [],
 			})
-			.catch(function (error) {
+			.then(() => {
+				window.localStorage.removeItem("Email");
+				window.localStorage.removeItem("First Name");
+				window.localStorage.removeItem("Last Name");
+			}).catch(function (error) {
 				console.log("Error adding document: ", error);
 			});
 	}
@@ -738,6 +761,14 @@ rhit.PrimaryProviderManager = class {
 			.catch(function (error) {
 				console.log("Error adding document: ", error);
 			});
+	}
+
+	delete() {
+		return this._ref.doc(`${rhit.single_AuthManager.uid}`).delete().then(() => {
+			rhit.single_AuthManager.deleteUser();
+		}).catch((error) => {
+			console.error("Error removing document: ", error);
+		});
 	}
 
 	set documentSnapshots(queries) {

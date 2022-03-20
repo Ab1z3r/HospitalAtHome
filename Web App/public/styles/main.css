@@ -422,6 +422,12 @@ a#authLink:hover {
   margin-right: 60px;
 }
 
+#providerProfileHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 #providerProfileTitle {
   margin: 30px 0px;
   text-align: center;
@@ -453,11 +459,11 @@ a#authLink:hover {
   font-size: 18px;
 }
 
-#goBackLink {
+#goBackLink, #deleteAccountLink {
   font-size: 20px;
 }
 
-#goBackLink:hover {
+#goBackLink:hover, #deleteAccountLink:hover{
   color: var(--main-color);
   text-decoration: underline;
   cursor: pointer;
