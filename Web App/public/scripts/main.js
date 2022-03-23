@@ -286,7 +286,7 @@ rhit.ProviderProfilePageController = class {
 				newPatients.push(patients[i].dataset.name);
 			} else if (patients[i].firstElementChild.checked == false) {
 				rhit.single_SinglePatientManager = new rhit.SinglePatientManager(patients[i].dataset.id);
-				rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update("None"));
+				rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update(""));
 			}
 		}
 		rhit.single_PrimaryProviderManager.update(newPatients);
@@ -295,7 +295,7 @@ rhit.ProviderProfilePageController = class {
 	removePatients() {
 		for (let i = 0; i < rhit.single_PatientsManager.length; i++) {
 			rhit.single_SinglePatientManager = new rhit.SinglePatientManager(rhit.single_PatientsManager.getPatientAtIndex(i).id);
-			rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update("None"));
+			rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update(""));
 		}
 		rhit.single_PrimaryProviderManager.delete();
 	}
@@ -361,6 +361,13 @@ rhit.SinglePatientPageController = class {
 			window.location.href = `/graphics.html?id=${rhit.single_SinglePatientManager.id}&vital=Temperature`;
 		};
 
+		// * Click Listener for Adding a Medicine
+		document.querySelector("#medicinesSaveButton").onclick = (event) => {
+			const medicineName = document.querySelector("#medicineModalName");
+			const medicineDosage = document.querySelector("#medicineModalDosage");
+			rhit.single_MedicinesManager.add(medicineName.value, medicineDosage.value);
+		};
+
 
 		// When a user clicks any of the buttons from the button group
 		// (VITALS, MEDICINES, NOTES), the cards need to change as well
@@ -395,10 +402,9 @@ rhit.SinglePatientPageController = class {
 			vitalsCard.classList.add("hidden");
 		};
 
-		rhit.single_MedicinesManager.beginListening();
-		rhit.single_NotesManager.beginListening();
 		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
-
+		rhit.single_MedicinesManager.beginListening(this.updateView.bind(this));
+		rhit.single_NotesManager.beginListening(this.updateView.bind(this));
 	}
 
 	updateView() {
@@ -447,7 +453,6 @@ rhit.SinglePatientPageController = class {
 		oldNoteList.removeAttribute("id");
 		oldNoteList.hidden = true;
 		oldNoteList.parentElement.appendChild(noteList);
-
 	}
 
 	_createMedicineCard(medicine) {
@@ -729,7 +734,6 @@ rhit.PrimaryProviderManager = class {
 					rhit.single_AuthManager.uid);
 			}
 		});
-
 	}
 
 	stopListening() {
@@ -1131,19 +1135,22 @@ rhit.MedicinesManager = class {
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('medicines')
 	}
 
-	beginListening() {
+	beginListening(changeListener = null) {
 		let query = this._ref.orderBy(rhit.MEDICINE_LAST_TOUCHED, "desc");
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
-		});
+			if (changeListener != null) {
+				changeListener();
+			}
+		}); 
 	}
 
-	add() {
+	add(name, dosage) {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('medicines').add({
-				[rhit.MEDICINE_DOSAGE]: "dosage",
-				[rhit.MEDICINE_NAME]: "name",
-				[rhit.MEDICINE_PRIMARY_PROVIDER]: "primaryProvider",
-				[rhit.MEDICINE_ISVALID]: "isValid",
+				[rhit.MEDICINE_DOSAGE]: dosage,
+				[rhit.MEDICINE_NAME]: name,
+				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_SinglePatientManager.primaryProvider,
+				[rhit.MEDICINE_ISVALID]: true,
 				[rhit.MEDICINE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 			})
 			.then(function () {
@@ -1197,10 +1204,13 @@ rhit.NotesManager = class {
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('notes')
 	}
 
-	beginListening() {
+	beginListening(changeListener = null) {
 		let query = this._ref.orderBy(rhit.MEDICINE_LAST_TOUCHED, "desc");
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
+			if (changeListener != null) {
+				changeListener();
+			}
 		});
 	}
 
