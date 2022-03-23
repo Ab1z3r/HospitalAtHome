@@ -26,6 +26,7 @@ import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import de.hdodenhof.circleimageview.CircleImageView
 import java.time.Instant
 import java.time.LocalDateTime
@@ -103,6 +104,8 @@ class HomeActivity : AppCompatActivity() {
         usermodel.googleSigninUser = getGoogleAccount()
         usermodel.fitnessoptions = fitnessOptions!!
 
+        usermodel.populateUserObject()
+        usermodel.getOrMakeUser { findNavController(R.id.nav_host_fragment_content_home) }
 
         if (!hasPermissions()) {
             getPermissions()

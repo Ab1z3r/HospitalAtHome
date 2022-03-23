@@ -11,14 +11,14 @@ import coil.transform.CircleCropTransformation
 import com.example.safetynetapp.R
 import com.example.safetynetapp.databinding.FragmentProfileEditBinding
 import com.example.safetynetapp.models.UserViewModel
+import java.util.*
 
 class ProfileEditFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileEditBinding
     private lateinit var model: UserViewModel
 
-
-    override fun onCreate( savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
@@ -28,10 +28,15 @@ class ProfileEditFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentProfileEditBinding.inflate(inflater, container, false)
         model = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
-        updateView()
+        binding = FragmentProfileEditBinding.inflate(inflater, container, false)
+
+        model.getOrMakeUser {
+            updateView()
+        }
 
         return binding.root
     }
@@ -44,6 +49,16 @@ class ProfileEditFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_save_profile -> {
+            model.update(
+                newFirstName = binding.profileEditFirstName.text.toString(),
+                newLastName = binding.profileEditLastName.text.toString(),
+                newEmail = binding.profileEditEmail.text.toString(),
+                newPhone = binding.profileEditPhone.text.toString(),
+                newBirthdate = Date(),
+                newGender = binding.profileEditGender.text.toString(),
+                newEmContactName = binding.profileEditEmContactName.text.toString(),
+                newEmContactPhone = binding.profileEditEmContactPhone.text.toString(),
+            )
             findNavController().navigate(R.id.nav_profile)
             true
         }
@@ -54,7 +69,7 @@ class ProfileEditFragment : Fragment() {
     }
 
     fun updateView() {
-        with (model.user!!) {
+        with(model.user!!) {
             Log.d("TAG", "in profile update view")
             Log.d("TAG", "$userPictureURI, $displayName, $username")
             binding.profileEditFirstName.setText(firstName)
@@ -63,6 +78,8 @@ class ProfileEditFragment : Fragment() {
             binding.profileEditPhone.setText(phone)
             binding.profileEditBirthday.setText(birthdate.toString())
             binding.profileEditGender.setText(gender)
+            binding.profileEditEmContactName.setText(emContactName)
+            binding.profileEditEmContactPhone.setText(emContactPhone)
             binding.profileEditImage.load(userPictureURI) {
                 crossfade(true)
                 transformations(CircleCropTransformation())
