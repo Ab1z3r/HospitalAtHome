@@ -31,7 +31,7 @@ class UserViewModel : ViewModel() {
         newLastName: String,
         newEmail: String,
         newPhone: String,
-        newBirthdate: Date,
+        newBirthdate: String,
         newGender: String,
         newEmContactName: String,
         newEmContactPhone: String,
@@ -75,8 +75,7 @@ class UserViewModel : ViewModel() {
                     lastName = snapshot.get("lastName").toString()
                     email = snapshot.get("email").toString()
                     phone = snapshot.get("phone").toString()
-                    // TODO: Conversion for Date
-//                    birthdate = snapshot.get("birthdate").toString()
+                    birthdate = snapshot.get("birthdate").toString()
                     gender = snapshot.get("gender").toString()
                     emContactName = snapshot.get("emContactName").toString()
                     emContactPhone = snapshot.get("emContactPhone").toString()

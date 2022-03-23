@@ -54,7 +54,7 @@ class ProfileEditFragment : Fragment() {
                 newLastName = binding.profileEditLastName.text.toString(),
                 newEmail = binding.profileEditEmail.text.toString(),
                 newPhone = binding.profileEditPhone.text.toString(),
-                newBirthdate = Date(),
+                newBirthdate = binding.profileEditBirthday.text.toString(),
                 newGender = binding.profileEditGender.text.toString(),
                 newEmContactName = binding.profileEditEmContactName.text.toString(),
                 newEmContactPhone = binding.profileEditEmContactPhone.text.toString(),
