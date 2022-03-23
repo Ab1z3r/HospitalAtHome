@@ -15,7 +15,7 @@ data class User(
     var lastName: String = "",
     var email: String = "",
     var phone: String = "",
-    var birthdate: Date = Date(),
+    var birthdate: String = "",
     var gender: String = "",
 
     var emContactName: String = "",

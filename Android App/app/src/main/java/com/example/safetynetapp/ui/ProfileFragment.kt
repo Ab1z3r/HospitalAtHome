@@ -65,7 +65,7 @@ class ProfileFragment : Fragment() {
             binding.profileLastName.text = lastName
             binding.profileEmail.text = email
             binding.profilePhone.text = phone
-            binding.profileBirthday.text = birthdate.toString()
+            binding.profileBirthday.text = birthdate
             binding.profileGender.text = gender
             binding.profileEmContactName.text = emContactName
             binding.profileEmContactPhone.text = emContactPhone
