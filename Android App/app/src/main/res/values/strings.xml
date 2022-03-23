@@ -54,4 +54,9 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="menu_profile_edit">Edit Profile</string>
     <string name="save_profile">Save Profile</string>
+    <string name="em_contact_name_label">Name</string>
+    <string name="em_contact_name_hint">Name</string>
+    <string name="em_contact_phone_label">Phone</string>
+    <string name="em_contact_phone_hint">Phone</string>
+    <string name="emergency_contact_title">Emergency Contact</string>
 </resources>

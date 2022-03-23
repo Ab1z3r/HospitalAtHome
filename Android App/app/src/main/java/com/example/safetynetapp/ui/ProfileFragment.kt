@@ -67,6 +67,8 @@ class ProfileFragment : Fragment() {
             binding.profilePhone.text = phone
             binding.profileBirthday.text = birthdate.toString()
             binding.profileGender.text = gender
+            binding.profileEmContactName.text = emContactName
+            binding.profileEmContactPhone.text = emContactPhone
             binding.profileImage.load(userPictureURI) {
                 crossfade(true)
                 transformations(CircleCropTransformation())

@@ -9,6 +9,7 @@ data class User(
     var userPictureURI: String = "",
     var displayName: String = "",
     var username: String = "",
+    var googleID: String = "",
 
     var firstName: String = "",
     var lastName: String = "",
