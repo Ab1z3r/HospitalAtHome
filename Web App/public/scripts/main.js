@@ -278,7 +278,7 @@ rhit.ProviderProfilePageController = class {
 	updatePatients() {
 		let newPatients = [];
 		let patients = document.querySelectorAll("#patientItem");
-		for (let i = patients.length - 3; i < patients.length; i++) {
+		for (let i = patients.length - rhit.single_PatientsManager.length; i < patients.length; i++) {
 			if (patients[i].firstElementChild.checked == true) {
 				rhit.single_SinglePatientManager = new rhit.SinglePatientManager(patients[i].dataset.id);
 				rhit.single_SinglePatientManager.beginListening(rhit.single_SinglePatientManager.update(rhit.single_PrimaryProviderManager.lastName))
@@ -1090,11 +1090,16 @@ rhit.SinglePatientManager = class {
 			docSnapshot.get(rhit.PATIENT_ADDRESS),
 			docSnapshot.get(rhit.PATIENT_BIRTHDATE),
 			docSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE),
+			docSnapshot.get(rhit.PATIENT_EM_CONTACT_NAME),
+			docSnapshot.get(rhit.PATIENT_EM_CONTACT_PHONE),
+			docSnapshot.get(rhit.PATIENT_EMAIL),
 			docSnapshot.get(rhit.PATIENT_FIRST_NAME),
+			docSnapshot.get(rhit.PATIENT_GENDER),
 			docSnapshot.get(rhit.PATIENT_GOOGLE_ID),
 			docSnapshot.get(rhit.PATIENT_HEIGHT),
 			docSnapshot.get(rhit.PATIENT_LAST_NAME),
 			docSnapshot.get(rhit.PATIENT_LAST_ONLINE),
+			docSnapshot.get(rhit.PATIENT_PHONE),
 			docSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER),
 			docSnapshot.get(rhit.PATIENT_PULSE),
 			docSnapshot.get(rhit.PATIENT_SPO2),
