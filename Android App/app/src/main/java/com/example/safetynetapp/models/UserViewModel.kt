@@ -20,9 +20,9 @@ class UserViewModel : ViewModel() {
     lateinit var ref: DocumentReference
 
     fun getOrMakeUser(observer: () -> Unit) {
-//        ref = Firebase.firestore.collection(User.COLLECTION_PATH).document(googleSigninUser.id!!)
-        ref = Firebase.firestore.collection(User.COLLECTION_PATH)
-            .document("PCN2xo0J2lWGDvLTk61PduYQjmI3")
+        ref = Firebase.firestore.collection(User.COLLECTION_PATH).document(googleSigninUser.id!!)
+//        ref = Firebase.firestore.collection(User.COLLECTION_PATH)
+//            .document("PCN2xo0J2lWGDvLTk61PduYQjmI3")
         observer()
     }
 
@@ -36,10 +36,10 @@ class UserViewModel : ViewModel() {
         newEmContactName: String,
         newEmContactPhone: String,
     ) {
-//        ref = Firebase.firestore.collection(User.COLLECTION_PATH).document(googleSigninUser.id!!)
-        ref =
-            Firebase.firestore.collection(User.COLLECTION_PATH)
-                .document("PCN2xo0J2lWGDvLTk61PduYQjmI3")
+        ref = Firebase.firestore.collection(User.COLLECTION_PATH).document(googleSigninUser.id!!)
+//        ref =
+//            Firebase.firestore.collection(User.COLLECTION_PATH)
+//                .document("PCN2xo0J2lWGDvLTk61PduYQjmI3")
         Log.d("TAG", googleSigninUser.id.toString())
 
         with(user!!) {
@@ -63,10 +63,10 @@ class UserViewModel : ViewModel() {
     }
 
     fun populateUserObject() {
-//        ref = Firebase.firestore.collection(User.COLLECTION_PATH).document(googleSigninUser.id!!)
-        ref =
-            Firebase.firestore.collection(User.COLLECTION_PATH)
-                .document("PCN2xo0J2lWGDvLTk61PduYQjmI3")
+        ref = Firebase.firestore.collection(User.COLLECTION_PATH).document(googleSigninUser.id!!)
+//        ref =
+//            Firebase.firestore.collection(User.COLLECTION_PATH)
+//                .document("PCN2xo0J2lWGDvLTk61PduYQjmI3")
 
         with(user!!) {
             ref.get().addOnSuccessListener { snapshot: DocumentSnapshot ->

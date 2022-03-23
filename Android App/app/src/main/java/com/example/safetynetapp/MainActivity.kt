@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("[INFO]", "Handling sign in")
 
             val account = completedTask.getResult(ApiException::class.java)
-            val loggedInUser = User(displayName = account.displayName!!, userPictureURI = account.photoUrl.toString(), username = account.email!!)
+            val loggedInUser = User(displayName = account.displayName!!, userPictureURI = account.photoUrl.toString(), username = account.email!!, googleID = account.id!!)
 
             val intent = Intent(this@MainActivity, HomeActivity::class.java)
             intent.putExtra("loggedInUser", loggedInUser)
