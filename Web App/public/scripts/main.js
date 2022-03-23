@@ -405,6 +405,7 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#singlePatientHeader").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
 		document.querySelector("#singlePatientBreadCrumb").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`.toUpperCase()
 		document.querySelector("#singlePatientTitle").innerHTML = `${rhit.single_SinglePatientManager.lastName}, ${rhit.single_SinglePatientManager.firstName}`
+		document.querySelector("#vitalsLastOnline").innerHTML = `Last Online: ${this._parseDate(rhit.single_SinglePatientManager.lastOnline)}`
 
 		this.updateCardsView();
 	}
