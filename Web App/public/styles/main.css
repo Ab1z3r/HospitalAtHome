@@ -537,6 +537,19 @@ a#authLink:hover {
 
 }
 
+p#vitalsLastOnline {
+  text-align: center;
+  font-weight: 500;
+  font-size: 18px !important;
+}
+
+p#vitalsLastOnline:hover {
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  cursor: default;
+}
+
 #singlePatientContact {
   width: 100%;
   height: 175px;
@@ -936,6 +949,10 @@ p.medicationName {
   #patientsPage .card-body .patientsCardInfo:nth-child(2) p {
     margin-right: 20px;
     margin-left: 20px;
+  }
+
+  #vitalsLastOnline {
+    margin-top: 10px;
   }
 
   #vitalsCard p {
