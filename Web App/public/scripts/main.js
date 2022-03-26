@@ -86,7 +86,7 @@ rhit.SignupPageController = class {
 		let passwordInput = document.querySelector("#passwordInput");
 		let nameInput = document.querySelector("#nameInput");
 
-		document.querySelector("#signupButton").onclick = (event) => {
+		document.querySelector("#returnButton").onclick = (event) => {
 			rhit.single_AuthManager.signUp(emailInput, passwordInput, nameInput);
 		};
 
@@ -731,7 +731,8 @@ rhit.PrimaryProviderManager = class {
 				if (changeListener != null) {
 					changeListener();
 				}
-			} if (!doc.exists && check) {
+			}
+			if (!doc.exists && check) {
 				console.log("Document does not exist!");
 				rhit.single_PrimaryProviderManager.add(window.localStorage.getItem("Email"), window.localStorage.getItem("First Name"), window.localStorage.getItem("Last Name"),
 					rhit.single_AuthManager.uid);
@@ -1151,7 +1152,7 @@ rhit.MedicinesManager = class {
 			if (changeListener != null) {
 				changeListener();
 			}
-		}); 
+		});
 	}
 
 	add(name, dosage) {
