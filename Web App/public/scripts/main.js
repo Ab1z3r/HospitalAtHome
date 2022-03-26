@@ -12,7 +12,7 @@ rhit.PROVIDER_UID = "uid";
 rhit.COLLECTION_PATIENTS = "patients";
 rhit.PATIENT_ADDRESS = "address";
 rhit.PATIENT_BIRTHDATE = "birthdate";
-rhit.PATIENT_BLOOD_PRESSURE = "bloodPressure";
+rhit.PATIENT_DIASTOLIC_PRESSURE = "diastolicPressure";
 rhit.PATIENT_EM_CONTACT_NAME = "emContactName";
 rhit.PATIENT_EM_CONTACT_PHONE = "emContactPhone";
 rhit.PATIENT_EMAIL = "email";
@@ -26,6 +26,7 @@ rhit.PATIENT_PHONE = "phone";
 rhit.PATIENT_PRIMARY_PROVIDER = "primaryProvider";
 rhit.PATIENT_PULSE = "pulse";
 rhit.PATIENT_SPO2 = "spo2";
+rhit.PATIENT_SYSTOLIC_PRESSURE = "systolicPressure";
 rhit.PATIENT_TEMPERATURE = "temperature";
 rhit.PATIENT_WEIGHT = "weight";
 
@@ -85,7 +86,7 @@ rhit.SignupPageController = class {
 		let passwordInput = document.querySelector("#passwordInput");
 		let nameInput = document.querySelector("#nameInput");
 
-		document.querySelector("#signupButton").onclick = (event) => {
+		document.querySelector("#returnButton").onclick = (event) => {
 			rhit.single_AuthManager.signUp(emailInput, passwordInput, nameInput);
 		};
 
@@ -420,13 +421,15 @@ rhit.SinglePatientPageController = class {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
 
 		// VITALS CARD
-		document.querySelector("#weightData").innerHTML = `Weight: ${singlePatient.weight.values().next().value} lbs`;
-		document.querySelector("#spo2Data").innerHTML = `SPO2: ${singlePatient.spo2.values().next().value} %`;
+
+		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  singlePatient.weight.values().next().value : "--"} lbs`;
+		document.querySelector("#spo2Data").innerHTML = `SPO2: ${(singlePatient.spo2.values().next().value) ?  singlePatient.spo2.values().next().value : "--"} %`;
 		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: 
-			${singlePatient.bloodPressure_sys.values().next().value}/${singlePatient.bloodPressure_dia.values().next().value} mmHg`;
-		document.querySelector("#heightData").innerHTML = `Height: ${singlePatient.height.values().next().value} in`;
-		document.querySelector("#pulseData").innerHTML = `Pulse: ${singlePatient.pulse.values().next().value} bpm`;
-		document.querySelector("#temperatureData").innerHTML = `Temperature: ${singlePatient.temperature.values().next().value} \xB0`;
+			${(singlePatient.systolicPressure.values().next().value) ? singlePatient.systolicPressure.values().next().value : "--"}
+			/${(singlePatient.diastolicPressure.values().next().value) ? singlePatient.diastolicPressure.values().next().value : "--"} mmHg`;
+		document.querySelector("#heightData").innerHTML = `Height: ${(singlePatient.height.values().next().value) ? singlePatient.height.values().next().value : "--"} in`;
+		document.querySelector("#pulseData").innerHTML = `Pulse: ${(singlePatient.pulse.values().next().value) ? singlePatient.pulse.values().next().value : "--"} bpm`;
+		document.querySelector("#temperatureData").innerHTML = `Temperature: ${(singlePatient.temperature.values().next().value) ? singlePatient.temperature.values().next().value : "--"} \xB0`;
 
 		// MEDICINE CARD
 		const medList = htmlToElement('<div id="medicinesInfo"></div>');
@@ -562,8 +565,8 @@ rhit.GraphicsPageController = class {
 			oldHistoryList.hidden = true;
 			oldHistoryList.parentElement.appendChild(historyList);
 		} else {
-			let sys_vital = Array.from(singlePatient.bloodPressure_sys);
-			let dia_vital = Array.from(singlePatient.bloodPressure_dia);
+			let sys_vital = Array.from(singlePatient.systolicPressure);
+			let dia_vital = Array.from(singlePatient.diastolicPressure);
 
 			const historyList = htmlToElement('<div id="graphicsInfo"></div>');
 			for (let i = 0; i < sys_vital.length; i++) {
@@ -728,7 +731,8 @@ rhit.PrimaryProviderManager = class {
 				if (changeListener != null) {
 					changeListener();
 				}
-			} if (!doc.exists && check) {
+			}
+			if (!doc.exists && check) {
 				console.log("Document does not exist!");
 				rhit.single_PrimaryProviderManager.add(window.localStorage.getItem("Email"), window.localStorage.getItem("First Name"), window.localStorage.getItem("Last Name"),
 					rhit.single_AuthManager.uid);
@@ -883,7 +887,7 @@ rhit.PatientsManager = class {
 		this._ref.add({
 				[rhit.PATIENT_ADDRESS]: "address",
 				[rhit.PATIENT_BIRTHDATE]: "birthdate",
-				[rhit.PATIENT_BLOOD_PRESSURE]: {},
+				[rhit.PATIENT_DIASTOLIC_PRESSURE]: {},
 				[rhit.PATIENT_EM_CONTACT_NAME]: "Contact Name",
 				[rhit.PATIENT_EM_CONTACT_PHONE]: "18005006464",
 				[rhit.PATIENT_EMAIL]: "---@gmail.com",
@@ -897,6 +901,7 @@ rhit.PatientsManager = class {
 				[rhit.PATIENT_PRIMARY_PROVIDER]: "primaryProvider",
 				[rhit.PATIENT_PULSE]: {},
 				[rhit.PATIENT_SPO2]: {},
+				[rhit.PATIENT_SYSTOLIC_PRESSURE]: {},
 				[rhit.PATIENT_TEMPERATURE]: {},
 				[rhit.PATIENT_WEIGHT]: {},
 			})
@@ -953,7 +958,7 @@ rhit.PatientsManager = class {
 		const patient = new rhit.Patient(docSnapshot.id,
 			docSnapshot.get(rhit.PATIENT_ADDRESS),
 			docSnapshot.get(rhit.PATIENT_BIRTHDATE),
-			docSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE),
+			docSnapshot.get(rhit.PATIENT_DIASTOLIC_PRESSURE),
 			docSnapshot.get(rhit.PATIENT_EM_CONTACT_NAME),
 			docSnapshot.get(rhit.PATIENT_EM_CONTACT_PHONE),
 			docSnapshot.get(rhit.PATIENT_EMAIL),
@@ -967,6 +972,7 @@ rhit.PatientsManager = class {
 			docSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER),
 			docSnapshot.get(rhit.PATIENT_PULSE),
 			docSnapshot.get(rhit.PATIENT_SPO2),
+			docSnapshot.get(rhit.PATIENT_SYSTOLIC_PRESSURE),
 			docSnapshot.get(rhit.PATIENT_TEMPERATURE),
 			docSnapshot.get(rhit.PATIENT_WEIGHT)
 		);
@@ -984,7 +990,6 @@ rhit.PatientsManager = class {
 	get length() {
 		return this._documentSnapshots.length;
 	}
-
 }
 
 // Single Patients Manager
@@ -1041,8 +1046,8 @@ rhit.SinglePatientManager = class {
 		return this._documentSnapshot.get(rhit.PATIENT_BIRTHDATE);
 	}
 
-	get bloodPressure() {
-		return this._documentSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE);
+	get diastolicPressure() {
+		return this._documentSnapshot.get(rhit.PATIENT_DIASTOLIC_PRESSURE);
 	}
 
 	get firstName() {
@@ -1077,6 +1082,10 @@ rhit.SinglePatientManager = class {
 		return this._documentSnapshot.get(rhit.PATIENT_SPO2);
 	}
 
+	get systolicPressure() {
+		return this._documentSnapshot.get(rhit.PATIENT_SYSTOLIC_PRESSURE);
+	}
+
 	get temperature() {
 		return this._documentSnapshot.get(rhit.PATIENT_TEMPERATURE);
 	}
@@ -1094,7 +1103,7 @@ rhit.SinglePatientManager = class {
 		const patient = new rhit.Patient(docSnapshot.id,
 			docSnapshot.get(rhit.PATIENT_ADDRESS),
 			docSnapshot.get(rhit.PATIENT_BIRTHDATE),
-			docSnapshot.get(rhit.PATIENT_BLOOD_PRESSURE),
+			docSnapshot.get(rhit.PATIENT_DIASTOLIC_PRESSURE),
 			docSnapshot.get(rhit.PATIENT_EM_CONTACT_NAME),
 			docSnapshot.get(rhit.PATIENT_EM_CONTACT_PHONE),
 			docSnapshot.get(rhit.PATIENT_EMAIL),
@@ -1108,6 +1117,7 @@ rhit.SinglePatientManager = class {
 			docSnapshot.get(rhit.PATIENT_PRIMARY_PROVIDER),
 			docSnapshot.get(rhit.PATIENT_PULSE),
 			docSnapshot.get(rhit.PATIENT_SPO2),
+			docSnapshot.get(rhit.PATIENT_SYSTOLIC_PRESSURE),
 			docSnapshot.get(rhit.PATIENT_TEMPERATURE),
 			docSnapshot.get(rhit.PATIENT_WEIGHT)
 		);
@@ -1142,7 +1152,7 @@ rhit.MedicinesManager = class {
 			if (changeListener != null) {
 				changeListener();
 			}
-		}); 
+		});
 	}
 
 	add(name, dosage) {
@@ -1263,14 +1273,13 @@ rhit.NotesManager = class {
  * PURPOSE: Holds all data relevant to a given patient
  */
 rhit.Patient = class {
-	constructor(id, address, birthdate, bloodPressure, emContactName, emContactPhone, email, firstName, gender, googleID,
+	constructor(id, address, birthdate, diastolicPressure, emContactName, emContactPhone, email, firstName, gender, googleID,
 		height, lastName, lastOnline, phone, primaryProvider, pulse,
-		spo2, temperature, weight) {
+		spo2, systolicPressure, temperature, weight) {
 		this.id = id;
 		this.address = address;
 		this.birthdate = birthdate;
-		this.bloodPressure_sys = sortMap(objectToMap(bloodPressure[0]));
-		this.bloodPressure_dia = sortMap(objectToMap(bloodPressure[1]));
+		this.diastolicPressure = sortMap(objectToMap(diastolicPressure));
 		this.emContactName = emContactName;
 		this.emContactPhone = emContactPhone;
 		this.email = email;
@@ -1284,6 +1293,7 @@ rhit.Patient = class {
 		this.primaryProvider = primaryProvider;
 		this.pulse = sortMap(objectToMap(pulse));
 		this.spo2 = sortMap(objectToMap(spo2));
+		this.systolicPressure = sortMap(objectToMap(systolicPressure))
 		this.temperature = sortMap(objectToMap(temperature));
 		this.weight = sortMap(objectToMap(weight));
 	}
@@ -1551,8 +1561,8 @@ function drawChart() {
 		window.addEventListener('resize', drawChart, false);
 	} else {
 
-		let sys_vital = singlePatient.bloodPressure_sys;
-		let dia_vital = singlePatient.bloodPressure_dia;
+		let sys_vital = singlePatient.systolicPressure;
+		let dia_vital = singlePatient.diastolicPressure;
 
 
 		data.addColumn('date', 'Date');
