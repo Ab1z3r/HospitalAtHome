@@ -1236,7 +1236,7 @@ rhit.NotesManager = class {
 				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_SinglePatientManager.primaryProvider}`,
 				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 				[rhit.NOTE_NOTE]: note,
-			})
+			}) 
 			.then(function () {
 				console.log(`Document created in Notes Collection`);
 			})
