@@ -369,6 +369,13 @@ rhit.SinglePatientPageController = class {
 			rhit.single_MedicinesManager.add(medicineName.value, medicineDosage.value);
 		};
 
+		// * Click Listener for Adding a Medicine
+		document.querySelector("#notesSaveButton").onclick = (event) => {
+			const noteText = document.querySelector("#noteModalNote");
+			rhit.single_NotesManager.add(noteText.value);
+		};
+
+
 
 		// When a user clicks any of the buttons from the button group
 		// (VITALS, MEDICINES, NOTES), the cards need to change as well
@@ -1224,11 +1231,11 @@ rhit.NotesManager = class {
 		});
 	}
 
-	add() {
+	add(note) {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('notes').add({
-				[rhit.NOTE_CREATED_BY]: "Dr.-----",
+				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_SinglePatientManager.primaryProvider}`,
 				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
-				[rhit.NOTE_NOTE]: "This is a placeholder note",
+				[rhit.NOTE_NOTE]: note,
 			})
 			.then(function () {
 				console.log(`Document created in Notes Collection`);
