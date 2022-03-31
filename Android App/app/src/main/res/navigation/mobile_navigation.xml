@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
+        android:id="@+id/nav_single_vital"
+        android:name="com.example.safetynetapp.ui.SingleVitalFragment"
+        android:label="@string/menu_single_vital"
+        tools:layout="@layout/fragment_single_vital" />
+
+    <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.safetynetapp.ui.ProfileFragment"
         android:label="@string/menu_profile"

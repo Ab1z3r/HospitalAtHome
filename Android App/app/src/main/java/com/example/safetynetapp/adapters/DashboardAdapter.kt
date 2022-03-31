@@ -15,6 +15,7 @@ import com.example.safetynetapp.ui.DashboardFragment
 import com.example.safetynetapp.models.UserViewModel
 
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 
 
 class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: HomeActivity): RecyclerView.Adapter<DashboardAdapter.DashboardViewHolder>() {
@@ -42,9 +43,10 @@ class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: Home
 
         init {
             itemView.setOnClickListener {
-                // TODO: Create updatePos method in view model
-                //model.updatePos(adapterPosition)
-                // TODO: Navigate to proper detail page
+                // DONE: Create updatePos method in view model
+                model.updatePos(adapterPosition)
+                // DONE: Navigate to proper detail page
+                fragment.findNavController().navigate(R.id.nav_single_vital)
 //                val intent = Intent(itemView.getContext(), ChartActivity::class.java)
 //                itemView.getContext().startActivity(intent)
 

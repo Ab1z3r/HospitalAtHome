@@ -23,7 +23,7 @@ public class ChartActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.line_chart);
+        setContentView(R.layout.fragment_single_vital);
 
         lineChart = findViewById(R.id.linechart);
 
