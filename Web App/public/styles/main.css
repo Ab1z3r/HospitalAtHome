@@ -295,6 +295,16 @@ a#authLink:hover {
   padding-top: 0px;
 }
 
+#signupAlert {
+  text-align: center;
+  background-color: rgba(193, 80, 39, 0.2);
+  color: var(--main-color)
+}
+
+#signupAlert h3 {
+  font-weight: 600;
+}
+
 /* <----- Patient Page (patients.html) -----> */
 .patients-container {
   margin-top: 120px;

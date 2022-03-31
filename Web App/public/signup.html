@@ -13,9 +13,19 @@
 </head>
 
 <body>
-  <!-- <nav class="navbar navbar-dark fixed-top">
-    <a id="title" class="navbar-brand" href="#">Login Page</a>
-  </nav> -->
+
+  <!-- MODAL SECTION -->
+  <div class="modal fade"data-bs-backdrop="static" data-bs-keyboard="false" id="createAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div id="signupAlert" class="modal-body alert mb-0 alert-dismissible" role="alert">
+            <h3 class="alert-heading">Verification Email Sent</h3>
+            A verification email has been sent to your email! After verifying your email, you will be able to access your account.
+            <button id="returnButton" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="signupPage" class="container signup-container">
 
@@ -47,7 +57,8 @@
       </div>
 
       <!-- <input type="checkbox" class="" checked=""> -->
-      <button id="signupButton" class="btn btn-primary" type="button">Log in</button>
+      <button id="signupButton" class="btn btn-primary" type="button" data-bs-toggle="modal"
+      data-bs-target="#createAccountModal">Create Account</button>
       <a href="/" id="authLink">Back to Login Page</a>
       <p id="signupCopyright">Copyright &copy; Your Website 2021</p>
 
