@@ -20,7 +20,10 @@
             android:name=".HomeActivity"
             android:exported="true"
             android:label="@string/title_activity_home"
-            android:theme="@style/Theme.SafetyNetApp.NoActionBar"></activity>
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:theme="@style/Theme.SafetyNetApp.NoActionBar">
+
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -32,10 +35,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.ChartActivity">
+<!--        <activity-->
+<!--            android:name=".ui.ChartActivity">-->
 
-        </activity>
+<!--        </activity>-->
 
         <meta-data
             android:name="preloaded_fonts"

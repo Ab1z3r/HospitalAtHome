@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:paddingHorizontal="10dp"
+    app:cardCornerRadius="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/dashboard_card_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/secondaryColor"
+            android:fontFamily="@font/mukta_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="@string/card_title"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/dashboard_card_average"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dashboard_card_title"
+            android:fontFamily="@font/mukta_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="3dp"
+            android:text="Average"
+            android:textColor="@color/secondaryTextColor"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/dashboard_card_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dashboard_card_average"
+            android:fontFamily="@font/mukta_regular"
+            android:paddingHorizontal="10dp"
+            android:text="@string/missing_data"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/dashboard_card_timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dashboard_card_data"
+            android:fontFamily="@font/mukta_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="3dp"
+            android:text="@string/missing_data"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
