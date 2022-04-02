@@ -377,12 +377,16 @@ rhit.SinglePatientPageController = class {
 		};
 
 		// * Click Listener for Adding a Note
-		document.querySelector("#notesSaveButton").onclick = (event) => {
+		document.querySelector("#notesCreateButton").onclick = (event) => {
 			const noteText = document.querySelector("#noteModalNote");
 			rhit.single_NotesManager.add(noteText.value);
 		};
 
-
+		// * Click Listener for Editing a Note
+		document.querySelector("#notesSaveButton").onclick = (event) => {
+			const noteText = document.querySelector("#noteModalEditNote");
+			rhit.single_NotesManager.update(noteText.value);
+		};
 
 		// When a user clicks any of the buttons from the button group
 		// (VITALS, MEDICINES, NOTES), the cards need to change as well
@@ -436,11 +440,14 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#medicineModalEditDosage").value = rhit.single_MedicinesManager.dosage;
 	}
 
+	updateNoteModal() {
+		document.querySelector("#noteModalEditNote").value = rhit.single_NotesManager.note;
+	}
+
 	updateCardsView() {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
 
 		// VITALS CARD
-
 		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  singlePatient.weight.values().next().value : "--"} lbs`;
 		document.querySelector("#spo2Data").innerHTML = `SPO2: ${(singlePatient.spo2.values().next().value) ?  singlePatient.spo2.values().next().value : "--"} %`;
 		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: 
@@ -467,7 +474,6 @@ rhit.SinglePatientPageController = class {
 		const medicationCards = document.querySelectorAll(".medicationCardInfo");
 		for (const med of medicationCards) {
 			med.addEventListener("click", (event) => {
-				console.log(med.dataset.id);
 				rhit.single_MedicinesManager.beginListenForDocument(med.dataset.id, this.updateMedicineModal.bind(this));
 			})
 		}
@@ -484,6 +490,14 @@ rhit.SinglePatientPageController = class {
 		oldNoteList.removeAttribute("id");
 		oldNoteList.hidden = true;
 		oldNoteList.parentElement.appendChild(noteList);
+
+		// * Adds listener to the select button in each medicine card in the patients list
+		const notesCards = document.querySelectorAll(".specificNoteCardInfo");
+		for (const not of notesCards) {
+			not.addEventListener("click", (event) => {
+				rhit.single_NotesManager.beginListenForDocument(not.dataset.id, this.updateNoteModal.bind(this));
+			})
+		}
 	}
 
 	_createMedicineCard(medicine) {
@@ -499,7 +513,7 @@ rhit.SinglePatientPageController = class {
 
 	_createNoteCard(note) {
 		return htmlToElement(`<div class="specificNoteCard card">
-		<div class="specificNoteCardBody card-body">
+		<div data-bs-toggle="modal" data-bs-target="#noteEditModal" class="specificNoteCardBody card-body">
 		  <div data-id=${note.id} class="specificNoteCardInfo">
 			<p>${note.note}</p>
 			<p class="noteData">${this._parseDate(note.lastTouched)}</p>
@@ -1047,13 +1061,9 @@ rhit.SinglePatientManager = class {
 		});
 	}
 
-
-
 	stopListening() {
 		this._unsubscribe();
 	}
-
-	// TODO implement update and delete if needed
 
 	update(primaryProvider) {
 		this._ref.update({
@@ -1293,6 +1303,7 @@ rhit.NotesManager = class {
 	constructor(id) {
 		this._id = id;
 		this._documentSnapshots = [];
+		this._document = {};
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('notes')
 	}
@@ -1307,8 +1318,34 @@ rhit.NotesManager = class {
 		});
 	}
 
+	beginListenForDocument(id, changeListener = null) {
+		this._unsubscribe = this._ref.doc(id).onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Docoument exists!");
+				this._document = doc;
+				if (changeListener != null) {
+					changeListener();
+				}
+			}
+		});
+	}
+
 	add(note) {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('notes').add({
+				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_SinglePatientManager.primaryProvider}`,
+				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+				[rhit.NOTE_NOTE]: note,
+			})
+			.then(function () {
+				console.log(`Document created in Notes Collection`);
+			})
+			.catch(function (error) {
+				console.log("Error adding note document: ", error);
+			});
+	}
+
+	update(note) {
+		this._ref.doc(rhit.single_NotesManager.getNote().id).set({
 				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_SinglePatientManager.primaryProvider}`,
 				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 				[rhit.NOTE_NOTE]: note,
@@ -1339,6 +1376,24 @@ rhit.NotesManager = class {
 		return note;
 	}
 
+	getNote() {
+		const docSnapshot = this._document;
+		const note = new rhit.Note(docSnapshot.id,
+			docSnapshot.get(rhit.NOTE_CREATED_BY),
+			docSnapshot.get(rhit.NOTE_LAST_TOUCHED),
+			docSnapshot.get(rhit.NOTE_NOTE),
+		);
+		return note;
+	}
+
+	get document_id() {
+		return this._document.get(id);
+	}
+
+	get note() {
+		return this._document.get(rhit.NOTE_NOTE);
+	}
+
 	get documentSnapshots() {
 		return this._documentSnapshots;
 	}
@@ -1346,7 +1401,6 @@ rhit.NotesManager = class {
 	get length() {
 		return this._documentSnapshots.length;
 	}
-
 }
 
 /** DATA MANAGEMENT **/
