@@ -100,6 +100,15 @@ body {
   cursor: pointer;
 }
 
+#medicineDeleteButton, #noteDeleteButton {
+  margin-right: 303px;
+}
+
+.modal-content .modal-footer {
+  padding: 8px 8px 8px 0px;
+  border-top: 0;
+}
+
 /* <----- Login Page (index.html) -----> */
 .login-container {
   margin-top: 40px;

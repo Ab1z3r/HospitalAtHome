@@ -376,6 +376,11 @@ rhit.SinglePatientPageController = class {
 			rhit.single_MedicinesManager.update(medicineName.value, medicineDosage.value);
 		};
 
+		// * Click Listener for Deleting a Medicine
+		document.querySelector("#medicineDeleteButton").onclick = (event) => {
+			rhit.single_MedicinesManager.delete();
+		};
+
 		// * Click Listener for Adding a Note
 		document.querySelector("#notesCreateButton").onclick = (event) => {
 			const noteText = document.querySelector("#noteModalNote");
@@ -386,6 +391,11 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#notesSaveButton").onclick = (event) => {
 			const noteText = document.querySelector("#noteModalEditNote");
 			rhit.single_NotesManager.update(noteText.value);
+		};
+
+		// * Click Listener for Deleting a Note
+		document.querySelector("#noteDeleteButton").onclick = (event) => {
+			rhit.single_NotesManager.delete();
 		};
 
 		// When a user clicks any of the buttons from the button group
@@ -1212,7 +1222,7 @@ rhit.MedicinesManager = class {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('medicines').add({
 				[rhit.MEDICINE_DOSAGE]: dosage,
 				[rhit.MEDICINE_NAME]: name,
-				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_SinglePatientManager.primaryProvider,
+				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_PrimaryProviderManager.lastName,
 				[rhit.MEDICINE_ISVALID]: true,
 				[rhit.MEDICINE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 			})
@@ -1228,7 +1238,7 @@ rhit.MedicinesManager = class {
 		this._ref.doc(rhit.single_MedicinesManager.getMedicine().id).set({
 				[rhit.MEDICINE_DOSAGE]: dosage,
 				[rhit.MEDICINE_NAME]: name,
-				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_SinglePatientManager.primaryProvider,
+				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_PrimaryProviderManager.lastName,
 				[rhit.MEDICINE_ISVALID]: true,
 				[rhit.MEDICINE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 			})
@@ -1238,6 +1248,14 @@ rhit.MedicinesManager = class {
 			.catch(function (error) {
 				console.log("Error adding medicine document: ", error);
 			});
+	}
+
+	delete() {
+		this._ref.doc(rhit.single_MedicinesManager.getMedicine().id).delete().then(() => {
+			console.log("The Medicine was deleted");
+		}).catch((error) => {
+			console.error("Error removing document: ", error);
+		});
 	}
 
 	set id(docRef) {
@@ -1332,7 +1350,7 @@ rhit.NotesManager = class {
 
 	add(note) {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('notes').add({
-				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_SinglePatientManager.primaryProvider}`,
+				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_PrimaryProviderManager.lastName}`,
 				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 				[rhit.NOTE_NOTE]: note,
 			})
@@ -1346,7 +1364,7 @@ rhit.NotesManager = class {
 
 	update(note) {
 		this._ref.doc(rhit.single_NotesManager.getNote().id).set({
-				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_SinglePatientManager.primaryProvider}`,
+				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_PrimaryProviderManager.lastName}`,
 				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 				[rhit.NOTE_NOTE]: note,
 			})
@@ -1356,6 +1374,14 @@ rhit.NotesManager = class {
 			.catch(function (error) {
 				console.log("Error adding note document: ", error);
 			});
+	}
+
+	delete() {
+		this._ref.doc(rhit.single_NotesManager.getNote().id).delete().then(() => {
+			console.log("The Note was deleted");
+		}).catch((error) => {
+			console.error("Error removing document: ", error);
+		});
 	}
 
 	set id(docRef) {
@@ -1550,6 +1576,10 @@ rhit.initializePage = () => {
 		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
 		rhit.single_MedicinesManager = new rhit.MedicinesManager(id);
 		rhit.single_NotesManager = new rhit.NotesManager(id);
+
+		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
+
+		rhit.single_PrimaryProviderManager.beginListenForDocument();
 
 		new rhit.SinglePatientPageController();
 	}
