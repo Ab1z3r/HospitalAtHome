@@ -30,29 +30,57 @@
 
   <!-- MODALS SECTION -->
 
-  <!-- Medicine Modal -->
-  <div class="modal fade" id="medicineModal" tabindex="-1" aria-labelledby="medicineModalLabel" aria-hidden="true">
+    <!-- Add Medicine Modal -->
+    <div class="modal fade" id="medicineModal" tabindex="-1" aria-labelledby="medicineModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="medicineModallLabel">Add new medicine</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="medicine-name" class="col-form-label">Name:</label>
+                <input type="text" class="form-control" id="medicineModalName">
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Dosage:</label>
+                <input type="text" class="form-control" id="medicineModalDosage">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="medicinesCreateButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Edit Medicine Modal -->
+  <div class="modal fade" id="medicineEditModal" tabindex="-1" aria-labelledby="medicineEditModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="medicineModallLabel">Add new medicine</h5>
+          <h5 class="modal-title" id="medicineModallLabel">Edit medicine</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form>
             <div class="mb-3">
               <label for="medicine-name" class="col-form-label">Name:</label>
-              <input type="text" class="form-control" id="medicineModalName">
+              <input type="text" class="form-control" id="medicineModalEditName">
             </div>
             <div class="mb-3">
               <label for="message-text" class="col-form-label">Dosage:</label>
-              <input type="text" class="form-control" id="medicineModalDosage">
+              <input type="text" class="form-control" id="medicineModalEditDosage">
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button id="medicinesSaveButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Create</button>
+          <button id="medicinesSaveButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
         </div>
       </div>
     </div>
@@ -80,7 +108,7 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 
   <div id="singlePatientPage" class="singlePatient-container">
     <h1 id="singlePatientHeader">&nbsp;</h1>

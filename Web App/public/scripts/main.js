@@ -363,13 +363,20 @@ rhit.SinglePatientPageController = class {
 		};
 
 		// * Click Listener for Adding a Medicine
-		document.querySelector("#medicinesSaveButton").onclick = (event) => {
+		document.querySelector("#medicinesCreateButton").onclick = (event) => {
 			const medicineName = document.querySelector("#medicineModalName");
 			const medicineDosage = document.querySelector("#medicineModalDosage");
 			rhit.single_MedicinesManager.add(medicineName.value, medicineDosage.value);
 		};
 
-		// * Click Listener for Adding a Medicine
+		// * Click Listener for Editing a Medicine
+		document.querySelector("#medicinesSaveButton").onclick = (event) => {
+			const medicineName = document.querySelector("#medicineModalEditName");
+			const medicineDosage = document.querySelector("#medicineModalEditDosage");
+			rhit.single_MedicinesManager.update(medicineName.value, medicineDosage.value);
+		};
+
+		// * Click Listener for Adding a Note
 		document.querySelector("#notesSaveButton").onclick = (event) => {
 			const noteText = document.querySelector("#noteModalNote");
 			rhit.single_NotesManager.add(noteText.value);
@@ -424,6 +431,11 @@ rhit.SinglePatientPageController = class {
 		this.updateCardsView();
 	}
 
+	updateMedicineModal() {
+		document.querySelector("#medicineModalEditName").value = rhit.single_MedicinesManager.name;
+		document.querySelector("#medicineModalEditDosage").value = rhit.single_MedicinesManager.dosage;
+	}
+
 	updateCardsView() {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
 
@@ -451,6 +463,15 @@ rhit.SinglePatientPageController = class {
 		oldMedList.hidden = true;
 		oldMedList.parentElement.appendChild(medList);
 
+		// * Adds listener to the select button in each medicine card in the patients list
+		const medicationCards = document.querySelectorAll(".medicationCardInfo");
+		for (const med of medicationCards) {
+			med.addEventListener("click", (event) => {
+				console.log(med.dataset.id);
+				rhit.single_MedicinesManager.beginListenForDocument(med.dataset.id, this.updateMedicineModal.bind(this));
+			})
+		}
+
 		// NOTE CARD
 		const noteList = htmlToElement('<div id="notesInfo"></div>');
 		for (let i = 0; i < rhit.single_NotesManager.length; i++) {
@@ -467,8 +488,8 @@ rhit.SinglePatientPageController = class {
 
 	_createMedicineCard(medicine) {
 		return htmlToElement(`<div class="medicationCard card">
-		<div class="medicationCardBody card-body">
-		  <div class="medicationCardInfo">
+		<div data-bs-toggle="modal" data-bs-target="#medicineEditModal"class="medicationCardBody card-body">
+		  <div data-id=${medicine.id} class="medicationCardInfo">
 			<p class="medicationName">${medicine.name}</p>
 			<p>Dosage: ${medicine.dosage}</p>
 		  </div>
@@ -479,7 +500,7 @@ rhit.SinglePatientPageController = class {
 	_createNoteCard(note) {
 		return htmlToElement(`<div class="specificNoteCard card">
 		<div class="specificNoteCardBody card-body">
-		  <div class="specificNoteCardInfo">
+		  <div data-id=${note.id} class="specificNoteCardInfo">
 			<p>${note.note}</p>
 			<p class="noteData">${this._parseDate(note.lastTouched)}</p>
 		  </div>
@@ -1026,6 +1047,8 @@ rhit.SinglePatientManager = class {
 		});
 	}
 
+
+
 	stopListening() {
 		this._unsubscribe();
 	}
@@ -1148,6 +1171,7 @@ rhit.MedicinesManager = class {
 	constructor(id) {
 		this._id = id;
 		this._documentSnapshots = [];
+		this._document = {};
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('medicines')
 	}
@@ -1162,6 +1186,18 @@ rhit.MedicinesManager = class {
 		});
 	}
 
+	beginListenForDocument(id, changeListener = null) {
+		this._unsubscribe = this._ref.doc(id).onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Docoument exists!");
+				this._document = doc;
+				if (changeListener != null) {
+					changeListener();
+				}
+			}
+		});
+	}
+
 	add(name, dosage) {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('medicines').add({
 				[rhit.MEDICINE_DOSAGE]: dosage,
@@ -1172,6 +1208,22 @@ rhit.MedicinesManager = class {
 			})
 			.then(function () {
 				console.log(`Document created in Medicines Collection`);
+			})
+			.catch(function (error) {
+				console.log("Error adding medicine document: ", error);
+			});
+	}
+
+	update(name, dosage) {
+		this._ref.doc(rhit.single_MedicinesManager.getMedicine().id).set({
+				[rhit.MEDICINE_DOSAGE]: dosage,
+				[rhit.MEDICINE_NAME]: name,
+				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_SinglePatientManager.primaryProvider,
+				[rhit.MEDICINE_ISVALID]: true,
+				[rhit.MEDICINE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			})
+			.then(function () {
+				console.log(`Medicine Document updated`);
 			})
 			.catch(function (error) {
 				console.log("Error adding medicine document: ", error);
@@ -1196,6 +1248,30 @@ rhit.MedicinesManager = class {
 			docSnapshot.get(rhit.MEDICINE_LAST_TOUCHED)
 		);
 		return medicine;
+	}
+
+	getMedicine() {
+		const docSnapshot = this._document;
+		const medicine = new rhit.Medicine(docSnapshot.id,
+			docSnapshot.get(rhit.MEDICINE_DOSAGE),
+			docSnapshot.get(rhit.MEDICINE_NAME),
+			docSnapshot.get(rhit.MEDICINE_PRIMARY_PROVIDER),
+			docSnapshot.get(rhit.MEDICINE_ISVALID),
+			docSnapshot.get(rhit.MEDICINE_LAST_TOUCHED)
+		);
+		return medicine;
+	}
+
+	get document_id() {
+		return this._document.get(id);
+	}
+
+	get name() {
+		return this._document.get(rhit.MEDICINE_NAME);
+	}
+
+	get dosage() {
+		return this._document.get(rhit.MEDICINE_DOSAGE);
 	}
 
 	get documentSnapshots() {
@@ -1236,7 +1312,7 @@ rhit.NotesManager = class {
 				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_SinglePatientManager.primaryProvider}`,
 				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 				[rhit.NOTE_NOTE]: note,
-			}) 
+			})
 			.then(function () {
 				console.log(`Document created in Notes Collection`);
 			})
