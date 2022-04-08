@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BleSampleOmron_v4.iml" filepath="$PROJECT_DIR$/.idea/modules/BleSampleOmron_v4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android-core-bluetooth/BleSampleOmron_v4.android-core-bluetooth.iml" filepath="$PROJECT_DIR$/.idea/modules/android-core-bluetooth/BleSampleOmron_v4.android-core-bluetooth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/BleSampleOmron_v4.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/BleSampleOmron_v4.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ohq-reference-code/BleSampleOmron_v4.ohq-reference-code.iml" filepath="$PROJECT_DIR$/.idea/modules/ohq-reference-code/BleSampleOmron_v4.ohq-reference-code.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/utility/BleSampleOmron_v4.utility.iml" filepath="$PROJECT_DIR$/.idea/modules/utility/BleSampleOmron_v4.utility.iml" />
+    </modules>
+  </component>
+</project>
