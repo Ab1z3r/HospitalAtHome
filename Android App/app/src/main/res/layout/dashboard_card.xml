@@ -23,14 +23,14 @@
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/dashboard_card_average"
+            android:id="@+id/dashboard_card_data_range"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/dashboard_card_title"
             android:fontFamily="@font/mukta_regular"
             android:paddingHorizontal="10dp"
             android:paddingTop="3dp"
-            android:text="Average"
+            android:text="@string/data_range_label"
             android:textColor="@color/secondaryTextColor"
             android:textSize="12sp" />
 
@@ -38,7 +38,7 @@
             android:id="@+id/dashboard_card_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/dashboard_card_average"
+            android:layout_below="@id/dashboard_card_data_range"
             android:fontFamily="@font/mukta_regular"
             android:paddingHorizontal="10dp"
             android:text="@string/missing_data"

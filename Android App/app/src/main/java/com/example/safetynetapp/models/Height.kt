@@ -8,13 +8,15 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import java.util.*
 
 class Height(
     override val title: String = "Height",
     override val units: String = "",
-    override val cardData: String = "-- ft, -- in",
-    override val cardTimestamp: String = "--",
-    override val dataType: DataType? = DataType.TYPE_HEIGHT
+    override var cardData: String = "-- ft, -- in",
+    override var cardTimestamp: String = "--",
+    override val dataType: DataType? = DataType.TYPE_HEIGHT,
+    var heights: SortedMap<String, Int> = sortedMapOf<String, Int>()
 ) : Vital {
     override fun fetchVital(
         callingActivity: AppCompatActivity,
@@ -26,9 +28,9 @@ class Height(
         Fitness.getHistoryClient(callingActivity, googleSignInAccount)
             .readDailyTotal(dataType!!)
             .addOnSuccessListener { response ->
-                if(response.dataPoints.isEmpty()){
+                if (response.dataPoints.isEmpty()) {
                     textView.text = defaultVal
-                }else{
+                } else {
                     textView.text = dataPointToValueString(response.dataPoints[0], defaultVal)
                 }
             }
@@ -39,7 +41,7 @@ class Height(
     }
 
     override fun dataPointToValueString(dp: DataPoint?, defaultVal: String): String {
-        if(dp == null){
+        if (dp == null) {
             return defaultVal
         }
 

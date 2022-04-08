@@ -14,7 +14,6 @@ import com.example.safetynetapp.models.Vital
 import com.example.safetynetapp.ui.DashboardFragment
 import com.example.safetynetapp.models.UserViewModel
 
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 
 
@@ -37,7 +36,7 @@ class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: Home
 
     inner class DashboardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.dashboard_card_title)
-        val averageTextView: TextView = itemView.findViewById(R.id.dashboard_card_average)
+        val dataRangeTextView: TextView = itemView.findViewById(R.id.dashboard_card_data_range)
         val dataTextView: TextView = itemView.findViewById(R.id.dashboard_card_data)
         val timestampTextView: TextView = itemView.findViewById(R.id.dashboard_card_timestamp)
 
@@ -65,9 +64,10 @@ class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: Home
         }
 
         fun bind(vital: Vital) {
+            vital.updateCard()
             titleTextView.text = vital.title
             timestampTextView.text = vital.cardTimestamp
-            averageTextView.text = "Average"
+            dataRangeTextView.text = "Latest"
             vital.fetchVital(parentActivity, usermodel.googleSigninUser, vital.dataType, dataTextView, vital.cardData)
             dataTextView.text = vital.cardData
         }

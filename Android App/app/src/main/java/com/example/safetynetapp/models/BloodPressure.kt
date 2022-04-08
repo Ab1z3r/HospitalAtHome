@@ -6,13 +6,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import java.util.*
 
 class BloodPressure(
     override val title: String = "Blood Pressure",
     override val units: String = "",
-    override val cardData: String = "--/-- $units",
-    override val cardTimestamp: String = "--",
+    override var cardData: String = "--/-- $units",
+    override var cardTimestamp: String = "--",
     override val dataType: DataType? = null,
+    var diastolicPressures: SortedMap<String, Int> = sortedMapOf<String, Int>(),
+    var systolicPressures: SortedMap<String, Int> = sortedMapOf<String, Int>()
 ) : Vital {
     override fun fetchVital(
         callingActivity: AppCompatActivity,

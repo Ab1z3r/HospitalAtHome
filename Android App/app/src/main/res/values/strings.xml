@@ -60,4 +60,5 @@
     <string name="em_contact_phone_hint">Phone</string>
     <string name="emergency_contact_title">Emergency Contact</string>
     <string name="menu_single_vital">Single Vital</string>
+    <string name="data_range_label">Data Range</string>
 </resources>
