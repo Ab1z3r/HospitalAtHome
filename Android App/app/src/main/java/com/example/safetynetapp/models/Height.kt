@@ -16,8 +16,28 @@ class Height(
     override var cardData: String = "-- ft, -- in",
     override var cardTimestamp: String = "--",
     override val dataType: DataType? = DataType.TYPE_HEIGHT,
-    var heights: SortedMap<String, Int> = sortedMapOf<String, Int>()
+    var heights: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
+    override fun updateCard() {
+        if (heights.isNotEmpty()) {
+            val key = heights.keys.elementAt(heights.size-1)
+            val height = heights[key]
+            val feet = height.toString().toFloat().toInt() / 12
+            val inches = height.toString().toFloat().toInt() % 12
+            cardData = "$feet ft, $inches in"
+            cardTimestamp = mapKeyToString(key)
+        }
+        super.updateCard()
+    }
+
+    override fun setModelData(map: SortedMap<String, Any>) {
+        heights = map
+    }
+
+    override fun setDiastolicData(map: SortedMap<String, Any>) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

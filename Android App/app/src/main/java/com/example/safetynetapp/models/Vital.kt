@@ -21,6 +21,9 @@ interface Vital {
 //        this.cardTimestamp = timestampToString(Timestamp.now())
     }
 
+    fun setModelData(map: SortedMap<String, Any>)
+    fun setDiastolicData(map: SortedMap<String, Any>)
+
     fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

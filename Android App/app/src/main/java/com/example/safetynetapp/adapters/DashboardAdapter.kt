@@ -68,8 +68,9 @@ class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: Home
             titleTextView.text = vital.title
             timestampTextView.text = vital.cardTimestamp
             dataRangeTextView.text = "Latest"
-            vital.fetchVital(parentActivity, usermodel.googleSigninUser, vital.dataType, dataTextView, vital.cardData)
+//            vital.fetchVital(parentActivity, usermodel.googleSigninUser, vital.dataType, dataTextView, vital.cardData)
             dataTextView.text = vital.cardData
+            Log.d("MIKE", "HERE ${vital.cardData}")
         }
     }
 }

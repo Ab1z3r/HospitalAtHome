@@ -17,16 +17,24 @@ class Pulse(
     override var cardData: String = "-- $units",
     override var cardTimestamp: String = "--",
     override val dataType: DataType? = DataType.TYPE_HEART_RATE_BPM,
-    var pulses: SortedMap<String, Int> = sortedMapOf<String, Int>()
+    var pulses: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
     override fun updateCard() {
         if (pulses.isNotEmpty()) {
             val key = pulses.keys.elementAt(pulses.size-1)
             val pulse = pulses[key]
-            cardData = "$pulse $units"
+            cardData = "${pulse.toString().toFloat().toInt()} $units"
             cardTimestamp = mapKeyToString(key)
         }
         super.updateCard()
+    }
+
+    override fun setModelData(map: SortedMap<String, Any>) {
+        pulses = map
+    }
+
+    override fun setDiastolicData(map: SortedMap<String, Any>) {
+        Log.d("[ERROR]", "should never be here")
     }
 
     override fun fetchVital(

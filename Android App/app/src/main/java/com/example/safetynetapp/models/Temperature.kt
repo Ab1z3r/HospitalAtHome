@@ -1,5 +1,6 @@
 package com.example.safetynetapp.models
 
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -14,8 +15,26 @@ class Temperature(
     override var cardData: String = "--$units",
     override var cardTimestamp: String = "--",
     override val dataType: DataType? = null,
-    var temperatures: SortedMap<String, Int> = sortedMapOf<String, Int>()
+    var temperatures: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
+    override fun updateCard() {
+        if (temperatures.isNotEmpty()) {
+            val key = temperatures.keys.elementAt(temperatures.size-1)
+            val temperature = temperatures[key]
+            cardData = "$temperature$units"
+            cardTimestamp = mapKeyToString(key)
+        }
+        super.updateCard()
+    }
+
+    override fun setModelData(map: SortedMap<String, Any>) {
+        temperatures = map
+    }
+
+    override fun setDiastolicData(map: SortedMap<String, Any>) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

@@ -17,6 +17,7 @@ import com.example.safetynetapp.adapters.DashboardAdapter
 import com.example.safetynetapp.databinding.FragmentDashboardBinding
 import com.example.safetynetapp.models.DashboardViewModel
 import com.example.safetynetapp.models.User
+import com.example.safetynetapp.models.UserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
@@ -32,7 +33,6 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
-
 
         adapter = DashboardAdapter(this, activity as HomeActivity)
         binding.dashboardRecyclerView.adapter = adapter
