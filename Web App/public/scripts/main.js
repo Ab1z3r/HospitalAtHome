@@ -306,6 +306,38 @@ rhit.ProviderProfilePageController = class {
 	}
 }
 
+// Patient Profile Page Controller
+/**
+ * PURPOSE: Handle all View and Controller interactions for the Patient Profile Page
+ */
+ rhit.PatientProfilePageController = class {
+	constructor() {
+		// // * Click Listener for sign out on Single Patient Page
+		// document.querySelector("#signOutLink").onclick = (event) => {
+		// 	rhit.single_AuthManager.signOut();
+		// 	window.location.href = "/";
+		// };
+
+		// // * Click Listener for Go Back
+		// document.querySelector("#goBackLink").onclick = (event) => {
+		// 	window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
+		// };
+
+		// // * Click Listener for save button on account modal
+		// document.querySelector("#deleteButton").onclick = (event) => {
+		// 	rhit.single_PatientsManager.repopulate(this.removePatients.bind(this), "patients", null);
+		// };
+
+
+		// // * Click Listener for save button on patient modal
+		// document.querySelector("#saveButton").onclick = (event) => {
+		// 	this.updatePatients();
+		// };
+
+		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
+	}
+}
+
 
 // Single Patients Page Controller
 /**
@@ -331,6 +363,11 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#primaryProviderProfile").onclick = (event) => {
 			window.location.href = `/provider_profile.html?uid=${rhit.single_AuthManager.uid}`;
 		};
+
+		// TODO (Change the href location) - * Click Listener for viewing patient profile
+		document.querySelector("#patientProviderProfile").onclick = (event) => {
+			window.location.href = `/patient_profile.html?id=${rhit.single_SinglePatientManager.id}`;
+		}
 
 		// * Click Listener for Bread Crumbs
 		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
@@ -1564,6 +1601,18 @@ rhit.initializePage = () => {
 		rhit.single_PrimaryProviderManager.beginListenForDocument();
 
 		new rhit.ProviderProfilePageController();
+	}
+
+	// * initializes page controller for Patient Profile Page
+	if (document.querySelector("#patientProfilePage")) {
+		console.log("You are on the patient profile page.");
+		const id = urlParams.get("id");
+		if (!id) {
+			window.location.href = "/patients.html";
+		}
+		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
+
+		new rhit.PatientProfilePageController();
 	}
 
 	// * initializes page controller for Single Patient Page

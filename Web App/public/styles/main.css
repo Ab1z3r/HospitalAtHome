@@ -94,9 +94,6 @@ body {
 #menuDropdown a.dropdown-item:hover{
   text-decoration: underline;
   color: var(--main-color);
-}
-
-#primaryProviderProfile {
   cursor: pointer;
 }
 
@@ -487,6 +484,31 @@ a#authLink:hover {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* <----- Patient Profile Page (patient_profile.html) -----> */
+.patientProfile-container {
+  margin-top: 120px;
+}
+
+#patientProfilePage {
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
+}
+
+#patientProfileHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#patientProfileTitle {
+  margin: 30px 0px;
+  text-align: center;
+  font-size: 50px;
+}
+
 
 /* <----- Single Patient Page (single_patient.html) -----> */
 .singlePatient-container {
