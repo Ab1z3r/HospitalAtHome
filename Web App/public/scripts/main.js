@@ -189,17 +189,11 @@ rhit.PatientsPageController = class {
             							<p>Primary Provider: ${patient.primaryProvider}</p>
           							</div>
           							<div class="patientsCardInfo">
-            							<p>Last online: ${this._parseDate(patient.lastOnline)}</p>
+            							<p>Last online: ${parseOnlineDate(patient.lastOnline)}</p>
             							<button data-id=${patient.id} id="selectButton" class="btn btn-primary" type="button">Select</button>
           							</div>
         						</div>
       						</div>`);
-	}
-
-	_parseDate(timestamp) {
-		const date = timestamp.toDate();
-		const year = date.getYear().toString();
-		return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 	}
 }
 
@@ -312,16 +306,16 @@ rhit.ProviderProfilePageController = class {
  */
  rhit.PatientProfilePageController = class {
 	constructor() {
-		// // * Click Listener for sign out on Single Patient Page
-		// document.querySelector("#signOutLink").onclick = (event) => {
-		// 	rhit.single_AuthManager.signOut();
-		// 	window.location.href = "/";
-		// };
+		// * Click Listener for sign out on Single Patient Page
+		document.querySelector("#signOutLink").onclick = (event) => {
+			rhit.single_AuthManager.signOut();
+			window.location.href = "/";
+		};
 
-		// // * Click Listener for Go Back
-		// document.querySelector("#goBackLink").onclick = (event) => {
-		// 	window.location.href = `/patients.html?uid=${rhit.single_AuthManager.uid}`;
-		// };
+		// * Click Listener for Go Back
+		document.querySelector("#goBackLink").onclick = (event) => {
+			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;		
+		};
 
 		// // * Click Listener for save button on account modal
 		// document.querySelector("#deleteButton").onclick = (event) => {
@@ -335,6 +329,17 @@ rhit.ProviderProfilePageController = class {
 		// };
 
 		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
+	}
+
+	updateView() {
+		document.querySelector("#patientProfileName").innerHTML = `Name: ${rhit.single_SinglePatientManager.firstName} ${rhit.single_SinglePatientManager.lastName}`
+		document.querySelector("#patientBirthdate").innerHTML = `Birth Date: ${rhit.single_SinglePatientManager.birthdate}`
+		document.querySelector("#patientProfileEmail").innerHTML = `Email: ${rhit.single_SinglePatientManager.email}`
+		document.querySelector("#patientProfileGender").innerHTML = `Gender: ${rhit.single_SinglePatientManager.gender}`
+		document.querySelector("#patientProfilePhone").innerHTML = `Phone: ${rhit.single_SinglePatientManager.phone}`
+		document.querySelector("#patientProfilePrimaryProvider").innerHTML = `Primary Provider: ${rhit.single_SinglePatientManager.primaryProvider}`
+		document.querySelector("#patientProfileEmContactName").innerHTML = `Name: ${rhit.single_SinglePatientManager.emContactName}`
+		document.querySelector("#patientProfileEmContactPhone").innerHTML = `Phone: ${rhit.single_SinglePatientManager.emContactPhone}`
 	}
 }
 
@@ -1137,8 +1142,24 @@ rhit.SinglePatientManager = class {
 		return this._documentSnapshot.get(rhit.PATIENT_DIASTOLIC_PRESSURE);
 	}
 
+	get emContactName() {
+		return this._documentSnapshot.get(rhit.PATIENT_EM_CONTACT_NAME);
+	}
+
+	get emContactPhone() {
+		return this._documentSnapshot.get(rhit.PATIENT_EM_CONTACT_PHONE);
+	}
+
+	get email() {
+		return this._documentSnapshot.get(rhit.PATIENT_EMAIL);
+	}
+
 	get firstName() {
 		return this._documentSnapshot.get(rhit.PATIENT_FIRST_NAME);
+	}
+
+	get gender() {
+		return this._documentSnapshot.get(rhit.PATIENT_GENDER);
 	}
 
 	get googleID() {
@@ -1155,6 +1176,10 @@ rhit.SinglePatientManager = class {
 
 	get lastOnline() {
 		return this._documentSnapshot.get(rhit.PATIENT_LAST_ONLINE);
+	}
+
+	get phone() {
+		return this._documentSnapshot.get(rhit.PATIENT_PHONE);
 	}
 
 	get primaryProvider() {
@@ -1839,6 +1864,12 @@ function drawChart() {
 		window.addEventListener('resize', drawChart, false);
 
 	}
+}
+
+ function parseOnlineDate(timestamp) {
+	const date = timestamp.toDate();
+	const year = date.getYear().toString();
+	return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 }
 
 // Function written to parse the time keys of the different vital maps
