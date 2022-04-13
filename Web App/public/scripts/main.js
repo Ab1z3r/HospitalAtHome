@@ -50,7 +50,10 @@ rhit.single_SinglePatientManager = null;
 rhit.single_MedicinesManager = null;
 rhit.single_NotesManager = null;
 
+
 /** PAGE CONTROLLERS **/
+/* --------------------------------------------------------------------------------------- */
+
 // Login Page Controller
 /**
  * PURPOSE: Handle all View and Controller interactions for the Login Page
@@ -304,7 +307,7 @@ rhit.ProviderProfilePageController = class {
 /**
  * PURPOSE: Handle all View and Controller interactions for the Patient Profile Page
  */
- rhit.PatientProfilePageController = class {
+rhit.PatientProfilePageController = class {
 	constructor() {
 		// * Click Listener for sign out on Single Patient Page
 		document.querySelector("#signOutLink").onclick = (event) => {
@@ -314,19 +317,13 @@ rhit.ProviderProfilePageController = class {
 
 		// * Click Listener for Go Back
 		document.querySelector("#goBackLink").onclick = (event) => {
-			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;		
+			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;
 		};
 
-		// // * Click Listener for save button on account modal
-		// document.querySelector("#deleteButton").onclick = (event) => {
-		// 	rhit.single_PatientsManager.repopulate(this.removePatients.bind(this), "patients", null);
-		// };
-
-
-		// // * Click Listener for save button on patient modal
-		// document.querySelector("#saveButton").onclick = (event) => {
-		// 	this.updatePatients();
-		// };
+		// * Click Listener for viewing patient profile
+		document.querySelector("#patientProviderProfile").onclick = (event) => {
+			window.location.href = `/patient_profile.html?id=${rhit.single_SinglePatientManager.id}`;
+		}
 
 		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
 	}
@@ -369,7 +366,7 @@ rhit.SinglePatientPageController = class {
 			window.location.href = `/provider_profile.html?uid=${rhit.single_AuthManager.uid}`;
 		};
 
-		// TODO (Change the href location) - * Click Listener for viewing patient profile
+		// * Click Listener for viewing patient profile
 		document.querySelector("#patientProviderProfile").onclick = (event) => {
 			window.location.href = `/patient_profile.html?id=${rhit.single_SinglePatientManager.id}`;
 		}
@@ -691,6 +688,7 @@ rhit.GraphicsPageController = class {
 
 
 /** MANAGERS **/
+/* --------------------------------------------------------------------------------------- */
 
 // Auth Manager
 /**
@@ -1123,9 +1121,6 @@ rhit.SinglePatientManager = class {
 		})
 	}
 
-	delete() {}
-
-
 	get id() {
 		return this._id;
 	}
@@ -1492,6 +1487,7 @@ rhit.NotesManager = class {
 }
 
 /** DATA MANAGEMENT **/
+/* --------------------------------------------------------------------------------------- */
 
 // Patient Wrapper
 /**
@@ -1568,6 +1564,8 @@ rhit.Note = class {
 
 
 /** PAGE MANAGEMENT **/
+/* --------------------------------------------------------------------------------------- */
+
 
 // Redirects
 /**
@@ -1688,17 +1686,10 @@ rhit.pageStatus = function () {
 	rhit.initializePage();
 }
 
-/** MAIN **/
-rhit.main = function () {
-	rhit.single_AuthManager = new rhit.AuthManager();
-	rhit.single_AuthManager.beginListening(rhit.pageStatus.bind(this));
-};
 
-rhit.main();
+/** TOOLS **/
+/* --------------------------------------------------------------------------------------- */
 
-/**
- * * TOOLS
- */
 // From: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro/35385518#35385518
 function htmlToElement(html) {
 	var template = document.createElement('template');
@@ -1866,7 +1857,7 @@ function drawChart() {
 	}
 }
 
- function parseOnlineDate(timestamp) {
+function parseOnlineDate(timestamp) {
 	const date = timestamp.toDate();
 	const year = date.getYear().toString();
 	return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
@@ -1889,3 +1880,13 @@ function parseDate(key, seconds = false) {
 
 	}
 }
+
+/** MAIN **/
+/* --------------------------------------------------------------------------------------- */
+
+rhit.main = function () {
+	rhit.single_AuthManager = new rhit.AuthManager();
+	rhit.single_AuthManager.beginListening(rhit.pageStatus.bind(this));
+};
+
+rhit.main();

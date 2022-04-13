@@ -31,36 +31,38 @@
 
   <!-- MODALS SECTION -->
 
-    <!-- Add Medicine Modal -->
-    <div class="modal fade" id="medicineModal" tabindex="-1" aria-labelledby="medicineModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="medicineModallLabel">Add new medicine</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="medicine-name" class="col-form-label">Name:</label>
-                <input type="text" class="form-control" id="medicineModalName">
-              </div>
-              <div class="mb-3">
-                <label for="message-text" class="col-form-label">Dosage:</label>
-                <input type="text" class="form-control" id="medicineModalDosage">
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button id="medicinesCreateButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Create</button>
-          </div>
+  <!-- Add Medicine Modal -->
+  <div class="modal fade" id="medicineModal" tabindex="-1" aria-labelledby="medicineModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="medicineModallLabel">Add new medicine</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="medicine-name" class="col-form-label">Name:</label>
+              <input type="text" class="form-control" id="medicineModalName">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Dosage:</label>
+              <input type="text" class="form-control" id="medicineModalDosage">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="medicinesCreateButton" type="button" class="btn btn-primary"
+            data-bs-dismiss="modal">Create</button>
         </div>
       </div>
     </div>
+  </div>
 
   <!-- Edit Medicine Modal -->
-  <div class="modal fade" id="medicineEditModal" tabindex="-1" aria-labelledby="medicineEditModalLabel" aria-hidden="true">
+  <div class="modal fade" id="medicineEditModal" tabindex="-1" aria-labelledby="medicineEditModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -80,7 +82,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button id="medicineDeleteButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-trash" aria-hidden="true"></i></button>
+          <button id="medicineDeleteButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+              class="fa fa-trash" aria-hidden="true"></i></button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button id="medicinesSaveButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
         </div>
@@ -129,7 +132,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button id="noteDeleteButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-trash" aria-hidden="true"></i></button>
+          <button id="noteDeleteButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+              class="fa fa-trash" aria-hidden="true"></i></button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button id="notesSaveButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
         </div>
@@ -148,7 +152,12 @@
       </nav>
     </div>
 
-    <h1 id="singlePatientTitle">&nbsp;</h1>
+    <div class="d-flex flex-row justify-content-center align-items-center">
+      <h1 id="singlePatientTitle">&nbsp;</h1>
+      <button id="videoButton" class="btn btn-primary" type="button"><i class="fa fa-video-camera"
+          aria-hidden="true"></i>
+      </button>
+    </div>
 
     <div id="singlePatientButtonGroup">
       <div class="btn-group" role="group" aria-label="Button Group">
@@ -207,15 +216,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div id="singlePatientContact">
-    <h2>Contact the Patient</h2>
-    <div id="singlePatientContactButtons">
-      <!-- <button id="messageButton" class="btn btn-primary" type="button">Message</button> -->
-      <button id="videoButton" class="btn btn-primary" type="button">Video</button>
-      <!-- <button id="audioButton" class="btn btn-primary" type="button">Audio</button> -->
     </div>
   </div>
 
