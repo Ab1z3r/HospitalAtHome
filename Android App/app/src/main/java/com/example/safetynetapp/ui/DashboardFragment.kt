@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -38,6 +39,11 @@ class DashboardFragment : Fragment() {
         binding.dashboardRecyclerView.adapter = adapter
         binding.dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.dashboardRecyclerView.setHasFixedSize(true)
+
+        binding.callButton.setOnClickListener {
+            val text = "Feature Still Under Development"
+            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+        }
 
         return binding.root
     }
