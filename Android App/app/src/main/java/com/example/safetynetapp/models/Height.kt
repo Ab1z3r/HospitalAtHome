@@ -8,14 +8,36 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import java.util.*
 
 class Height(
     override val title: String = "Height",
     override val units: String = "",
-    override val cardData: String = "-- ft, -- in",
-    override val cardTimestamp: String = "--",
-    override val dataType: DataType? = DataType.TYPE_HEIGHT
+    override var cardData: String = "-- ft, -- in",
+    override var cardTimestamp: String = "--",
+    override val dataType: DataType? = DataType.TYPE_HEIGHT,
+    var heights: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
+    override fun updateCard() {
+        if (heights.isNotEmpty()) {
+            val key = heights.keys.elementAt(heights.size-1)
+            val height = heights[key]
+            val feet = height.toString().toFloat().toInt() / 12
+            val inches = height.toString().toFloat().toInt() % 12
+            cardData = "$feet ft, $inches in"
+            cardTimestamp = mapKeyToString(key)
+        }
+        super.updateCard()
+    }
+
+    override fun setModelData(map: SortedMap<String, Any>) {
+        heights = map
+    }
+
+    override fun setDiastolicData(map: SortedMap<String, Any>) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
@@ -26,9 +48,9 @@ class Height(
         Fitness.getHistoryClient(callingActivity, googleSignInAccount)
             .readDailyTotal(dataType!!)
             .addOnSuccessListener { response ->
-                if(response.dataPoints.isEmpty()){
+                if (response.dataPoints.isEmpty()) {
                     textView.text = defaultVal
-                }else{
+                } else {
                     textView.text = dataPointToValueString(response.dataPoints[0], defaultVal)
                 }
             }
@@ -39,7 +61,7 @@ class Height(
     }
 
     override fun dataPointToValueString(dp: DataPoint?, defaultVal: String): String {
-        if(dp == null){
+        if (dp == null) {
             return defaultVal
         }
 

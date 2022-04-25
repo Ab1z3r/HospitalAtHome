@@ -8,15 +8,35 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import java.util.*
 import kotlin.math.roundToLong
 
 class Pulse(
     override val title: String = "Pulse",
     override val units: String = "bpm",
-    override val cardData: String = "-- $units",
-    override val cardTimestamp: String = "--",
-    override val dataType: DataType? = DataType.TYPE_HEART_RATE_BPM
+    override var cardData: String = "-- $units",
+    override var cardTimestamp: String = "--",
+    override val dataType: DataType? = DataType.TYPE_HEART_RATE_BPM,
+    var pulses: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
+    override fun updateCard() {
+        if (pulses.isNotEmpty()) {
+            val key = pulses.keys.elementAt(pulses.size-1)
+            val pulse = pulses[key]
+            cardData = "${pulse.toString().toFloat().toInt()} $units"
+            cardTimestamp = mapKeyToString(key)
+        }
+        super.updateCard()
+    }
+
+    override fun setModelData(map: SortedMap<String, Any>) {
+        pulses = map
+    }
+
+    override fun setDiastolicData(map: SortedMap<String, Any>) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

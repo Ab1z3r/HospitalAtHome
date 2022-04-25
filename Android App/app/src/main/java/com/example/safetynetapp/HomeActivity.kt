@@ -92,19 +92,23 @@ class HomeActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-
         fitnessOptions = FitnessOptions.builder()
             .addDataType(DataType.TYPE_HEART_RATE_BPM, FitnessOptions.ACCESS_READ)
             .addDataType(DataType.TYPE_HEIGHT, FitnessOptions.ACCESS_READ)
             .addDataType(DataType.TYPE_WEIGHT, FitnessOptions.ACCESS_READ)
             .build()
 
-         var usermodel = ViewModelProvider(this@HomeActivity).get(UserViewModel::class.java)
+        var usermodel = ViewModelProvider(this@HomeActivity).get(UserViewModel::class.java)
         usermodel.user = loggedInUser!!
         usermodel.googleSigninUser = getGoogleAccount()
         usermodel.fitnessoptions = fitnessOptions!!
 
         usermodel.populateUserObject()
+
+        var dashboardModel = ViewModelProvider(this@HomeActivity).get(DashboardViewModel::class.java)
+        dashboardModel.googleSigninUser = getGoogleAccount()
+        dashboardModel.populateVitals()
+
         usermodel.getOrMakeUser { findNavController(R.id.nav_host_fragment_content_home) }
 
         if (!hasPermissions()) {

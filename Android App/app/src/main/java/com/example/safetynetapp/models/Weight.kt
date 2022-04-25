@@ -9,15 +9,35 @@ import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import java.util.*
 import kotlin.math.roundToInt
 
 class Weight(
     override val title: String = "Weight",
     override val units: String = "lbs",
-    override val cardData: String = "-- $units",
-    override val cardTimestamp: String = "--",
-    override val dataType: DataType? = DataType.TYPE_WEIGHT
+    override var cardData: String = "-- $units",
+    override var cardTimestamp: String = "--",
+    override val dataType: DataType? = DataType.TYPE_WEIGHT,
+    var weights: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
+    override fun updateCard() {
+        if (weights.isNotEmpty()) {
+            val key = weights.keys.elementAt(weights.size-1)
+            val weight = weights[key]
+            cardData = "$weight $units"
+            cardTimestamp = mapKeyToString(key)
+        }
+        super.updateCard()
+    }
+
+    override fun setModelData(map: SortedMap<String, Any>) {
+        weights = map
+    }
+
+    override fun setDiastolicData(map: SortedMap<String, Any>) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

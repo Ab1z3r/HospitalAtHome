@@ -1,19 +1,40 @@
 package com.example.safetynetapp.models
 
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import java.util.*
 
 class Spo2(
-    override val title: String = "Blood Saturation",
+    override val title: String = "Oxygen Saturation",
     override val units: String = "%",
-    override val cardData: String = "--$units",
-    override val cardTimestamp: String = "--",
-    override val dataType: DataType? = null
+    override var cardData: String = "--$units",
+    override var cardTimestamp: String = "--",
+    override val dataType: DataType? = null,
+    var spo2s: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
+    override fun updateCard() {
+        if (spo2s.isNotEmpty()) {
+            val key = spo2s.keys.elementAt(spo2s.size-1)
+            val spo2 = spo2s[key]
+            cardData = "${spo2.toString().toFloat().toInt()}$units"
+            cardTimestamp = mapKeyToString(key)
+        }
+        super.updateCard()
+    }
+
+    override fun setModelData(map: SortedMap<String, Any>) {
+        spo2s = map
+    }
+
+    override fun setDiastolicData(map: SortedMap<String, Any>) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
