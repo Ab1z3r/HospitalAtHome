@@ -1,8 +1,8 @@
 package com.example.safetynetapp.models
 
 import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.RequestQueue
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
@@ -39,13 +39,13 @@ class Temperature(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
         dataType: DataType?,
-        textView: TextView,
-        defaultVal: String
+        defaultVal: String,
+        mRequestQueue: RequestQueue,
+        dashboardAdapter: DashboardViewModel
     ) {
-        textView.text = dataPointToValueString(null, defaultVal)
     }
 
-    override fun dataPointToValueString(dp: DataPoint?, defaultVal: String): String {
+    override fun dataPointToValueString(dp: DataPoint, defaultVal: String): String {
         if(dp == null){
             return defaultVal
         }else{

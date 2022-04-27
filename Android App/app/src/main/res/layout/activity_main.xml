@@ -141,9 +141,9 @@
             android:drawableStart="@drawable/common_google_signin_btn_icon_light_normal"
             android:drawablePadding="5dp"
             android:text="@string/google_signin"
+            android:textColor="@color/common_google_signin_btn_text_light_default"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/common_google_signin_btn_text_light_default"
             tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
 
     </RelativeLayout>

@@ -1,12 +1,17 @@
 package com.example.safetynetapp.models
 
 import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
-import com.google.firebase.Timestamp
+import org.json.JSONObject
 import java.util.*
 
 class BloodPressure(
@@ -41,13 +46,12 @@ class BloodPressure(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
         dataType: DataType?,
-        textView: TextView,
-        defaultVal: String
-    ) {
-        textView.text = dataPointToValueString(null, defaultVal)
-    }
+        defaultVal: String,
+        mRequestQueue: RequestQueue,
+        dashboardAdapter: DashboardViewModel
+    ) {}
 
-    override fun dataPointToValueString(dp: DataPoint?, defaultVal: String): String {
+    override fun dataPointToValueString(dp: DataPoint, defaultVal: String): String {
         if(dp == null){
             return defaultVal
         }else{

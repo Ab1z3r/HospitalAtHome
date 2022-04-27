@@ -32,12 +32,9 @@ class DashboardViewModel : ViewModel() {
     fun populateVitals() {
         val uid = googleSigninUser.id!!
         ref = Firebase.firestore.collection(User.COLLECTION_PATH).document(uid)
-
         Log.d("MIKE", "Adding Listener")
-
         ref.get().addOnSuccessListener { snapshot: DocumentSnapshot ->
             if (snapshot.exists()) {
-                Log.d("MIKE", snapshot.get("pulse").toString())
                 vitals[0].setModelData(snapshot.get("pulse")!!.serializeToMap().toSortedMap())
                 vitals[1].setModelData(snapshot.get("spo2")!!.serializeToMap().toSortedMap())
                 vitals[2].setModelData(snapshot.get("systolicPressure")!!.serializeToMap().toSortedMap())

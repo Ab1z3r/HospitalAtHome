@@ -2,6 +2,7 @@ package com.example.safetynetapp.models
 
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.RequestQueue
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.FitnessOptions
@@ -17,6 +18,7 @@ interface Vital {
     var cardTimestamp: String
     val dataType: DataType?
 
+
     fun updateCard() {
 //        this.cardTimestamp = timestampToString(Timestamp.now())
     }
@@ -28,11 +30,12 @@ interface Vital {
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
         dataType: DataType?,
-        textView: TextView,
-        defaultVal: String
+        defaultVal: String,
+        mRequestQueue: RequestQueue,
+        dashboardModel: DashboardViewModel
     )
 
-    fun dataPointToValueString(dp: DataPoint?, defaultVal: String): String
+    fun dataPointToValueString(dp: DataPoint, defaultVal: String): String
 
     fun timestampToString(time: Timestamp): String {
         return "%02d/%02d/%d, %02d:%02d:%02d".format(

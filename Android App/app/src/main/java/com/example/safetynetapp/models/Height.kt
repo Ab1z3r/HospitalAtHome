@@ -1,13 +1,18 @@
 package com.example.safetynetapp.models
 
 import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.example.safetynetapp.adapters.DashboardAdapter
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
-import com.google.firebase.Timestamp
+import org.json.JSONObject
 import java.util.*
 
 class Height(
@@ -19,11 +24,20 @@ class Height(
     var heights: SortedMap<String, Any> = sortedMapOf<String, Any>()
 ) : Vital {
     override fun updateCard() {
+        if(heights.isEmpty()){
+            Log.d("[INFO]" ,"Heights are empty my guy")
+        }
+
         if (heights.isNotEmpty()) {
+            Log.d("[INFO]" ,heights.toString())
             val key = heights.keys.elementAt(heights.size-1)
-            val height = heights[key]
-            val feet = height.toString().toFloat().toInt() / 12
-            val inches = height.toString().toFloat().toInt() % 12
+            val METERS_PER_FOOT: Double = 0.3048;
+            val INCHES_PER_FOOT: Double = 12.0;
+            val heightInMetersstr: String = heights[key] as String
+            val heightInMeters: Double = heightInMetersstr.toDouble()
+            val heightInFeet = heightInMeters / METERS_PER_FOOT;
+            val feet: Int = heightInFeet.toInt();
+            val inches: Int = ((heightInFeet - feet) * INCHES_PER_FOOT + 0.5).toInt();
             cardData = "$feet ft, $inches in"
             cardTimestamp = mapKeyToString(key)
         }
@@ -42,25 +56,56 @@ class Height(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
         dataType: DataType?,
-        textView: TextView,
-        defaultVal: String
+        defaultVal: String,
+        mRequestQueue: RequestQueue,
+        dashboardAdapter: DashboardViewModel
     ) {
+        val url: String = "https://us-central1-safetynet-1636515641171.cloudfunctions.net/updatePatientData/AddHeatlthData"
+
         Fitness.getHistoryClient(callingActivity, googleSignInAccount)
             .readDailyTotal(dataType!!)
             .addOnSuccessListener { response ->
                 if (response.dataPoints.isEmpty()) {
-                    textView.text = defaultVal
+                    Log.d("[INFO]", "No data points exist")
                 } else {
-                    textView.text = dataPointToValueString(response.dataPoints[0], defaultVal)
+                    var mStringRequest = object : StringRequest(Request.Method.POST, url, Response.Listener { response ->
+                        Log.i("[INFO]", "Response from upload Data: " + response)
+                    }, Response.ErrorListener { error ->
+                        Log.i("[INFO]", error.toString());
+                    }) {
+                        @Throws(AuthFailureError::class)
+                        override fun getHeaders(): Map<String, String>? {
+                            val params: MutableMap<String, String> = HashMap()
+                            params["Content-Type"] = "application/json"
+                            return params
+                        }
+
+                        @Throws(AuthFailureError::class)
+                        override fun getBody(): ByteArray {
+
+                            val rootObject= JSONObject()
+                            rootObject.put("uid",googleSignInAccount.id)
+
+                            val dataTypeNameArray = dataType.name.split(".")
+                            val dataTypeName = dataTypeNameArray.get(dataTypeNameArray.size - 1)
+
+
+                            val dp: DataPoint = response.dataPoints[0]
+                            rootObject.put(dataTypeName, dp.getValue(dp.dataType.fields[0]).toString())
+
+                            Log.d("[INFO]", rootObject.toString())
+                            return rootObject.toString().toByteArray()
+                        }
+                    }
+                    mRequestQueue!!.add(mStringRequest!!)
                 }
             }
             .addOnFailureListener { e ->
                 Log.w("[ERROR]", "There was an error reading data from Google Fit", e)
-                textView.text = defaultVal
             }
     }
 
-    override fun dataPointToValueString(dp: DataPoint?, defaultVal: String): String {
+    override fun dataPointToValueString(dp: DataPoint, defaultVal: String): String {
         if (dp == null) {
             return defaultVal
         }
@@ -72,7 +117,7 @@ class Height(
         val heightInFeet = heightInMeters / METERS_PER_FOOT;
         val feet: Int = heightInFeet.toInt();
         val inches: Int = ((heightInFeet - feet) * INCHES_PER_FOOT + 0.5).toInt();
-        return feet.toString().plus("''$inches'")
+        return feet.toString().plus("'$inches'")
     }
 
 

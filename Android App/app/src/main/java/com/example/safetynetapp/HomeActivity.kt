@@ -1,5 +1,6 @@
 package com.example.safetynetapp
 
+import android.content.ContextParams
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,11 +15,18 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import com.example.safetynetapp.databinding.ActivityHomeBinding
 import com.example.safetynetapp.models.DashboardViewModel
 import com.example.safetynetapp.models.User
 import com.example.safetynetapp.models.UserViewModel
+import com.example.safetynetapp.models.Vital
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.Fitness
@@ -26,8 +34,10 @@ import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import de.hdodenhof.circleimageview.CircleImageView
+import org.json.JSONObject
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -40,6 +50,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var heightVal: TextView
     private lateinit var callButton: ImageButton
+    private lateinit var dashboardModel: DashboardViewModel
     private var loggedInUser: User? = null
     private var fitnessOptions: FitnessOptions? = null
 
@@ -85,6 +96,13 @@ class HomeActivity : AppCompatActivity() {
 //            getData()
 //        }
 
+
+        val uploadToCloud = findViewById<ImageButton>(R.id.upload_data_to_cloud)
+        Log.d("[INFO]", "Got to button")
+        uploadToCloud.setOnClickListener{
+            upload_values()
+        }
+
         Glide.with(this).load(uriOfImage).into(displayImage)
         displayNameTextView.setText(loggedInUser?.displayName)
         usernameTextView.setText(loggedInUser?.username)
@@ -96,6 +114,7 @@ class HomeActivity : AppCompatActivity() {
             .addDataType(DataType.TYPE_HEART_RATE_BPM, FitnessOptions.ACCESS_READ)
             .addDataType(DataType.TYPE_HEIGHT, FitnessOptions.ACCESS_READ)
             .addDataType(DataType.TYPE_WEIGHT, FitnessOptions.ACCESS_READ)
+            .addDataType(DataType.TYPE_HEART_POINTS, FitnessOptions.ACCESS_READ)
             .build()
 
         var usermodel = ViewModelProvider(this@HomeActivity).get(UserViewModel::class.java)
@@ -105,7 +124,7 @@ class HomeActivity : AppCompatActivity() {
 
         usermodel.populateUserObject()
 
-        var dashboardModel = ViewModelProvider(this@HomeActivity).get(DashboardViewModel::class.java)
+        dashboardModel = ViewModelProvider(this@HomeActivity).get(DashboardViewModel::class.java)
         dashboardModel.googleSigninUser = getGoogleAccount()
         dashboardModel.populateVitals()
 
@@ -113,6 +132,15 @@ class HomeActivity : AppCompatActivity() {
 
         if (!hasPermissions()) {
             getPermissions()
+        }
+    }
+
+    private fun upload_values() {
+        getData(DataType.TYPE_HEIGHT)
+        getData(DataType.TYPE_HEART_RATE_BPM)
+        var mRequestQueue = Volley.newRequestQueue(this)
+        for(vital: Vital in dashboardModel.vitals) {
+            vital.fetchVital(this, getGoogleAccount(), vital.dataType, "0", mRequestQueue, dashboardModel)
         }
     }
 
