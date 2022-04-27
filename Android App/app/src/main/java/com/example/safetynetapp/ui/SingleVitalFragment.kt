@@ -80,6 +80,7 @@ class SingleVitalFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_add_vital -> {
+            AddVitalDialogFragment().show(childFragmentManager, AddVitalDialogFragment.TAG)
 //            val inflater = requireActivity().layoutInflater
 //
 //            AlertDialog.Builder(requireContext())

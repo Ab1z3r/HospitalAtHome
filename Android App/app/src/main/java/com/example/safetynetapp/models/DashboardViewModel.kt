@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
@@ -27,6 +28,10 @@ class DashboardViewModel : ViewModel() {
 
     fun updatePos(pos: Int) {
         currentPos = pos
+    }
+
+    fun addData(position: Int, data: String) {
+        val uid = googleSigninUser.id!!
     }
 
     fun populateVitals() {

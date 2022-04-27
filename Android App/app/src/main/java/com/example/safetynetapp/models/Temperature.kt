@@ -35,6 +35,10 @@ class Temperature(
         Log.d("[ERROR]", "should never be here")
     }
 
+    override fun addData(timestamp: String, data: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

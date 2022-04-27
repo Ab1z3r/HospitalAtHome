@@ -26,6 +26,8 @@ interface Vital {
     fun setModelData(map: SortedMap<String, Any>)
     fun setDiastolicData(map: SortedMap<String, Any>)
 
+    fun addData(timestamp: String, data: String)
+
     fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
