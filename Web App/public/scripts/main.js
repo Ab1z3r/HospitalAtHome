@@ -497,14 +497,14 @@ rhit.SinglePatientPageController = class {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
 
 		// VITALS CARD
-		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  singlePatient.weight.values().next().value : "--"} lbs`;
+		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  singlePatient.weight.values().next().value : "--"} kg`;
 		document.querySelector("#spo2Data").innerHTML = `SPO2: ${(singlePatient.spo2.values().next().value) ?  singlePatient.spo2.values().next().value : "--"} %`;
 		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: 
 			${(singlePatient.systolicPressure.values().next().value) ? singlePatient.systolicPressure.values().next().value : "--"}
 			/${(singlePatient.diastolicPressure.values().next().value) ? singlePatient.diastolicPressure.values().next().value : "--"} mmHg`;
-		document.querySelector("#heightData").innerHTML = `Height: ${(singlePatient.height.values().next().value) ? singlePatient.height.values().next().value : "--"} in`;
+		document.querySelector("#heightData").innerHTML = `Height: ${(singlePatient.height.values().next().value) ? singlePatient.height.values().next().value : "--"} m`;
 		document.querySelector("#pulseData").innerHTML = `Pulse: ${(singlePatient.pulse.values().next().value) ? singlePatient.pulse.values().next().value : "--"} bpm`;
-		document.querySelector("#temperatureData").innerHTML = `Temperature: ${(singlePatient.temperature.values().next().value) ? singlePatient.temperature.values().next().value : "--"} \xB0`;
+		document.querySelector("#temperatureData").innerHTML = `Temperature: ${(singlePatient.temperature.values().next().value) ? singlePatient.temperature.values().next().value : "--"} \xB0F`;
 
 		// MEDICINE CARD
 		const medList = htmlToElement('<div id="medicinesInfo"></div>');
@@ -1732,7 +1732,7 @@ function drawChart() {
 		switch (rhit.single_SinglePatientManager.vital) {
 			case "Weight":
 				vital = singlePatient.weight;
-				yAxis = "Pounds (Lbs)";
+				yAxis = "Kilograms";
 				break;
 			case "SPO2":
 				vital = singlePatient.spo2;
@@ -1740,7 +1740,7 @@ function drawChart() {
 				break;
 			case "Height":
 				vital = singlePatient.height;
-				yAxis = "Inches";
+				yAxis = "Meters";
 				break;
 			case "Pulse":
 				vital = singlePatient.pulse;
@@ -1748,7 +1748,7 @@ function drawChart() {
 				break;
 			case "Temperature":
 				vital = singlePatient.temperature;
-				yAxis = "Degrees (\xB0)";
+				yAxis = "Degrees (\xB0)F";
 				break;
 			default:
 		}
