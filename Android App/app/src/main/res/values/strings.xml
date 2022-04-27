@@ -61,4 +61,7 @@
     <string name="emergency_contact_title">Emergency Contact</string>
     <string name="menu_single_vital">Single Vital</string>
     <string name="data_range_label">Data Range</string>
+    <string name="add_vital">Add Vital</string>
+    <string name="add_vital_data">Vital Data</string>
+    <string name="add_vital_data_entry">Add Vital Data Entry</string>
 </resources>

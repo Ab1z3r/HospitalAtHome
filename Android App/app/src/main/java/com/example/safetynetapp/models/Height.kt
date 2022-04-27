@@ -33,8 +33,8 @@ class Height(
             val key = heights.keys.elementAt(heights.size-1)
             val METERS_PER_FOOT: Double = 0.3048;
             val INCHES_PER_FOOT: Double = 12.0;
-            val heightInMetersstr: String = heights[key] as String
-            val heightInMeters: Double = heightInMetersstr.toDouble()
+            val heightInMetersstr: String = "${heights[key]}"
+            val heightInMeters: Double = heights[key] as Double
             val heightInFeet = heightInMeters / METERS_PER_FOOT;
             val feet: Int = heightInFeet.toInt();
             val inches: Int = ((heightInFeet - feet) * INCHES_PER_FOOT + 0.5).toInt();
