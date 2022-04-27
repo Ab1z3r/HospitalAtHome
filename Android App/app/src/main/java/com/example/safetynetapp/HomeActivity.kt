@@ -135,6 +135,8 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun upload_values() {
         getData(DataType.TYPE_HEIGHT)
         getData(DataType.TYPE_HEART_RATE_BPM)
