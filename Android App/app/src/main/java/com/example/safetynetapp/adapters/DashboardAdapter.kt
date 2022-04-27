@@ -15,6 +15,7 @@ import com.example.safetynetapp.ui.DashboardFragment
 import com.example.safetynetapp.models.UserViewModel
 
 import androidx.navigation.fragment.findNavController
+import com.example.safetynetapp.ui.SingleVitalFragment
 
 
 class DashboardAdapter(val fragment: DashboardFragment, val parentActivity: HomeActivity): RecyclerView.Adapter<DashboardAdapter.DashboardViewHolder>() {

@@ -12,16 +12,22 @@ import com.github.mikephil.charting.data.LineData
 import java.util.ArrayList
 
 import android.view.ViewGroup
-
 import android.view.LayoutInflater
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.safetynetapp.HomeActivity
 import com.example.safetynetapp.R
+import com.example.safetynetapp.adapters.DashboardAdapter
+import com.example.safetynetapp.adapters.VitalAdapter
 import com.example.safetynetapp.databinding.FragmentSingleVitalBinding
 import com.example.safetynetapp.models.DashboardViewModel
 
 class SingleVitalFragment : Fragment() {
+    private lateinit var adapter: VitalAdapter
+
     private lateinit var binding: FragmentSingleVitalBinding
     private var lineChart: LineChart? = null
     private var periodRadioGroup: RadioGroup? = null
@@ -41,28 +47,36 @@ class SingleVitalFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = model.vitals[model.currentPos].title
 
         updateView()
+        adapter = VitalAdapter(this)
+        binding.vitalRecyclerView.adapter = adapter
+        binding.vitalRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.vitalRecyclerView.setHasFixedSize(true)
 
-        lineChart = view?.findViewById(R.id.linechart)
+
+        lineChart = this.binding.lineChart.findViewById(R.id.linechart)
         periodRadioGroup = view?.findViewById(R.id.period_radiogroup)
         intervalRadioGroup = view?.findViewById(R.id.interval)
-        this.view?.findViewById<View>(R.id.activity_main_getprices)?.setOnClickListener { data }
-//        return inflater.inflate(R.layout.fragment_single_vital, container, false)
+        this.binding.lineChart.findViewById<Button>(R.id.activity_main_getprices)?.setOnClickListener {
+            getData()
+        }
+
         return binding.root
     }
 
-    private val data: Unit
-        private get() {
-            val data = ArrayList<Entry>()
-            data.add(Entry(0F, 75F))
-            data.add(Entry(1F, 73F))
-            data.add(Entry(2F, 80F))
-            data.add(Entry(3F, 80F))
-            data.add(Entry(4F, 85F))
-            data.add(Entry(5F, 90F))
-            data.add(Entry(6F, 75F))
-            data.add(Entry(7F, 83F))
-            setLineChartData(data)
-        }
+
+
+    private fun getData() {
+        val data = ArrayList<Entry>()
+        data.add(Entry(0F, 75F))
+        data.add(Entry(1F, 73F))
+        data.add(Entry(2F, 80F))
+        data.add(Entry(3F, 80F))
+        data.add(Entry(4F, 85F))
+        data.add(Entry(5F, 90F))
+        data.add(Entry(6F, 75F))
+        data.add(Entry(7F, 83F))
+        setLineChartData(data)
+    }
 
     private fun setLineChartData(data: ArrayList<Entry>) {
         val dataSets = ArrayList<ILineDataSet>()
@@ -75,8 +89,8 @@ class SingleVitalFragment : Fragment() {
         highLineDataSet.setCircleColor(R.color.unionHealth)
         dataSets.add(highLineDataSet)
         val lineData = LineData(dataSets)
-        lineChart!!.data = lineData
-        lineChart!!.invalidate()
+        lineChart?.setData(lineData);
+        lineChart?.invalidate();
     }
 
     fun updateView() {

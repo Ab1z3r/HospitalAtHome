@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:paddingHorizontal="10dp"
+    app:cardCornerRadius="10dp"
+    tools:ignore="MissingDefaultResource">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/vital_card_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/secondaryColor"
+            android:fontFamily="@font/mukta_regular"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="@string/card_title"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/vital_card_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vital_card_title"
+            android:fontFamily="@font/mukta_regular"
+            android:paddingHorizontal="10dp"
+            android:text="@string/missing_data"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
