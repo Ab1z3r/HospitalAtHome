@@ -137,5 +137,9 @@ class SingleVitalFragment : Fragment() {
         // How I get information from the vital classes
         Log.d("VITAL", "in ${model.vitals[model.currentPos].title} vital page")
 
+//        if(model.vitals[model.currentPos].){
+//
+//        }
+
     }
 }

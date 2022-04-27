@@ -12,8 +12,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
+import com.google.firebase.Timestamp
 import org.json.JSONObject
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class Height(
     override val title: String = "Height",
@@ -82,18 +84,19 @@ class Height(
 
                         @Throws(AuthFailureError::class)
                         override fun getBody(): ByteArray {
-
                             val rootObject= JSONObject()
                             rootObject.put("uid",googleSignInAccount.id)
-
                             val dataTypeNameArray = dataType.name.split(".")
                             val dataTypeName = dataTypeNameArray.get(dataTypeNameArray.size - 1)
-
-
                             val dp: DataPoint = response.dataPoints[0]
-                            rootObject.put(dataTypeName, dp.getValue(dp.dataType.fields[0]).toString())
+                            val dataJSON = JSONObject()
+                            var secondsVal: Long = dp.getStartTime(TimeUnit.SECONDS)
+                            var nanosecVal: Int = dp.getStartTime(TimeUnit.NANOSECONDS).toInt()
+                            var ts: Timestamp = Timestamp(secondsVal, nanosecVal)
 
-                            Log.d("[INFO]", rootObject.toString())
+                            var tsString: String = timestampToMapKey(ts)
+                            dataJSON.put(tsString, dp.getValue(dp.dataType.fields[0]).toString())
+                            rootObject.put(dataTypeName, dataJSON)
                             return rootObject.toString().toByteArray()
                         }
                     }
