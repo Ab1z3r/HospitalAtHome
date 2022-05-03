@@ -12,6 +12,7 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -43,8 +44,10 @@ class Weight(
         Log.d("[ERROR]", "should never be here")
     }
 
-    override fun addData(timestamp: String, data: String) {
-        TODO("Not yet implemented")
+    override fun addData(timestamp: String, data: String, ref: DocumentReference) {
+        weights.set(timestamp, data)
+        ref.update("weight", weights)
+        Log.d("MIKE", weights.toString())
     }
 
     override fun fetchVital(

@@ -9,6 +9,7 @@ import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import java.util.*
 
 interface Vital {
@@ -26,7 +27,7 @@ interface Vital {
     fun setModelData(map: SortedMap<String, Any>)
     fun setDiastolicData(map: SortedMap<String, Any>)
 
-    fun addData(timestamp: String, data: String)
+    fun addData(timestamp: String, data: String, ref: DocumentReference)
 
     fun fetchVital(
         callingActivity: AppCompatActivity,

@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
+import com.google.firebase.firestore.DocumentReference
 import org.json.JSONObject
 import java.util.*
 
@@ -42,8 +43,15 @@ class BloodPressure(
         diastolicPressures = map
     }
 
-    override fun addData(timestamp: String, data: String) {
-        TODO("Not yet implemented")
+    override fun addData(timestamp: String, data: String, ref: DocumentReference) {
+        systolicPressures.set(timestamp, data)
+        ref.update("systolicPressure", systolicPressures)
+        addDiastolicData(timestamp, "0", ref)
+    }
+
+    fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
+        diastolicPressures.set(timestamp, data)
+        ref.update("diastolicPressure", diastolicPressures)
     }
 
     override fun fetchVital(

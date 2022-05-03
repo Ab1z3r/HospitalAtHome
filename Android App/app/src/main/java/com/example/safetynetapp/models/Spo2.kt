@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import java.util.*
 
 class Spo2(
@@ -36,8 +37,9 @@ class Spo2(
         Log.d("[ERROR]", "should never be here")
     }
 
-    override fun addData(timestamp: String, data: String) {
-        TODO("Not yet implemented")
+    override fun addData(timestamp: String, data: String, ref: DocumentReference) {
+        spo2s.set(timestamp, data)
+        ref.update("spo2", spo2s)
     }
 
     override fun fetchVital(

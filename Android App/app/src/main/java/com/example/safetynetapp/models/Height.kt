@@ -13,6 +13,7 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -54,8 +55,9 @@ class Height(
         Log.d("[ERROR]", "should never be here")
     }
 
-    override fun addData(timestamp: String, data: String) {
+    override fun addData(timestamp: String, data: String, ref: DocumentReference) {
         heights.set(timestamp, data)
+        ref.update("height", heights)
         Log.d("MIKE", heights.toString())
     }
 

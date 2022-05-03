@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import java.util.*
 
 class Temperature(
@@ -35,8 +36,9 @@ class Temperature(
         Log.d("[ERROR]", "should never be here")
     }
 
-    override fun addData(timestamp: String, data: String) {
-        TODO("Not yet implemented")
+    override fun addData(timestamp: String, data: String, ref: DocumentReference) {
+        temperatures.set(timestamp, data)
+        ref.update("temperature", temperatures)
     }
 
     override fun fetchVital(

@@ -31,7 +31,8 @@ class AddVitalDialogFragment : DialogFragment() {
             if (binding.addVitalData.text.isNotEmpty()) {
                 val data = binding.addVitalData.text.toString()
                 val timestamp = model.getVitalAt(model.currentPos).timestampToMapKey(Timestamp.now())
-                model.getVitalAt(model.currentPos).addData(timestamp, data)
+                val ref = model.ref
+                model.getVitalAt(model.currentPos).addData(timestamp, data, ref)
                 this.dismiss()
             }
         }
