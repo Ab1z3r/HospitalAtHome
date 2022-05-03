@@ -50,6 +50,13 @@ class Weight(
         Log.d("MIKE", weights.toString())
     }
 
+    override fun dataSize() : Int {
+        return weights.size
+    }
+
+    override fun getData() = weights
+
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

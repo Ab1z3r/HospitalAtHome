@@ -24,6 +24,20 @@ class DashboardViewModel : ViewModel() {
 
     fun size() = vitals.size
 
+    fun vitalSize(vitalPos: Int) : Int {
+        return when (vitalPos) {
+            0 -> vitals[0].dataSize()
+            1 -> vitals[1].dataSize()
+            2 -> vitals[2].dataSize()
+            3 -> vitals[3].dataSize()
+            4 -> vitals[4].dataSize()
+            5 -> vitals[5].dataSize()
+            else -> {
+                -1
+            }
+        }
+    }
+
     fun getVitalAt(pos: Int) = vitals[pos]
 
     fun updatePos(pos: Int) {

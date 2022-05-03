@@ -29,6 +29,10 @@ interface Vital {
 
     fun addData(timestamp: String, data: String, ref: DocumentReference)
 
+    fun dataSize() : Int
+
+    fun getData() : SortedMap<String, Any>
+
     fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

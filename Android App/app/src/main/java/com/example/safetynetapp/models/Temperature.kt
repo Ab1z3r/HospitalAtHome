@@ -41,6 +41,12 @@ class Temperature(
         ref.update("temperature", temperatures)
     }
 
+    override fun dataSize() : Int {
+        return temperatures.size
+    }
+
+    override fun getData() = temperatures
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

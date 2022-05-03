@@ -54,6 +54,12 @@ class BloodPressure(
         ref.update("diastolicPressure", diastolicPressures)
     }
 
+    override fun dataSize() : Int {
+        return systolicPressures.size
+    }
+
+    override fun getData() = systolicPressures
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

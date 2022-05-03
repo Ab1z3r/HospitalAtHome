@@ -61,6 +61,12 @@ class Height(
         Log.d("MIKE", heights.toString())
     }
 
+    override fun dataSize() : Int {
+        return heights.size
+    }
+
+    override fun getData() = heights
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

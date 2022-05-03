@@ -49,6 +49,12 @@ class Pulse(
         ref.update("pulse", pulses)
     }
 
+    override fun dataSize() : Int {
+        return pulses.size
+    }
+
+    override fun getData() = pulses
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,

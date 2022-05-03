@@ -42,6 +42,12 @@ class Spo2(
         ref.update("spo2", spo2s)
     }
 
+    override fun dataSize() : Int {
+        return spo2s.size
+    }
+
+    override fun getData() = spo2s
+
     override fun fetchVital(
         callingActivity: AppCompatActivity,
         googleSignInAccount: GoogleSignInAccount,
