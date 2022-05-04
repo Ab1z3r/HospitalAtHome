@@ -50,7 +50,10 @@ rhit.single_SinglePatientManager = null;
 rhit.single_MedicinesManager = null;
 rhit.single_NotesManager = null;
 
+
 /** PAGE CONTROLLERS **/
+/* --------------------------------------------------------------------------------------- */
+
 // Login Page Controller
 /**
  * PURPOSE: Handle all View and Controller interactions for the Login Page
@@ -189,17 +192,11 @@ rhit.PatientsPageController = class {
             							<p>Primary Provider: ${patient.primaryProvider}</p>
           							</div>
           							<div class="patientsCardInfo">
-            							<p>Last online: ${this._parseDate(patient.lastOnline)}</p>
+            							<p>Last online: ${parseOnlineDate(patient.lastOnline)}</p>
             							<button data-id=${patient.id} id="selectButton" class="btn btn-primary" type="button">Select</button>
           							</div>
         						</div>
       						</div>`);
-	}
-
-	_parseDate(timestamp) {
-		const date = timestamp.toDate();
-		const year = date.getYear().toString();
-		return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 	}
 }
 
@@ -306,6 +303,43 @@ rhit.ProviderProfilePageController = class {
 	}
 }
 
+// Patient Profile Page Controller
+/**
+ * PURPOSE: Handle all View and Controller interactions for the Patient Profile Page
+ */
+rhit.PatientProfilePageController = class {
+	constructor() {
+		// * Click Listener for sign out on Single Patient Page
+		document.querySelector("#signOutLink").onclick = (event) => {
+			rhit.single_AuthManager.signOut();
+			window.location.href = "/";
+		};
+
+		// * Click Listener for Go Back
+		document.querySelector("#goBackLink").onclick = (event) => {
+			window.location.href = `/single_patient.html?uid=${rhit.single_AuthManager.uid}&id=${rhit.single_SinglePatientManager.id}`;
+		};
+
+		// * Click Listener for viewing patient profile
+		document.querySelector("#patientProviderProfile").onclick = (event) => {
+			window.location.href = `/patient_profile.html?id=${rhit.single_SinglePatientManager.id}`;
+		}
+
+		rhit.single_SinglePatientManager.beginListening(this.updateView.bind(this));
+	}
+
+	updateView() {
+		document.querySelector("#patientProfileName").innerHTML = `Name: ${rhit.single_SinglePatientManager.firstName} ${rhit.single_SinglePatientManager.lastName}`
+		document.querySelector("#patientBirthdate").innerHTML = `Birth Date: ${rhit.single_SinglePatientManager.birthdate}`
+		document.querySelector("#patientProfileEmail").innerHTML = `Email: ${rhit.single_SinglePatientManager.email}`
+		document.querySelector("#patientProfileGender").innerHTML = `Gender: ${rhit.single_SinglePatientManager.gender}`
+		document.querySelector("#patientProfilePhone").innerHTML = `Phone: ${rhit.single_SinglePatientManager.phone}`
+		document.querySelector("#patientProfilePrimaryProvider").innerHTML = `Primary Provider: ${rhit.single_SinglePatientManager.primaryProvider}`
+		document.querySelector("#patientProfileEmContactName").innerHTML = `Name: ${rhit.single_SinglePatientManager.emContactName}`
+		document.querySelector("#patientProfileEmContactPhone").innerHTML = `Phone: ${rhit.single_SinglePatientManager.emContactPhone}`
+	}
+}
+
 
 // Single Patients Page Controller
 /**
@@ -331,6 +365,11 @@ rhit.SinglePatientPageController = class {
 		document.querySelector("#primaryProviderProfile").onclick = (event) => {
 			window.location.href = `/provider_profile.html?uid=${rhit.single_AuthManager.uid}`;
 		};
+
+		// * Click Listener for viewing patient profile
+		document.querySelector("#patientProviderProfile").onclick = (event) => {
+			window.location.href = `/patient_profile.html?id=${rhit.single_SinglePatientManager.id}`;
+		}
 
 		// * Click Listener for Bread Crumbs
 		document.querySelector("#patientsBreadCrumb").onclick = (event) => {
@@ -363,12 +402,40 @@ rhit.SinglePatientPageController = class {
 		};
 
 		// * Click Listener for Adding a Medicine
-		document.querySelector("#medicinesSaveButton").onclick = (event) => {
+		document.querySelector("#medicinesCreateButton").onclick = (event) => {
 			const medicineName = document.querySelector("#medicineModalName");
 			const medicineDosage = document.querySelector("#medicineModalDosage");
 			rhit.single_MedicinesManager.add(medicineName.value, medicineDosage.value);
 		};
 
+		// * Click Listener for Editing a Medicine
+		document.querySelector("#medicinesSaveButton").onclick = (event) => {
+			const medicineName = document.querySelector("#medicineModalEditName");
+			const medicineDosage = document.querySelector("#medicineModalEditDosage");
+			rhit.single_MedicinesManager.update(medicineName.value, medicineDosage.value);
+		};
+
+		// * Click Listener for Deleting a Medicine
+		document.querySelector("#medicineDeleteButton").onclick = (event) => {
+			rhit.single_MedicinesManager.delete();
+		};
+
+		// * Click Listener for Adding a Note
+		document.querySelector("#notesCreateButton").onclick = (event) => {
+			const noteText = document.querySelector("#noteModalNote");
+			rhit.single_NotesManager.add(noteText.value);
+		};
+
+		// * Click Listener for Editing a Note
+		document.querySelector("#notesSaveButton").onclick = (event) => {
+			const noteText = document.querySelector("#noteModalEditNote");
+			rhit.single_NotesManager.update(noteText.value);
+		};
+
+		// * Click Listener for Deleting a Note
+		document.querySelector("#noteDeleteButton").onclick = (event) => {
+			rhit.single_NotesManager.delete();
+		};
 
 		// When a user clicks any of the buttons from the button group
 		// (VITALS, MEDICINES, NOTES), the cards need to change as well
@@ -417,19 +484,27 @@ rhit.SinglePatientPageController = class {
 		this.updateCardsView();
 	}
 
+	updateMedicineModal() {
+		document.querySelector("#medicineModalEditName").value = rhit.single_MedicinesManager.name;
+		document.querySelector("#medicineModalEditDosage").value = rhit.single_MedicinesManager.dosage;
+	}
+
+	updateNoteModal() {
+		document.querySelector("#noteModalEditNote").value = rhit.single_NotesManager.note;
+	}
+
 	updateCardsView() {
 		const singlePatient = rhit.single_SinglePatientManager.getPatient()
 
 		// VITALS CARD
-
-		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  singlePatient.weight.values().next().value : "--"} lbs`;
+		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  singlePatient.weight.values().next().value : "--"} kg`;
 		document.querySelector("#spo2Data").innerHTML = `SPO2: ${(singlePatient.spo2.values().next().value) ?  singlePatient.spo2.values().next().value : "--"} %`;
 		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: 
 			${(singlePatient.systolicPressure.values().next().value) ? singlePatient.systolicPressure.values().next().value : "--"}
 			/${(singlePatient.diastolicPressure.values().next().value) ? singlePatient.diastolicPressure.values().next().value : "--"} mmHg`;
-		document.querySelector("#heightData").innerHTML = `Height: ${(singlePatient.height.values().next().value) ? singlePatient.height.values().next().value : "--"} in`;
+		document.querySelector("#heightData").innerHTML = `Height: ${(singlePatient.height.values().next().value) ? singlePatient.height.values().next().value : "--"} m`;
 		document.querySelector("#pulseData").innerHTML = `Pulse: ${(singlePatient.pulse.values().next().value) ? singlePatient.pulse.values().next().value : "--"} bpm`;
-		document.querySelector("#temperatureData").innerHTML = `Temperature: ${(singlePatient.temperature.values().next().value) ? singlePatient.temperature.values().next().value : "--"} \xB0`;
+		document.querySelector("#temperatureData").innerHTML = `Temperature: ${(singlePatient.temperature.values().next().value) ? singlePatient.temperature.values().next().value : "--"} \xB0F`;
 
 		// MEDICINE CARD
 		const medList = htmlToElement('<div id="medicinesInfo"></div>');
@@ -444,6 +519,14 @@ rhit.SinglePatientPageController = class {
 		oldMedList.hidden = true;
 		oldMedList.parentElement.appendChild(medList);
 
+		// * Adds listener to the select button in each medicine card in the patients list
+		const medicationCards = document.querySelectorAll(".medicationCardInfo");
+		for (const med of medicationCards) {
+			med.addEventListener("click", (event) => {
+				rhit.single_MedicinesManager.beginListenForDocument(med.dataset.id, this.updateMedicineModal.bind(this));
+			})
+		}
+
 		// NOTE CARD
 		const noteList = htmlToElement('<div id="notesInfo"></div>');
 		for (let i = 0; i < rhit.single_NotesManager.length; i++) {
@@ -456,12 +539,20 @@ rhit.SinglePatientPageController = class {
 		oldNoteList.removeAttribute("id");
 		oldNoteList.hidden = true;
 		oldNoteList.parentElement.appendChild(noteList);
+
+		// * Adds listener to the select button in each medicine card in the patients list
+		const notesCards = document.querySelectorAll(".specificNoteCardInfo");
+		for (const not of notesCards) {
+			not.addEventListener("click", (event) => {
+				rhit.single_NotesManager.beginListenForDocument(not.dataset.id, this.updateNoteModal.bind(this));
+			})
+		}
 	}
 
 	_createMedicineCard(medicine) {
 		return htmlToElement(`<div class="medicationCard card">
-		<div class="medicationCardBody card-body">
-		  <div class="medicationCardInfo">
+		<div data-bs-toggle="modal" data-bs-target="#medicineEditModal"class="medicationCardBody card-body">
+		  <div data-id=${medicine.id} class="medicationCardInfo">
 			<p class="medicationName">${medicine.name}</p>
 			<p>Dosage: ${medicine.dosage}</p>
 		  </div>
@@ -471,8 +562,8 @@ rhit.SinglePatientPageController = class {
 
 	_createNoteCard(note) {
 		return htmlToElement(`<div class="specificNoteCard card">
-		<div class="specificNoteCardBody card-body">
-		  <div class="specificNoteCardInfo">
+		<div data-bs-toggle="modal" data-bs-target="#noteEditModal" class="specificNoteCardBody card-body">
+		  <div data-id=${note.id} class="specificNoteCardInfo">
 			<p>${note.note}</p>
 			<p class="noteData">${this._parseDate(note.lastTouched)}</p>
 		  </div>
@@ -597,6 +688,7 @@ rhit.GraphicsPageController = class {
 
 
 /** MANAGERS **/
+/* --------------------------------------------------------------------------------------- */
 
 // Auth Manager
 /**
@@ -1023,16 +1115,11 @@ rhit.SinglePatientManager = class {
 		this._unsubscribe();
 	}
 
-	// TODO implement update and delete if needed
-
 	update(primaryProvider) {
 		this._ref.update({
 			[rhit.PATIENT_PRIMARY_PROVIDER]: primaryProvider,
 		})
 	}
-
-	delete() {}
-
 
 	get id() {
 		return this._id;
@@ -1050,8 +1137,24 @@ rhit.SinglePatientManager = class {
 		return this._documentSnapshot.get(rhit.PATIENT_DIASTOLIC_PRESSURE);
 	}
 
+	get emContactName() {
+		return this._documentSnapshot.get(rhit.PATIENT_EM_CONTACT_NAME);
+	}
+
+	get emContactPhone() {
+		return this._documentSnapshot.get(rhit.PATIENT_EM_CONTACT_PHONE);
+	}
+
+	get email() {
+		return this._documentSnapshot.get(rhit.PATIENT_EMAIL);
+	}
+
 	get firstName() {
 		return this._documentSnapshot.get(rhit.PATIENT_FIRST_NAME);
+	}
+
+	get gender() {
+		return this._documentSnapshot.get(rhit.PATIENT_GENDER);
 	}
 
 	get googleID() {
@@ -1068,6 +1171,10 @@ rhit.SinglePatientManager = class {
 
 	get lastOnline() {
 		return this._documentSnapshot.get(rhit.PATIENT_LAST_ONLINE);
+	}
+
+	get phone() {
+		return this._documentSnapshot.get(rhit.PATIENT_PHONE);
 	}
 
 	get primaryProvider() {
@@ -1141,6 +1248,7 @@ rhit.MedicinesManager = class {
 	constructor(id) {
 		this._id = id;
 		this._documentSnapshots = [];
+		this._document = {};
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('medicines')
 	}
@@ -1155,11 +1263,23 @@ rhit.MedicinesManager = class {
 		});
 	}
 
+	beginListenForDocument(id, changeListener = null) {
+		this._unsubscribe = this._ref.doc(id).onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Docoument exists!");
+				this._document = doc;
+				if (changeListener != null) {
+					changeListener();
+				}
+			}
+		});
+	}
+
 	add(name, dosage) {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('medicines').add({
 				[rhit.MEDICINE_DOSAGE]: dosage,
 				[rhit.MEDICINE_NAME]: name,
-				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_SinglePatientManager.primaryProvider,
+				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_PrimaryProviderManager.lastName,
 				[rhit.MEDICINE_ISVALID]: true,
 				[rhit.MEDICINE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 			})
@@ -1169,6 +1289,30 @@ rhit.MedicinesManager = class {
 			.catch(function (error) {
 				console.log("Error adding medicine document: ", error);
 			});
+	}
+
+	update(name, dosage) {
+		this._ref.doc(rhit.single_MedicinesManager.getMedicine().id).set({
+				[rhit.MEDICINE_DOSAGE]: dosage,
+				[rhit.MEDICINE_NAME]: name,
+				[rhit.MEDICINE_PRIMARY_PROVIDER]: rhit.single_PrimaryProviderManager.lastName,
+				[rhit.MEDICINE_ISVALID]: true,
+				[rhit.MEDICINE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			})
+			.then(function () {
+				console.log(`Medicine Document updated`);
+			})
+			.catch(function (error) {
+				console.log("Error adding medicine document: ", error);
+			});
+	}
+
+	delete() {
+		this._ref.doc(rhit.single_MedicinesManager.getMedicine().id).delete().then(() => {
+			console.log("The Medicine was deleted");
+		}).catch((error) => {
+			console.error("Error removing document: ", error);
+		});
 	}
 
 	set id(docRef) {
@@ -1191,6 +1335,30 @@ rhit.MedicinesManager = class {
 		return medicine;
 	}
 
+	getMedicine() {
+		const docSnapshot = this._document;
+		const medicine = new rhit.Medicine(docSnapshot.id,
+			docSnapshot.get(rhit.MEDICINE_DOSAGE),
+			docSnapshot.get(rhit.MEDICINE_NAME),
+			docSnapshot.get(rhit.MEDICINE_PRIMARY_PROVIDER),
+			docSnapshot.get(rhit.MEDICINE_ISVALID),
+			docSnapshot.get(rhit.MEDICINE_LAST_TOUCHED)
+		);
+		return medicine;
+	}
+
+	get document_id() {
+		return this._document.get(id);
+	}
+
+	get name() {
+		return this._document.get(rhit.MEDICINE_NAME);
+	}
+
+	get dosage() {
+		return this._document.get(rhit.MEDICINE_DOSAGE);
+	}
+
 	get documentSnapshots() {
 		return this._documentSnapshots;
 	}
@@ -1210,6 +1378,7 @@ rhit.NotesManager = class {
 	constructor(id) {
 		this._id = id;
 		this._documentSnapshots = [];
+		this._document = {};
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(id).collection('notes')
 	}
@@ -1224,11 +1393,23 @@ rhit.NotesManager = class {
 		});
 	}
 
-	add() {
+	beginListenForDocument(id, changeListener = null) {
+		this._unsubscribe = this._ref.doc(id).onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Docoument exists!");
+				this._document = doc;
+				if (changeListener != null) {
+					changeListener();
+				}
+			}
+		});
+	}
+
+	add(note) {
 		firebase.firestore().collection(rhit.COLLECTION_PATIENTS).doc(this._id).collection('notes').add({
-				[rhit.NOTE_CREATED_BY]: "Dr.-----",
+				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_PrimaryProviderManager.lastName}`,
 				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
-				[rhit.NOTE_NOTE]: "This is a placeholder note",
+				[rhit.NOTE_NOTE]: note,
 			})
 			.then(function () {
 				console.log(`Document created in Notes Collection`);
@@ -1236,6 +1417,28 @@ rhit.NotesManager = class {
 			.catch(function (error) {
 				console.log("Error adding note document: ", error);
 			});
+	}
+
+	update(note) {
+		this._ref.doc(rhit.single_NotesManager.getNote().id).set({
+				[rhit.NOTE_CREATED_BY]: `Dr.${rhit.single_PrimaryProviderManager.lastName}`,
+				[rhit.NOTE_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+				[rhit.NOTE_NOTE]: note,
+			})
+			.then(function () {
+				console.log(`Document created in Notes Collection`);
+			})
+			.catch(function (error) {
+				console.log("Error adding note document: ", error);
+			});
+	}
+
+	delete() {
+		this._ref.doc(rhit.single_NotesManager.getNote().id).delete().then(() => {
+			console.log("The Note was deleted");
+		}).catch((error) => {
+			console.error("Error removing document: ", error);
+		});
 	}
 
 	set id(docRef) {
@@ -1256,6 +1459,24 @@ rhit.NotesManager = class {
 		return note;
 	}
 
+	getNote() {
+		const docSnapshot = this._document;
+		const note = new rhit.Note(docSnapshot.id,
+			docSnapshot.get(rhit.NOTE_CREATED_BY),
+			docSnapshot.get(rhit.NOTE_LAST_TOUCHED),
+			docSnapshot.get(rhit.NOTE_NOTE),
+		);
+		return note;
+	}
+
+	get document_id() {
+		return this._document.get(id);
+	}
+
+	get note() {
+		return this._document.get(rhit.NOTE_NOTE);
+	}
+
 	get documentSnapshots() {
 		return this._documentSnapshots;
 	}
@@ -1263,10 +1484,10 @@ rhit.NotesManager = class {
 	get length() {
 		return this._documentSnapshots.length;
 	}
-
 }
 
 /** DATA MANAGEMENT **/
+/* --------------------------------------------------------------------------------------- */
 
 // Patient Wrapper
 /**
@@ -1343,6 +1564,8 @@ rhit.Note = class {
 
 
 /** PAGE MANAGEMENT **/
+/* --------------------------------------------------------------------------------------- */
+
 
 // Redirects
 /**
@@ -1403,6 +1626,18 @@ rhit.initializePage = () => {
 		new rhit.ProviderProfilePageController();
 	}
 
+	// * initializes page controller for Patient Profile Page
+	if (document.querySelector("#patientProfilePage")) {
+		console.log("You are on the patient profile page.");
+		const id = urlParams.get("id");
+		if (!id) {
+			window.location.href = "/patients.html";
+		}
+		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
+
+		new rhit.PatientProfilePageController();
+	}
+
 	// * initializes page controller for Single Patient Page
 	if (document.querySelector("#singlePatientPage")) {
 		console.log("You are on a single patient page.");
@@ -1413,6 +1648,10 @@ rhit.initializePage = () => {
 		rhit.single_SinglePatientManager = new rhit.SinglePatientManager(id);
 		rhit.single_MedicinesManager = new rhit.MedicinesManager(id);
 		rhit.single_NotesManager = new rhit.NotesManager(id);
+
+		rhit.single_PrimaryProviderManager = new rhit.PrimaryProviderManager();
+
+		rhit.single_PrimaryProviderManager.beginListenForDocument();
 
 		new rhit.SinglePatientPageController();
 	}
@@ -1447,17 +1686,10 @@ rhit.pageStatus = function () {
 	rhit.initializePage();
 }
 
-/** MAIN **/
-rhit.main = function () {
-	rhit.single_AuthManager = new rhit.AuthManager();
-	rhit.single_AuthManager.beginListening(rhit.pageStatus.bind(this));
-};
 
-rhit.main();
+/** TOOLS **/
+/* --------------------------------------------------------------------------------------- */
 
-/**
- * * TOOLS
- */
 // From: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro/35385518#35385518
 function htmlToElement(html) {
 	var template = document.createElement('template');
@@ -1500,7 +1732,7 @@ function drawChart() {
 		switch (rhit.single_SinglePatientManager.vital) {
 			case "Weight":
 				vital = singlePatient.weight;
-				yAxis = "Pounds (Lbs)";
+				yAxis = "Kilograms";
 				break;
 			case "SPO2":
 				vital = singlePatient.spo2;
@@ -1508,7 +1740,7 @@ function drawChart() {
 				break;
 			case "Height":
 				vital = singlePatient.height;
-				yAxis = "Inches";
+				yAxis = "Meters";
 				break;
 			case "Pulse":
 				vital = singlePatient.pulse;
@@ -1516,7 +1748,7 @@ function drawChart() {
 				break;
 			case "Temperature":
 				vital = singlePatient.temperature;
-				yAxis = "Degrees (\xB0)";
+				yAxis = "Degrees (\xB0)F";
 				break;
 			default:
 		}
@@ -1625,6 +1857,12 @@ function drawChart() {
 	}
 }
 
+function parseOnlineDate(timestamp) {
+	const date = timestamp.toDate();
+	const year = date.getYear().toString();
+	return `${date.getMonth()+1}/${date.getDate()}/20${year.substring(1,3)} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+}
+
 // Function written to parse the time keys of the different vital maps
 function parseDate(key, seconds = false) {
 	let year = parseInt(key.substring(0, 4));
@@ -1642,3 +1880,13 @@ function parseDate(key, seconds = false) {
 
 	}
 }
+
+/** MAIN **/
+/* --------------------------------------------------------------------------------------- */
+
+rhit.main = function () {
+	rhit.single_AuthManager = new rhit.AuthManager();
+	rhit.single_AuthManager.beginListening(rhit.pageStatus.bind(this));
+};
+
+rhit.main();

@@ -94,10 +94,16 @@ body {
 #menuDropdown a.dropdown-item:hover{
   text-decoration: underline;
   color: var(--main-color);
+  cursor: pointer;
 }
 
-#primaryProviderProfile {
-  cursor: pointer;
+#medicineDeleteButton, #noteDeleteButton {
+  margin-right: 303px;
+}
+
+.modal-content .modal-footer {
+  padding: 8px 8px 8px 0px;
+  border-top: 0;
 }
 
 /* <----- Login Page (index.html) -----> */
@@ -479,6 +485,31 @@ a#authLink:hover {
   cursor: pointer;
 }
 
+/* <----- Patient Profile Page (patient_profile.html) -----> */
+.patientProfile-container {
+  margin-top: 120px;
+}
+
+#patientProfilePage {
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-right: 60px;
+}
+
+#patientProfileHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#patientProfileTitle {
+  margin: 30px 0px;
+  text-align: center;
+  font-size: 50px;
+}
+
+
 /* <----- Single Patient Page (single_patient.html) -----> */
 .singlePatient-container {
   margin-top: 120px;
@@ -494,6 +525,7 @@ a#authLink:hover {
 #singlePatientTitle {
   text-align: center;
   font-size: 50px;
+  margin-right: 15px;
 }
 
 #singlePatientButtonGroup {
@@ -509,7 +541,7 @@ a#authLink:hover {
 }
 
 [id$=Card] p {
-  font-size: 16px;
+  font-size: 14px; 
   font-weight: 200;
 }
 
@@ -594,6 +626,10 @@ p#vitalsLastOnline:hover {
   font-size: 12px;
   text-align: center;
   margin-right: 50px;
+}
+
+#videoButton {
+  height: 45px;
 }
 
 #medicinesInfo, #notesInfo {
@@ -966,7 +1002,7 @@ p.medicationName {
   }
 
   #vitalsCard p {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   [id$=Card] {
@@ -1017,6 +1053,10 @@ p.medicationName {
 @media screen and (min-width: 992px) {
   #singlePatientPage #vitalsEditButton {
     margin-bottom: 20px;
+  }
+
+  #vitalsCard p {
+    font-size: 20px;
   }
 }
 

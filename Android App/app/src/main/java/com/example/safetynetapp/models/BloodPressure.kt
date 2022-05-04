@@ -26,13 +26,21 @@ class BloodPressure(
 ) : Vital {
     override fun updateCard() {
         if (systolicPressures.isNotEmpty()) {
-            val key = systolicPressures.keys.elementAt(systolicPressures.size-1)
-            val systolicPressure = systolicPressures[key]
-            val diastolicPressure = diastolicPressures[key]
-            cardData = "${systolicPressure.toString().toFloat().toInt()}/${diastolicPressure.toString().toFloat().toInt()} $units"
+            val key = systolicPressures.keys.elementAt(systolicPressures.size - 1)
+            val systolicPressure = systolicPressures[key].toString()
+            val diastolicPressure = diastolicPressures[key].toString()
+            Log.d("MIKE", "$systolicPressure")
+            Log.d("MIKE", "$diastolicPressure")
+            cardData = dataString(systolicPressure, diastolicPressure)
             cardTimestamp = mapKeyToString(key)
         }
         super.updateCard()
+    }
+
+    override fun dataString(systolicPressure: String, diastolicPressure: String): String {
+        return "${systolicPressure.toFloat().toInt()}/${
+            diastolicPressure.toFloat().toInt()
+        } $units"
     }
 
     override fun setModelData(map: SortedMap<String, Any>) {
@@ -46,19 +54,20 @@ class BloodPressure(
     override fun addData(timestamp: String, data: String, ref: DocumentReference) {
         systolicPressures.set(timestamp, data)
         ref.update("systolicPressure", systolicPressures)
-        addDiastolicData(timestamp, "0", ref)
     }
 
-    fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
+    override fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
         diastolicPressures.set(timestamp, data)
         ref.update("diastolicPressure", diastolicPressures)
     }
 
-    override fun dataSize() : Int {
+    override fun dataSize(): Int {
         return systolicPressures.size
     }
 
     override fun getData() = systolicPressures
+
+    override fun getDiastolicData() = diastolicPressures
 
     override fun fetchVital(
         callingActivity: AppCompatActivity,
@@ -67,12 +76,13 @@ class BloodPressure(
         defaultVal: String,
         mRequestQueue: RequestQueue,
         dashboardAdapter: DashboardViewModel
-    ) {}
+    ) {
+    }
 
     override fun dataPointToValueString(dp: DataPoint, defaultVal: String): String {
-        if(dp == null){
+        if (dp == null) {
             return defaultVal
-        }else{
+        } else {
             // Get data from Maximo
             return defaultVal
         }

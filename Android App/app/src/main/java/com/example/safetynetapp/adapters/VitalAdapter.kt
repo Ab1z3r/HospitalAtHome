@@ -48,7 +48,7 @@ class VitalAdapter(val fragment: SingleVitalFragment): RecyclerView.Adapter<Vita
 
         fun bind(vital: Vital, pos: Int) {
             titleTextView.text = vital.mapKeyToString(vital.getData().keys.elementAt(pos))
-            dataTextView.text = vital.getData().get(vital.getData().keys.elementAt(pos)).toString()
+            dataTextView.text = vital.dataString(vital.getData().get(vital.getData().keys.elementAt(pos)).toString(), vital.getDiastolicData().get(vital.getData().keys.elementAt(pos)).toString())
         }
     }
 }

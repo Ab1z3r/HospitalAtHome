@@ -1,6 +1,7 @@
 package com.example.safetynetapp.ui
 
 import android.content.DialogInterface
+import android.graphics.Color
 import com.github.mikephil.charting.charts.LineChart
 import android.widget.RadioGroup
 import android.os.Bundle
@@ -10,7 +11,6 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.LineData
-import java.util.ArrayList
 
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
@@ -25,6 +25,11 @@ import com.example.safetynetapp.adapters.DashboardAdapter
 import com.example.safetynetapp.adapters.VitalAdapter
 import com.example.safetynetapp.databinding.FragmentSingleVitalBinding
 import com.example.safetynetapp.models.DashboardViewModel
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.formatter.ValueFormatter
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class SingleVitalFragment : Fragment() {
     private lateinit var adapter: VitalAdapter
@@ -105,20 +110,43 @@ class SingleVitalFragment : Fragment() {
 
     private fun getData() {
         val data = ArrayList<Entry>()
-        data.add(Entry(0F, 75F))
-        data.add(Entry(1F, 73F))
-        data.add(Entry(2F, 80F))
-        data.add(Entry(3F, 80F))
-        data.add(Entry(4F, 85F))
-        data.add(Entry(5F, 90F))
-        data.add(Entry(6F, 75F))
-        data.add(Entry(7F, 83F))
-        setLineChartData(data)
+
+        var keys = model.getVitalAt(model.currentPos).getData().keys
+
+        for (key in keys) {
+            data.add(Entry(model.getVitalAt(model.currentPos).mapKeyToTimestamp(key).seconds.toFloat(), model.getVitalAt(model.currentPos).getData().get(key).toString().toFloat()))
+        }
+
+        Log.d("MIKE", "$data")
+        Log.d("MIKE", "${model.getVitalAt(0).mapKeyToTimestamp(keys.elementAt(0))}")
+
+        var diastolicData = ArrayList<Entry>()
+        if (model.currentPos == 2) {
+            diastolicData = getDiastolicData()
+        }
+
+        setLineChartData(data, diastolicData)
     }
 
-    private fun setLineChartData(data: ArrayList<Entry>) {
+    private fun getDiastolicData() : ArrayList<Entry> {
+        val data = ArrayList<Entry>()
+
+        var keys = model.getVitalAt(model.currentPos).getDiastolicData().keys
+
+        for (key in keys) {
+            data.add(Entry(model.getVitalAt(model.currentPos).mapKeyToTimestamp(key).seconds.toFloat(), model.getVitalAt(model.currentPos).getDiastolicData().get(key).toString().toFloat()))
+        }
+
+        Log.d("MIKE", "$data")
+        Log.d("MIKE", "${model.getVitalAt(0).mapKeyToTimestamp(keys.elementAt(0))}")
+
+        return data
+    }
+
+    private fun setLineChartData(data: ArrayList<Entry>, diastolicData: ArrayList<Entry>) {
         val dataSets = ArrayList<ILineDataSet>()
-        val highLineDataSet = LineDataSet(data, "Blood Pressure")
+
+        val highLineDataSet = LineDataSet(data, "${model.vitals[model.currentPos].title}")
         highLineDataSet.setDrawCircles(true)
         highLineDataSet.circleRadius = 4f
         highLineDataSet.setDrawValues(false)
@@ -126,9 +154,22 @@ class SingleVitalFragment : Fragment() {
         highLineDataSet.color = R.color.unionHealth
         highLineDataSet.setCircleColor(R.color.unionHealth)
         dataSets.add(highLineDataSet)
+
+        var diastolicDataSet: LineDataSet
+        if (model.currentPos == 2) {
+            diastolicDataSet = LineDataSet(diastolicData, "${model.vitals[model.currentPos].title}")
+            diastolicDataSet.setDrawCircles(true)
+            diastolicDataSet.circleRadius = 4f
+            diastolicDataSet.setDrawValues(false)
+            diastolicDataSet.lineWidth = 3f
+            diastolicDataSet.color = Color.RED
+            diastolicDataSet.setCircleColor(Color.RED)
+            dataSets.add(diastolicDataSet)
+        }
+
         val lineData = LineData(dataSets)
-        lineChart?.setData(lineData);
-        lineChart?.invalidate();
+        lineChart?.data = lineData
+        lineChart?.invalidate()
     }
 
     fun updateView() {
@@ -136,10 +177,6 @@ class SingleVitalFragment : Fragment() {
         // EXAMPLE
         // How I get information from the vital classes
         Log.d("VITAL", "in ${model.vitals[model.currentPos].title} vital page")
-
-//        if(model.vitals[model.currentPos].){
-//
-//        }
 
     }
 }

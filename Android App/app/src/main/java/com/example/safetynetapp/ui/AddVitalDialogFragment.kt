@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -27,14 +29,24 @@ class AddVitalDialogFragment : DialogFragment() {
 
         binding = FragmentAddVitalDialogBinding.inflate(inflater, container, false)
 
+        if (model.currentPos != 2) {
+            binding.addVitalData2.visibility = GONE
+        }
+
         binding.addVitalAddButton.setOnClickListener {
             if (binding.addVitalData.text.isNotEmpty()) {
                 val data = binding.addVitalData.text.toString()
+                val diastolicData = binding.addVitalData2.text.toString()
                 val timestamp = model.getVitalAt(model.currentPos).timestampToMapKey(Timestamp.now())
                 val ref = model.ref
                 model.getVitalAt(model.currentPos).addData(timestamp, data, ref)
+                model.getVitalAt(model.currentPos).addDiastolicData(timestamp, diastolicData, ref)
                 this.dismiss()
             }
+        }
+
+        binding.addVitalCancelButton.setOnClickListener {
+            this.dismiss()
         }
 
         return binding.root

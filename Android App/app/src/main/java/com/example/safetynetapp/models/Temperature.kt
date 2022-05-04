@@ -22,10 +22,14 @@ class Temperature(
         if (temperatures.isNotEmpty()) {
             val key = temperatures.keys.elementAt(temperatures.size-1)
             val temperature = temperatures[key]
-            cardData = "$temperature$units"
+            cardData = dataString(temperature.toString(), "0")
             cardTimestamp = mapKeyToString(key)
         }
         super.updateCard()
+    }
+
+    override fun dataString(temperature: String, diastolicData: String): String {
+        return "$temperature$units"
     }
 
     override fun setModelData(map: SortedMap<String, Any>) {
@@ -41,11 +45,20 @@ class Temperature(
         ref.update("temperature", temperatures)
     }
 
+    override fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun dataSize() : Int {
         return temperatures.size
     }
 
     override fun getData() = temperatures
+
+    override fun getDiastolicData(): SortedMap<String, Any> {
+        Log.d("[ERROR]", "should never be here")
+        return sortedMapOf<String, Any>()
+    }
 
     override fun fetchVital(
         callingActivity: AppCompatActivity,

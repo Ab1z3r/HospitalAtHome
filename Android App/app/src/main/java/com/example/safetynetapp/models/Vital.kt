@@ -29,9 +29,15 @@ interface Vital {
 
     fun addData(timestamp: String, data: String, ref: DocumentReference)
 
+    fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference)
+
     fun dataSize() : Int
 
     fun getData() : SortedMap<String, Any>
+
+    fun getDiastolicData() : SortedMap<String, Any>
+
+    fun dataString(data: String, diastolicData: String) : String
 
     fun fetchVital(
         callingActivity: AppCompatActivity,
