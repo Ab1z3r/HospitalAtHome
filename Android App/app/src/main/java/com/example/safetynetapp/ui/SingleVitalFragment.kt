@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.car.ui.AlertDialogBuilder
 import com.example.safetynetapp.HomeActivity
 import com.example.safetynetapp.R
 import com.example.safetynetapp.adapters.DashboardAdapter

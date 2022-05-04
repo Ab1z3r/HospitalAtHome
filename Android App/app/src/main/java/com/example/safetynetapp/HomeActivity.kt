@@ -7,7 +7,9 @@ import android.util.Log
 import android.view.Menu
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -138,6 +140,7 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun upload_values() {
+        Toast.makeText(getApplicationContext(), "Starting Upload of Data...", Toast.LENGTH_LONG).show()
         getData(DataType.TYPE_HEIGHT)
         getData(DataType.TYPE_HEART_RATE_BPM)
         var mRequestQueue = Volley.newRequestQueue(this)
