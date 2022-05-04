@@ -23,10 +23,14 @@ class Spo2(
         if (spo2s.isNotEmpty()) {
             val key = spo2s.keys.elementAt(spo2s.size-1)
             val spo2 = spo2s[key]
-            cardData = "${spo2.toString().toFloat().toInt()}$units"
+            cardData = dataString(spo2.toString(), "0")
             cardTimestamp = mapKeyToString(key)
         }
         super.updateCard()
+    }
+
+    override fun dataString(spo2: String, diastolicData: String): String {
+        return "${spo2.toString().toFloat().toInt()}$units"
     }
 
     override fun setModelData(map: SortedMap<String, Any>) {
@@ -42,11 +46,20 @@ class Spo2(
         ref.update("spo2", spo2s)
     }
 
+    override fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun dataSize() : Int {
         return spo2s.size
     }
 
     override fun getData() = spo2s
+
+    override fun getDiastolicData(): SortedMap<String, Any> {
+        Log.d("[ERROR]", "should never be here")
+        return sortedMapOf<String, Any>()
+    }
 
     override fun fetchVital(
         callingActivity: AppCompatActivity,

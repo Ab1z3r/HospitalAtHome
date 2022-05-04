@@ -36,6 +36,7 @@ class SettingsFragment : Fragment() {
         binding.settingsHeightUnits.setOnClickListener {
             val text = "Feature Still Under Development"
             Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+
         }
 
         return binding.root

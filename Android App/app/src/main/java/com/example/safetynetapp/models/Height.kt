@@ -34,17 +34,21 @@ class Height(
         if (heights.isNotEmpty()) {
             Log.d("[INFO]" ,heights.toString())
             val key = heights.keys.elementAt(heights.size-1)
-            val METERS_PER_FOOT: Double = 0.3048;
-            val INCHES_PER_FOOT: Double = 12.0;
-            val heightInMetersstr: String = heights[key] as String
-            val heightInMeters: Double = heightInMetersstr.toDouble()
-            val heightInFeet = heightInMeters / METERS_PER_FOOT;
-            val feet: Int = heightInFeet.toInt();
-            val inches: Int = ((heightInFeet - feet) * INCHES_PER_FOOT + 0.5).toInt();
-            cardData = "$feet ft, $inches in"
+            cardData = dataString(heights[key].toString(), "0")
             cardTimestamp = mapKeyToString(key)
         }
         super.updateCard()
+    }
+
+    override fun dataString(height: String, diastolicData: String) : String {
+        val METERS_PER_FOOT: Double = 0.3048;
+        val INCHES_PER_FOOT: Double = 12.0;
+        val heightInMetersstr: String = height
+        val heightInMeters: Double = heightInMetersstr.toDouble()
+        val heightInFeet = heightInMeters / METERS_PER_FOOT;
+        val feet: Int = heightInFeet.toInt();
+        val inches: Int = ((heightInFeet - feet) * INCHES_PER_FOOT + 0.5).toInt();
+        return "$feet ft, $inches in"
     }
 
     override fun setModelData(map: SortedMap<String, Any>) {
@@ -61,11 +65,20 @@ class Height(
         Log.d("MIKE", heights.toString())
     }
 
+    override fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun dataSize() : Int {
         return heights.size
     }
 
     override fun getData() = heights
+
+    override fun getDiastolicData(): SortedMap<String, Any> {
+        Log.d("[ERROR]", "should never be here")
+        return sortedMapOf<String, Any>()
+    }
 
     override fun fetchVital(
         callingActivity: AppCompatActivity,
@@ -105,6 +118,7 @@ class Height(
                             val dataJSON = JSONObject()
                             var secondsVal: Long = dp.getStartTime(TimeUnit.SECONDS)
                             var nanosecVal: Int = dp.getStartTime(TimeUnit.NANOSECONDS).toInt()
+                            if (nanosecVal < 0) nanosecVal = 0
                             var ts: Timestamp = Timestamp(secondsVal, nanosecVal)
 
                             var tsString: String = timestampToMapKey(ts)

@@ -30,10 +30,14 @@ class Pulse(
         if (pulses.isNotEmpty()) {
             val key = pulses.keys.elementAt(pulses.size-1)
             val pulse = pulses[key]
-            cardData = "${pulse.toString().toFloat().toInt()} $units"
+            cardData = dataString(pulse.toString(), "0")
             cardTimestamp = mapKeyToString(key)
         }
         super.updateCard()
+    }
+
+    override fun dataString(pulse: String, diastolicData: String): String {
+        return "${pulse.toFloat().toInt()} $units"
     }
 
     override fun setModelData(map: SortedMap<String, Any>) {
@@ -49,11 +53,20 @@ class Pulse(
         ref.update("pulse", pulses)
     }
 
+    override fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun dataSize() : Int {
         return pulses.size
     }
 
     override fun getData() = pulses
+
+    override fun getDiastolicData(): SortedMap<String, Any> {
+        Log.d("[ERROR]", "should never be here")
+        return sortedMapOf<String, Any>()
+    }
 
     override fun fetchVital(
         callingActivity: AppCompatActivity,
@@ -92,8 +105,9 @@ class Pulse(
                             val dp: DataPoint = response.dataPoints[0]
                             val dataJSON = JSONObject()
                             var secondsVal: Long = dp.getStartTime(TimeUnit.SECONDS)
-                            //var nanosecVal: Int = dp.getStartTime(TimeUnit.NANOSECONDS).toInt()
-                            var ts: Timestamp = Timestamp(secondsVal, 0)
+                            var nanosecVal: Int = dp.getStartTime(TimeUnit.NANOSECONDS).toInt()
+                            if (nanosecVal < 0) nanosecVal = 0
+                            var ts: Timestamp = Timestamp(secondsVal, nanosecVal)
 
                             var tsString: String = timestampToMapKey(ts)
                             dataJSON.put(tsString, dp.getValue(dp.dataType.fields[0]).toString())

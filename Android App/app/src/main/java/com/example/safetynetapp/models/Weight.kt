@@ -17,6 +17,7 @@ import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 class Weight(
     override val title: String = "Weight",
@@ -30,10 +31,19 @@ class Weight(
         if (weights.isNotEmpty()) {
             val key = weights.keys.elementAt(weights.size-1)
             val weight = weights[key]
-            cardData = "$weight $units"
+            cardData = dataString(weight.toString(), "0")
             cardTimestamp = mapKeyToString(key)
         }
         super.updateCard()
+    }
+
+    override fun dataString(weight: String, diastolicData: String): String {
+        val KG_PER_LBS: Double = 0.453592
+        val weightInKgString: String = weight
+        val weightInKg: Double = weightInKgString.toDouble()
+        val weightInLbs = weightInKg / KG_PER_LBS
+        val weight = (weightInLbs * 10).roundToInt().toDouble() / 10
+        return "$weight $units"
     }
 
     override fun setModelData(map: SortedMap<String, Any>) {
@@ -50,12 +60,20 @@ class Weight(
         Log.d("MIKE", weights.toString())
     }
 
+    override fun addDiastolicData(timestamp: String, data: String, ref: DocumentReference) {
+        Log.d("[ERROR]", "should never be here")
+    }
+
     override fun dataSize() : Int {
         return weights.size
     }
 
     override fun getData() = weights
 
+    override fun getDiastolicData(): SortedMap<String, Any> {
+        Log.d("[ERROR]", "should never be here")
+        return sortedMapOf<String, Any>()
+    }
 
     override fun fetchVital(
         callingActivity: AppCompatActivity,
@@ -95,6 +113,7 @@ class Weight(
                             val dataJSON = JSONObject()
                             var secondsVal: Long = dp.getStartTime(TimeUnit.SECONDS)
                             var nanosecVal: Int = dp.getStartTime(TimeUnit.NANOSECONDS).toInt()
+                            if (nanosecVal < 0) nanosecVal = 0
                             var ts: Timestamp = Timestamp(secondsVal, 0)
 
                             var tsString: String = timestampToMapKey(ts)
