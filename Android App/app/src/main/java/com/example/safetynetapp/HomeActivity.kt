@@ -141,8 +141,6 @@ class HomeActivity : AppCompatActivity() {
 
     private fun upload_values() {
         Toast.makeText(getApplicationContext(), "Starting Upload of Data...", Toast.LENGTH_LONG).show()
-        getData(DataType.TYPE_HEIGHT)
-        getData(DataType.TYPE_HEART_RATE_BPM)
         var mRequestQueue = Volley.newRequestQueue(this)
         for(vital: Vital in dashboardModel.vitals) {
             vital.fetchVital(this, getGoogleAccount(), vital.dataType, "0", mRequestQueue, dashboardModel)
