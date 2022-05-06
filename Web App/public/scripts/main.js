@@ -219,7 +219,7 @@ rhit.ProviderProfilePageController = class {
 
 		// * Click Listener for save button on account modal
 		document.querySelector("#deleteButton").onclick = (event) => {
-			rhit.single_PatientsManager.repopulate(this.removePatients.bind(this), "patients", null);
+			rhit.single_PatientsManager.repopulate(this.removePatients.bind(this), "patients", true);
 		};
 
 
@@ -970,6 +970,9 @@ rhit.PatientsManager = class {
 					});
 					if (matched.length > 0) {
 						this._documentSnapshots = matched;
+						changeListener();
+					}
+					if (value) {
 						changeListener();
 					}
 				})
