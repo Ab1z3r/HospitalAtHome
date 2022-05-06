@@ -494,17 +494,25 @@ rhit.SinglePatientPageController = class {
 	}
 
 	updateCardsView() {
-		const singlePatient = rhit.single_SinglePatientManager.getPatient()
-
+		const singlePatient = rhit.single_SinglePatientManager.getPatient();
+		
 		// VITALS CARD
-		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  singlePatient.weight.values().next().value : "--"} kg`;
-		document.querySelector("#spo2Data").innerHTML = `SPO2: ${(singlePatient.spo2.values().next().value) ?  singlePatient.spo2.values().next().value : "--"} %`;
+		const weightData = Array.from(singlePatient.weight);
+		const spo2Data  = Array.from(singlePatient.spo2);
+		const systolicData  = Array.from(singlePatient.systolicPressure);
+		const diastolicData  = Array.from(singlePatient.diastolicPressure);
+		const heightData  = Array.from(singlePatient.height);
+		const pulseData  = Array.from(singlePatient.pulse);
+		const temperatureData  = Array.from(singlePatient.temperature);
+
+		document.querySelector("#weightData").innerHTML = `Weight: ${(singlePatient.weight.values().next().value) ?  weightData[weightData.length - 1][1] : "--"} kg`;
+		document.querySelector("#spo2Data").innerHTML = `SPO2: ${(singlePatient.spo2.values().next().value) ? spo2Data[spo2Data.length - 1][1] : "--"} %`;
 		document.querySelector("#bloodPressureData").innerHTML = `Blood Pressure: 
-			${(singlePatient.systolicPressure.values().next().value) ? singlePatient.systolicPressure.values().next().value : "--"}
-			/${(singlePatient.diastolicPressure.values().next().value) ? singlePatient.diastolicPressure.values().next().value : "--"} mmHg`;
-		document.querySelector("#heightData").innerHTML = `Height: ${(singlePatient.height.values().next().value) ? singlePatient.height.values().next().value : "--"} m`;
-		document.querySelector("#pulseData").innerHTML = `Pulse: ${(singlePatient.pulse.values().next().value) ? singlePatient.pulse.values().next().value : "--"} bpm`;
-		document.querySelector("#temperatureData").innerHTML = `Temperature: ${(singlePatient.temperature.values().next().value) ? singlePatient.temperature.values().next().value : "--"} \xB0F`;
+			${(singlePatient.systolicPressure.values().next().value) ? systolicData[systolicData.length - 1][1] : "--"}
+			/${(singlePatient.diastolicPressure.values().next().value) ? diastolicData[diastolicData.length - 1][1] : "--"} mmHg`;
+		document.querySelector("#heightData").innerHTML = `Height: ${(singlePatient.height.values().next().value) ? heightData[heightData.length - 1][1] : "--"} m`;
+		document.querySelector("#pulseData").innerHTML = `Pulse: ${(singlePatient.pulse.values().next().value) ? pulseData[pulseData.length - 1][1] : "--"} bpm`;
+		document.querySelector("#temperatureData").innerHTML = `Temperature: ${(singlePatient.temperature.values().next().value) ? temperatureData[temperatureData.length - 1][1] : "--"} \xB0F`;
 
 		// MEDICINE CARD
 		const medList = htmlToElement('<div id="medicinesInfo"></div>');
